@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang='tr'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>LabFull</title>
+  <script src='BilmedUiLib.js'></script>
+  <style>
+    :root{--lfRadius:16px;--lfPad:14px;--lfGap:12px;--lfTopH:54px;--lfRowH:44px}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bilmed-page-bg);color:var(--bilmed-surface-text)}
+    #lfPage{height:100%;display:flex;flex-direction:column}
+    #lfTop{height:var(--lfTopH);display:flex;align-items:center;gap:10px;padding:0 14px;box-sizing:border-box;position:sticky;top:0;z-index:10;background:var(--bilmed-header2-bg);color:var(--bilmed-header2-fg);border-bottom:1px solid var(--bilmed-header2-border)}
+    #lfTitle{font-weight:900;font-size:14px;opacity:.96;white-space:nowrap}
+    #lfMeta{font-size:12px;opacity:.84;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #lfTopSpacer{flex:1}
+    .lfBtn{height:34px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:currentColor;cursor:pointer;font-weight:800;display:inline-flex;align-items:center;gap:8px;user-select:none}
+    .lfBtn:hover{background:rgba(255,255,255,.16)}
+    .lfBtn:active{background:rgba(255,255,255,.22)}
+    #lfMain{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--lfGap);padding:var(--lfPad);box-sizing:border-box}
+    #lfCard{flex:1;min-height:0;background:var(--bilmed-surface-bg);border:1px solid var(--bilmed-surface-border);border-radius:var(--lfRadius);overflow:hidden;display:flex;flex-direction:column}
+    #lfFilters{padding:12px;border-bottom:1px solid var(--bilmed-surface-border);display:flex;align-items:center;gap:8px}
+    #lfSearch{flex:1;height:34px;border-radius:12px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-surface-bg);color:var(--bilmed-surface-text);padding:0 10px;outline:none;font-size:13px}
+    #lfStatus{height:34px;border-radius:12px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-tint-bg);color:var(--bilmed-surface-text);padding:0 10px;outline:none;font-size:13px;font-weight:800}
+    #lfTableWrap{flex:1;min-height:0;overflow:auto}
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    thead th{position:sticky;top:0;background:var(--bilmed-tint-bg);border-bottom:1px solid var(--bilmed-surface-border);font-size:12px;text-align:left;padding:10px 12px;opacity:.92;z-index:2}
+    tbody td{padding:10px 12px;border-bottom:1px solid rgba(0,0,0,0.06);font-size:13px;vertical-align:middle}
+    tbody tr:hover td{background:rgba(0,0,0,0.03)}
+    .lfKey{font-weight:900;white-space:nowrap}
+    .lfName{font-weight:800}
+    .lfVal{font-weight:900;white-space:nowrap}
+    .lfRef{font-size:12px;opacity:.78;white-space:nowrap}
+    .lfTime{font-size:12px;opacity:.76;white-space:nowrap}
+    .lfFlag{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 8px;border-radius:10px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-surface-bg);font-size:12px;font-weight:900;white-space:nowrap}
+    .lfFlag[data-flag='H']{border-color:var(--bilmed-primary-bg)}
+    .lfFlag[data-flag='L']{border-color:var(--bilmed-primary-bg)}
+    @media (max-width: 768px){
+      #lfTop{padding:0 10px}
+      #lfMain{padding:10px}
+      .lfBtn{height:32px;border-radius:11px;padding:0 10px}
+      thead th, tbody td{padding:10px 10px}
+    }
+  </style>
+</head>
+<body>
+  <div id='lfPage'>
+    <div id='lfTop'>
+      <div id='lfTitle'>Laboratuvar</div>
+      <div id='lfMeta'>HastaID: <span id='lfHastaId'>-</span> · Anormal: <span id='lfAbnCount'>0</span></div>
+      <div id='lfTopSpacer'></div>
+      <button class='lfBtn' id='lfRefreshBtn' type='button'>Yenile</button>
+      <button class='lfBtn' id='lfCloseBtn' type='button'>Kapat</button>
+    </div>
+
+    <div id='lfMain'>
+      <div id='lfCard'>
+        <div id='lfFilters'>
+          <input id='lfSearch' type='text' placeholder='Test ara (WBC, CRP, Glikoz...)'>
+          <select id='lfStatus'>
+            <option value='all'>Tümü</option>
+            <option value='abn'>Anormal</option>
+            <option value='norm'>Normal</option>
+          </select>
+        </div>
+        <div id='lfTableWrap'>
+          <table>
+            <thead>
+              <tr>
+                <th style='width:92px'>Test</th>
+                <th>Ad</th>
+                <th style='width:140px'>Değer</th>
+                <th style='width:170px'>Referans</th>
+                <th style='width:80px'>Durum</th>
+                <th style='width:84px'>Saat</th>
+              </tr>
+            </thead>
+            <tbody id='lfTbody'></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    var __LF_CTX = { drId: 0, hastaId: 0, hizmetId: 0 };
+    var __LF_THEME_ID = 'kurumsal';
+    var __LF_TICK = 0;
+    var __LF_TIMER = 0;
+    var __LF_SUSPENDED = 0;
+
+    var __LF_EL = {};
+
+    function __lf_q(id){ return document.getElementById(id); }
+
+    function __lf_post(type, payload){
+      try { window.parent.postMessage({ type: type, payload: payload || {} }, '*'); }
+      catch(e){ console.error('LF_POST_FAIL', e); }
+    }
+
+    function __lf_applyTheme(themeId){
+      var tid = themeId || __LF_THEME_ID || 'kurumsal';
+      __LF_THEME_ID = tid;
+      try {
+        if(window.BilmedTheme && typeof window.BilmedTheme.apply === 'function') {
+          window.BilmedTheme.apply(document, { themeId: tid });
+        }
+      } catch(e) { console.error('LF_THEME_APPLY_FAIL', e); }
+    }
+
+    function __lf_lcg(seed){
+      var s = Math.floor(Number(seed) || 0) >>> 0;
+      return function(){ s = (s * 1664525 + 1013904223) >>> 0; return (s >>> 0) / 4294967296; };
+    }
+
+    function __lf_seedBase(){
+      var h = Math.floor(Number(__LF_CTX.hastaId) || 0);
+      var d = Math.floor(Number(__LF_CTX.drId) || 0);
+      var z = Math.floor(Number(__LF_CTX.hizmetId) || 0);
+      var seed = (h * 2654435761) ^ (d * 2246822519) ^ (z * 3266489917) ^ (__LF_TICK * 374761393);
+      return seed >>> 0;
+    }
+
+    function __lf_testsDef(){
+      return [
+        { key:'WBC', title:'WBC', unit:'10^3/µL', lo:4.0, hi:10.0 },
+        { key:'HGB', title:'HGB', unit:'g/dL', lo:12.0, hi:17.5 },
+        { key:'PLT', title:'PLT', unit:'10^3/µL', lo:150, hi:450 },
+        { key:'GLU', title:'Glikoz', unit:'mg/dL', lo:70, hi:110 },
+        { key:'CRP', title:'CRP', unit:'mg/L', lo:0.0, hi:5.0 },
+        { key:'CRE', title:'Kreatinin', unit:'mg/dL', lo:0.6, hi:1.3 },
+        { key:'NA', title:'Sodyum', unit:'mmol/L', lo:135, hi:145 },
+        { key:'K', title:'Potasyum', unit:'mmol/L', lo:3.5, hi:5.1 }
+      ];
+    }
+
+    function __lf_fmt(v){
+      var n = Number(v);
+      if(!isFinite(n)) { return '-'; }
+      var abs = Math.abs(n);
+      if(abs >= 100) { return String(Math.round(n)); }
+      if(abs >= 10) { return (Math.round(n * 10) / 10).toFixed(1); }
+      return (Math.round(n * 100) / 100).toFixed(2);
+    }
+
+    function __lf_pickTime(r, idx){
+      var now = new Date();
+      var minsAgo = 8 + Math.floor(r * 210) + (idx * 9);
+      var t = new Date(now.getTime() - minsAgo * 60000);
+      var hh = String(t.getHours()).padStart(2,'0');
+      var mm = String(t.getMinutes()).padStart(2,'0');
+      return hh + ':' + mm;
+    }
+
+    function __lf_esc(s){
+      var t = String(typeof s === 'undefined' ? '' : s);
+      var out = '';
+      for(var i = 0; i < t.length; i += 1){
+        var ch = t[i];
+        if(ch === '&') { out += '&amp;'; continue; }
+        if(ch === '<') { out += '&lt;'; continue; }
+        if(ch === '>') { out += '&gt;'; continue; }
+        if(ch === '"') { out += '&quot;'; continue; }
+        if(ch === "'") { out += '&#39;'; continue; }
+        out += ch;
+      }
+      return out;
+    }
+
+    function __lf_makeRows(){
+      var defs = __lf_testsDef();
+      var rnd = __lf_lcg(__lf_seedBase());
+      var rows = [];
+      for(var i = 0; i < defs.length; i += 1){
+        var d = defs[i];
+        var mid = (d.lo + d.hi) / 2;
+        var span = (d.hi - d.lo);
+        var r = rnd();
+        var v = mid + (r - 0.5) * span * 0.8;
+
+        var out = rnd();
+        if(out > 0.88){
+          var dir = (rnd() > 0.5) ? 1 : -1;
+          v = mid + dir * span * (0.9 + rnd() * 1.1);
+        }
+
+        var flag = '';
+        if(v < d.lo) { flag = 'L'; }
+        if(v > d.hi) { flag = 'H'; }
+
+        rows.push({
+          key: d.key,
+          name: d.title,
+          unit: d.unit,
+          lo: d.lo,
+          hi: d.hi,
+          value: v,
+          valueText: __lf_fmt(v),
+          flag: flag,
+          time: __lf_pickTime(rnd(), i)
+        });
+      }
+      return rows;
+    }
+
+    function __lf_render(){
+      var q = String(__LF_EL.search.value || '').trim().toLowerCase();
+      var mode = String(__LF_EL.status.value || 'all');
+
+      var rows = __lf_makeRows();
+      var abn = 0;
+
+      var html = '';
+      for(var i = 0; i < rows.length; i += 1){
+        var it = rows[i];
+        if(it.flag) { abn += 1; }
+
+        if(q){
+          var hay = (it.key + ' ' + it.name).toLowerCase();
+          if(hay.indexOf(q) < 0) { continue; }
+        }
+        if(mode === 'abn' && !it.flag) { continue; }
+        if(mode === 'norm' && it.flag) { continue; }
+
+        var ref = __lf_fmt(it.lo) + ' - ' + __lf_fmt(it.hi) + ' ' + it.unit;
+        var durum = it.flag ? (it.flag === 'H' ? 'Yüksek' : 'Düşük') : 'Normal';
+
+        html += '' +
+          '<tr>' +
+            '<td class=\'lfKey\'>' + __lf_esc(it.key) + '</td>' +
+            '<td class=\'lfName\'>' + __lf_esc(it.name) + '</td>' +
+            '<td class=\'lfVal\'>' + __lf_esc(it.valueText + ' ' + it.unit) + '</td>' +
+            '<td class=\'lfRef\'>' + __lf_esc(ref) + '</td>' +
+            '<td><span class=\'lfFlag\' data-flag=\'' + __lf_esc(it.flag) + '\'>' + __lf_esc(durum) + '</span></td>' +
+            '<td class=\'lfTime\'>' + __lf_esc(it.time) + '</td>' +
+          '</tr>';
+      }
+
+      __LF_EL.tbody.innerHTML = html;
+      __LF_EL.hastaId.textContent = String(Math.floor(Number(__LF_CTX.hastaId) || 0) || '-');
+      __LF_EL.abnCount.textContent = String(abn);
+    }
+
+    function __lf_onRefresh(){
+      __LF_TICK += 1;
+      __lf_render();
+      __lf_post('ACTION', { action: 'labRefresh', source: 'labFull', data: { tick: __LF_TICK } });
+    }
+
+    function __lf_onClose(){
+      __lf_post('CLOSE', { pageId: 'labFull' });
+    }
+
+    function __lf_start(){
+      if(__LF_TIMER){ return; }
+      __LF_TIMER = window.setInterval(function(){
+        if(__LF_SUSPENDED){ return; }
+        __LF_TICK += 1;
+        __lf_render();
+      }, 30000);
+    }
+
+    function __lf_stop(){
+      if(__LF_TIMER){ window.clearInterval(__LF_TIMER); __LF_TIMER = 0; }
+    }
+
+    function __lf_suspend(){ __LF_SUSPENDED = 1; }
+    function __lf_resume(){ __LF_SUSPENDED = 0; }
+
+    function __lf_onMessage(e){
+      var msg = e && e.data ? e.data : null;
+      if(!msg || !msg.type){ return; }
+      var t = String(msg.type || '');
+      var p = msg.payload || {};
+
+      if(t === 'CTX_SET'){
+        __LF_CTX.drId = Math.floor(Number(p.drId) || 0);
+        __LF_CTX.hastaId = Math.floor(Number(p.hastaId) || 0);
+        __LF_CTX.hizmetId = Math.floor(Number(p.hizmetId) || 0);
+        __LF_TICK = 0;
+        __lf_render();
+        return;
+      }
+
+      if(t === 'THEME_SET'){ __lf_applyTheme(String(p.themeId || 'kurumsal')); return; }
+      if(t === 'SUSPEND'){ __lf_suspend(); return; }
+      if(t === 'RESUME'){ __lf_resume(); return; }
+    }
+
+    function __lf_init(){
+      __LF_EL.tbody = __lf_q('lfTbody');
+      __LF_EL.search = __lf_q('lfSearch');
+      __LF_EL.status = __lf_q('lfStatus');
+      __LF_EL.hastaId = __lf_q('lfHastaId');
+      __LF_EL.abnCount = __lf_q('lfAbnCount');
+      __LF_EL.refreshBtn = __lf_q('lfRefreshBtn');
+      __LF_EL.closeBtn = __lf_q('lfCloseBtn');
+
+      __LF_EL.search.addEventListener('input', __lf_render);
+      __LF_EL.status.addEventListener('change', __lf_render);
+      __LF_EL.refreshBtn.addEventListener('click', __lf_onRefresh);
+      __LF_EL.closeBtn.addEventListener('click', __lf_onClose);
+
+      window.addEventListener('message', __lf_onMessage, false);
+
+      __lf_applyTheme(__LF_THEME_ID);
+      __lf_render();
+      __lf_start();
+      __lf_post('READY', { host: 'LabFull', version: 'v02' });
+    }
+
+    try { __lf_init(); } catch(err){ console.error('LF_INIT_FAIL', err); }
+  </script>
+</body>
+</html>

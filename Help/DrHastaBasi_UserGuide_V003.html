@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DrHastaBaşı • User Guide (Demo) V003</title>
+<style>
+:root{
+  --ugBg:#0b1220;
+  --ugPanel: rgba(255,255,255,0.06);
+  --ugText:#e8eefc;
+  --ugMut:#a9b6d3;
+  --ugLine: rgba(255,255,255,0.12);
+  --ugAccent:#4f8cff;
+  --ugAccent2:#9cc1ff;
+  --ugWarn:#ffcc66;
+  --ugOk:#5eead4;
+  --ugRadius:16px;
+  --ugShadow: 0 18px 60px rgba(0,0,0,0.38);
+  --ugFont: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: var(--ugFont);
+  background: radial-gradient(1200px 800px at 10% 0%, rgba(79,140,255,0.25), transparent 55%),
+              radial-gradient(900px 700px at 90% 10%, rgba(94,234,212,0.16), transparent 60%),
+              var(--ugBg);
+  color: var(--ugText);
+}
+#app{
+  height:100%;
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+  padding: 14px;
+  box-sizing:border-box;
+}
+@media (max-width: 980px){
+  #app{grid-template-columns:1fr; grid-template-rows: auto 1fr}
+}
+.card{
+  background: var(--ugPanel);
+  border:1px solid var(--ugLine);
+  border-radius: var(--ugRadius);
+  box-shadow: var(--ugShadow);
+  overflow:hidden;
+}
+#side{display:flex; flex-direction:column; min-height:0}
+#sideHead{
+  padding:14px 14px 10px 14px;
+  border-bottom:1px solid var(--ugLine);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent);
+}
+#sideHead .t{font-weight:800; font-size:16px; letter-spacing:0.2px}
+#sideHead .s{margin-top:6px; color:var(--ugMut); font-size:13px; line-height:1.35}
+#setup{
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 10px;
+}
+#setup b{font-size:12.5px}
+#setup .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; align-items:center}
+#setup .pill{
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: var(--ugMut);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+#steps{padding:10px; display:flex; flex-direction:column; gap:8px; overflow:auto; min-height:0}
+.stepBtn{
+  width:100%;
+  border:1px solid var(--ugLine);
+  background: rgba(255,255,255,0.04);
+  color: var(--ugText);
+  border-radius: 14px;
+  padding: 10px 10px;
+  cursor:pointer;
+  text-align:left;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  opacity: 0.55;
+}
+.stepBtn[data-enabled="1"]{opacity:1}
+.stepBtn:hover{background: rgba(255,255,255,0.07)}
+.stepBtn[data-active="1"]{
+  border-color: rgba(79,140,255,0.55);
+  box-shadow: 0 0 0 2px rgba(79,140,255,0.22) inset;
+  background: rgba(79,140,255,0.10);
+}
+.badge{
+  flex:0 0 auto;
+  width:24px;
+  height:24px;
+  border-radius: 9px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);
+  color: var(--ugAccent2);
+  font-weight:800;
+  font-size:12px;
+  margin-top:1px;
+}
+.stTitle{font-weight:800; font-size:13px}
+.stDesc{color:var(--ugMut); font-size:12.5px; margin-top:3px; line-height:1.25}
+#sideFoot{
+  padding:12px 12px;
+  border-top:1px solid var(--ugLine);
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.btn{
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.07);
+  color: var(--ugText);
+  border-radius: 14px;
+  height: 38px;
+  padding: 0 12px;
+  cursor:pointer;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.btn:hover{background: rgba(255,255,255,0.10)}
+.btnPrimary{
+  border-color: rgba(79,140,255,0.55);
+  background: rgba(79,140,255,0.14);
+}
+.btnPrimary:hover{background: rgba(79,140,255,0.20)}
+.btn:active{transform: translateY(1px)}
+#main{position:relative; min-height:0}
+#mainHead{
+  padding:14px 14px 10px 14px;
+  border-bottom:1px solid var(--ugLine);
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+}
+#mainHead .mt{font-weight:900; font-size:16px}
+#mainHead .ms{color:var(--ugMut); font-size:13px; margin-top:4px; line-height:1.35}
+#mainHeadLeft{min-width:0}
+#mainHeadRight{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+.chip{
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: var(--ugMut);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+#viewerWrap{position:relative; height:calc(100% - 86px); min-height:0}
+@media (max-width:980px){
+  #viewerWrap{height:calc(100% - 104px)}
+}
+#viewer{
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+#overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.hl{
+  position:absolute;
+  border-radius: 14px;
+  border: 2px solid rgba(79,140,255,0.95);
+  box-shadow: 0 0 0 4px rgba(79,140,255,0.20);
+  background: rgba(79,140,255,0.05);
+}
+.pulse{
+  position:absolute;
+  width:14px;height:14px;border-radius:50%;
+  background: rgba(94,234,212,0.95);
+  box-shadow: 0 0 0 6px rgba(94,234,212,0.20);
+  transform: translate(-50%,-50%);
+  animation: ugPulse 1.25s ease-in-out infinite;
+}
+@keyframes ugPulse{
+  0%{opacity:0.55; transform: translate(-50%,-50%) scale(0.86)}
+  50%{opacity:1; transform: translate(-50%,-50%) scale(1)}
+  100%{opacity:0.55; transform: translate(-50%,-50%) scale(0.86)}
+}
+.tip{
+  position:absolute;
+  max-width: 320px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,0.16);
+  background: rgba(15,23,42,0.82);
+  backdrop-filter: blur(10px);
+  color: var(--ugText);
+  box-shadow: 0 16px 55px rgba(0,0,0,0.45);
+  padding: 10px 10px;
+}
+.tip .tt{font-weight:900; font-size:13px}
+.tip .tx{color: var(--ugMut); font-size:12.5px; margin-top:4px; line-height:1.3}
+.tip .sm{margin-top:7px; font-size:12px; color: rgba(232,238,252,0.84)}
+.line{
+  position:absolute;
+  height:2px;
+  background: rgba(79,140,255,0.85);
+  transform-origin: left center;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(79,140,255,0.10);
+}
+#fallback{
+  position:absolute;
+  inset:auto 12px 12px 12px;
+  display:none;
+  border:1px solid rgba(255,204,102,0.35);
+  background: rgba(255,204,102,0.08);
+  color: var(--ugText);
+  border-radius: 14px;
+  padding: 10px 10px;
+  box-shadow: 0 16px 55px rgba(0,0,0,0.35);
+}
+#fallback b{color: var(--ugWarn)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="side" class="card">
+    <div id="sideHead">
+      <div class="t">User Guide • Demo</div>
+      <div class="s">Menüye program ekleme akışını gerçek ekranlar üzerinde adım adım gösterir.</div>
+
+      <div id="setup">
+        <b>Dosyaları seç</b>
+        <div class="row">
+          <input id="filePick" type="file" accept=".html,text/html" multiple>
+          <span class="pill" id="stDr">DrHastaBasi: yok</span>
+          <span class="pill" id="stMenu">MenuAyarlari: yok</span>
+        </div>
+        <div style="margin-top:8px;color:var(--ugMut);font-size:12.5px;line-height:1.3">
+          Bu demo, iframe içinde highlight yapabilmek için HTML dosyalarını bu sayfaya “blob” olarak yükler.
+        </div>
+      </div>
+    </div>
+
+    <div id="steps"></div>
+
+    <div id="sideFoot">
+      <button class="btn" id="btnPrev">← Önceki</button>
+      <button class="btn btnPrimary" id="btnNext">Sonraki →</button>
+    </div>
+  </div>
+
+  <div id="main" class="card">
+    <div id="mainHead">
+      <div id="mainHeadLeft">
+        <div class="mt" id="mainTitle">Dosyaları seç</div>
+        <div class="ms" id="mainDesc">Soldan DrHastaBasi.html ve MenuAyarlari.html dosyalarını seç.</div>
+      </div>
+      <div id="mainHeadRight">
+        <div class="chip" id="chipWhere">Ekran: …</div>
+        <button class="btn" id="btnDemo">Demo Tıkla</button>
+        <button class="btn" id="btnReset">Sıfırla</button>
+      </div>
+    </div>
+
+    <div id="viewerWrap">
+      <iframe id="viewer" src="about:blank" title="Ekran"></iframe>
+      <div id="overlay"></div>
+      <div id="fallback"><b>Not:</b> Bu adımda hedef element bulunamadı. (UI farklı olabilir.)</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var qs = function(sel, root){ return (root || document).querySelector(sel); };
+  var qsa = function(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+  var overlay = qs('#overlay');
+  var iframe = qs('#viewer');
+  var fallback = qs('#fallback');
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  var urls = { dr:"", menu:"" };
+  var state = { i:0, lastUrl:"", accessOk:false, enabled:false };
+
+  var STEPS = [
+    {
+      id: "s1",
+      title: "Menü Ayarları ekranını aç",
+      desc: "Sağ üstteki Ayarlar (çark) butonuna bas.",
+      where: "DrHastaBaşı",
+      getUrl: function(){ return urls.dr; },
+      highlights: [{ selector: "#doctorGear", title: "Ayarlar (Çark)", text: "Buraya basınca Özelleştir menüsü açılır.", align: "left" }],
+      demo: [{ type: "click", selector: "#doctorGear" }]
+    },
+    {
+      id: "s2",
+      title: "Menü Ayarları'na gir",
+      desc: "Özelleştir panelinden “Menü Ayarları”nı seç.",
+      where: "DrHastaBaşı → Özelleştir",
+      getUrl: function(){ return urls.dr; },
+      pre: [{ type: "click", selector: "#doctorGear" }],
+      highlights: [{ selector: "#hbOzMenuAyar", title: "Menü Ayarları", text: "Menü düzenleme ekranını açar.", align: "left" }],
+      demo: [{ type: "click", selector: "#hbOzMenuAyar" }]
+    },
+    {
+      id: "s3",
+      title: "Program Havuzu'ndan bir program seç",
+      desc: "Program Havuzu kutusunda bir programı bul ve sürükle.",
+      where: "Menü Ayarları",
+      getUrl: function(){ return urls.menu; },
+      highlights: [
+        { selector: "#panelPool", title: "Program Havuzu", text: "Programlar burada listelenir. Birini sürükle.", align: "right" },
+        { selector: "#itemPool .item", title: "Program Kartı", text: "Sürükleyip Sol Menü veya Sağ Menü alanına bırakabilirsin.", align: "right" }
+      ],
+      demo: []
+    },
+    {
+      id: "s4",
+      title: "Sol veya Sağ Menü alanına sürükle",
+      desc: "Seçtiğin programı Sol Menü (MiniPanel) veya Sağ Menü alanına bırak.",
+      where: "Menü Ayarları",
+      getUrl: function(){ return urls.menu; },
+      highlights: [
+        { selector: "#panelMini", title: "Sol Menü", text: "Sık kullanılanları sol menüye sürükleyebilirsin.", align: "left" },
+        { selector: "#panelMenu", title: "Sağ Menü", text: "Alternatif olarak sağ menüye de bırakabilirsin.", align: "right" }
+      ],
+      demo: []
+    },
+    {
+      id: "s5",
+      title: "Kaydet & Çık",
+      desc: "Kaydet ile kalıcı hale getir, Çık ile DrHastaBaşı'na dön.",
+      where: "Menü Ayarları",
+      getUrl: function(){ return urls.menu; },
+      highlights: [
+        { selector: "#hbSaveBtn", title: "Kaydet", text: "Değişiklikleri kaydeder.", align: "right" },
+        { selector: "#hbExitBtn", title: "Çık", text: "Kaydetmeden çıkarsan uyarı alabilirsin.", align: "right" }
+      ],
+      demo: []
+    }
+  ];
+
+  function clearOverlay(){ overlay.innerHTML = ""; }
+  function getFrameDoc(){ try{ return iframe.contentDocument || iframe.contentWindow.document; }catch(e){ return null; } }
+
+  function rectToOverlayRect(r){
+    var fr = iframe.getBoundingClientRect();
+    return { left:r.left-fr.left, top:r.top-fr.top, width:r.width, height:r.height };
+  }
+
+  function addHighlight(rect){
+    var hl = document.createElement("div");
+    hl.className = "hl";
+    hl.style.left = String(Math.max(0, rect.left - 6)) + "px";
+    hl.style.top = String(Math.max(0, rect.top - 6)) + "px";
+    hl.style.width = String(Math.max(8, rect.width + 12)) + "px";
+    hl.style.height = String(Math.max(8, rect.height + 12)) + "px";
+    overlay.appendChild(hl);
+  }
+
+  function addLine(x1,y1,x2,y2){
+    var dx = x2 - x1, dy = y2 - y1;
+    var len = Math.sqrt(dx*dx + dy*dy);
+    if(!isFinite(len) || len < 20){ return; }
+    var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    var line = document.createElement("div");
+    line.className = "line";
+    line.style.left = String(x1) + "px";
+    line.style.top = String(y1) + "px";
+    line.style.width = String(len) + "px";
+    line.style.transform = "rotate(" + String(ang) + "deg)";
+    overlay.appendChild(line);
+  }
+
+  function addPulse(x,y){
+    var p = document.createElement("div");
+    p.className = "pulse";
+    p.style.left = String(x) + "px";
+    p.style.top = String(y) + "px";
+    overlay.appendChild(p);
+  }
+
+  function addTip(rect, title, text, align){
+    var tip = document.createElement("div");
+    tip.className = "tip";
+    tip.innerHTML = "<div class='tt'>" + esc(title) + "</div><div class='tx'>" + esc(text) + "</div><div class='sm'>Adım içindeki hedef alan.</div>";
+    overlay.appendChild(tip);
+
+    var pad = 10;
+    var tw = 320;
+    var th = 110;
+    var px = rect.left + rect.width + 14;
+    var py = rect.top;
+
+    if(align === "left"){ px = Math.max(pad, rect.left - tw - 14); }
+    if(px + tw > overlay.clientWidth - pad){ px = Math.max(pad, overlay.clientWidth - tw - pad); }
+    if(py + th > overlay.clientHeight - pad){ py = Math.max(pad, overlay.clientHeight - th - pad); }
+    if(py < pad){ py = pad; }
+
+    tip.style.left = String(px) + "px";
+    tip.style.top = String(py) + "px";
+
+    var cx = (align === "left") ? (px + tw) : px;
+    var cy = py + 20;
+    var tx = rect.left + rect.width/2;
+    var ty = rect.top + rect.height/2;
+
+    addLine(cx,cy,tx,ty);
+    addPulse(tx,ty);
+  }
+
+  function runActions(actions){
+    var d = getFrameDoc();
+    if(!d){ return false; }
+    for(var i=0;i<actions.length;i+=1){
+      var a = actions[i];
+      if(!a || !a.type){ continue; }
+      if(a.type === "click"){
+        var el = null;
+        try{ el = d.querySelector(a.selector); }catch(e){}
+        if(el){
+          try{ el.scrollIntoView({block:"center", inline:"center"}); }catch(e){}
+          try{ el.click(); }catch(e){}
+        }
+      }
+    }
+    return true;
+  }
+
+  function findFirst(d, selector){
+    try{
+      var el = d.querySelector(selector);
+      if(el){ return el; }
+    }catch(e){}
+    return null;
+  }
+
+  function renderHighlights(step){
+    clearOverlay();
+    fallback.style.display = "none";
+
+    if(!state.enabled){ return; }
+    var d = getFrameDoc();
+    state.accessOk = !!d;
+    if(!d){ return; }
+
+    if(step.pre && step.pre.length){
+      runActions(step.pre);
+    }
+
+    var any = false;
+    for(var i=0;i<step.highlights.length;i+=1){
+      var h = step.highlights[i];
+      if(!h || !h.selector){ continue; }
+      var el = findFirst(d, h.selector);
+      if(!el){ continue; }
+      var r = null;
+      try{ r = el.getBoundingClientRect(); }catch(e){}
+      if(!r || !isFinite(r.width) || r.width <= 0 || r.height <= 0){ continue; }
+      var rr = rectToOverlayRect(r);
+      addHighlight(rr);
+      addTip(rr, h.title || h.selector, h.text || "", h.align || "right");
+      any = true;
+    }
+
+    if(!any){
+      fallback.style.display = "block";
+    }
+  }
+
+  function setStep(idx){
+    if(idx < 0){ idx = 0; }
+    if(idx >= STEPS.length){ idx = STEPS.length - 1; }
+    state.i = idx;
+
+    qsa('.stepBtn').forEach(function(b){
+      b.setAttribute('data-active', b.getAttribute('data-step') === String(state.i) ? '1' : '0');
+    });
+
+    var step = STEPS[state.i];
+    qs('#mainTitle').textContent = String((state.i+1) + ". " + (step.title || ""));
+    qs('#mainDesc').textContent = String(step.desc || "");
+    qs('#chipWhere').textContent = "Ekran: " + String(step.where || "");
+
+    var url = (step.getUrl ? step.getUrl() : "") || "";
+    if(!url){
+      iframe.src = "about:blank";
+      clearOverlay();
+      fallback.style.display = "none";
+      return;
+    }
+
+    if(state.lastUrl !== url){
+      state.lastUrl = url;
+      clearOverlay();
+      iframe.src = url;
+    }else{
+      setTimeout(function(){ renderHighlights(step); }, 80);
+    }
+  }
+
+  function buildSteps(){
+    var host = qs('#steps');
+    host.innerHTML = "";
+    for(var i=0;i<STEPS.length;i+=1){
+      var s = STEPS[i];
+      var b = document.createElement('button');
+      b.type = "button";
+      b.className = "stepBtn";
+      b.setAttribute('data-step', String(i));
+      b.setAttribute('data-enabled', state.enabled ? '1' : '0');
+      b.innerHTML = "<div class='badge'>" + String(i+1) + "</div>" +
+                    "<div style='min-width:0'>" +
+                      "<div class='stTitle'>" + esc(s.title) + "</div>" +
+                      "<div class='stDesc'>" + esc(s.desc) + "</div>" +
+                    "</div>";
+      b.addEventListener('click', (function(ix){ return function(){ if(state.enabled){ setStep(ix); } }; })(i));
+      host.appendChild(b);
+    }
+  }
+
+  iframe.addEventListener('load', function(){
+    if(!state.enabled){ return; }
+    setTimeout(function(){ renderHighlights(STEPS[state.i]); }, 110);
+  });
+
+  qs('#btnPrev').addEventListener('click', function(){ if(state.enabled){ setStep(state.i - 1); } });
+  qs('#btnNext').addEventListener('click', function(){ if(state.enabled){ setStep(state.i + 1); } });
+
+  qs('#btnDemo').addEventListener('click', function(){
+    if(!state.enabled){ return; }
+    var step = STEPS[state.i];
+    if(!step){ return; }
+    if(step.demo && step.demo.length){
+      runActions(step.demo);
+    }
+    setTimeout(function(){ renderHighlights(step); }, 130);
+  });
+
+  qs('#btnReset').addEventListener('click', function(){
+    if(!state.enabled){ return; }
+    state.lastUrl = "";
+    setStep(state.i);
+  });
+
+  function setStatus(){
+    qs('#stDr').textContent = urls.dr ? "DrHastaBasi: yüklü" : "DrHastaBasi: yok";
+    qs('#stMenu').textContent = urls.menu ? "MenuAyarlari: yüklü" : "MenuAyarlari: yok";
+  }
+
+  function enableIfReady(){
+    state.enabled = !!(urls.dr && urls.menu);
+    buildSteps();
+    setStatus();
+    if(state.enabled){
+      setStep(0);
+    }else{
+      qs('#mainTitle').textContent = "Dosyaları seç";
+      qs('#mainDesc').textContent = "Soldan DrHastaBasi.html ve MenuAyarlari.html dosyalarını seç.";
+      qs('#chipWhere').textContent = "Ekran: …";
+      iframe.src = "about:blank";
+      clearOverlay();
+      fallback.style.display = "none";
+    }
+  }
+
+  qs('#filePick').addEventListener('change', function(){
+    var files = Array.prototype.slice.call(qs('#filePick').files || []);
+    files.forEach(function(f){
+      var name = String(f.name || "").toLowerCase();
+      var u = URL.createObjectURL(f);
+      if(name.indexOf("drhastabasi") >= 0){ urls.dr = u; }
+      if(name.indexOf("menuayarlari") >= 0){ urls.menu = u; }
+    });
+    enableIfReady();
+  });
+
+  buildSteps();
+  setStatus();
+})();
+</script>
+</body>
+</html>

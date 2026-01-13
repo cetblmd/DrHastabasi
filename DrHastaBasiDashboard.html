@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DrHastaBasiDashboard</title>
+<style>
+html, body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background: var(--bilmed-surface-bg);
+    color: var(--bilmed-surface-text);
+    font-family: Arial, sans-serif;
+}
+#dashRoot{
+    position:absolute;
+    inset:0;
+    padding: 12px;
+    box-sizing: border-box;
+    background: var(--bilmed-surface-bg);
+    overflow:auto;
+}
+#dashGrid{
+    position:relative;
+    display:grid;
+    grid-template-columns: repeat(var(--hbDashCols, 2), minmax(0, 1fr));
+    grid-auto-rows: var(--hbDashCellH, 160px);
+    gap: var(--hbDashGapPx, 16px);
+    align-content:start;
+    box-sizing:border-box;
+    padding: var(--hbDashGapPx, 16px);
+}
+.dashTile{
+    position:relative;
+    border: 1px solid var(--bilmed-surface-border);
+    border-radius: 14px;
+    overflow:hidden;
+    background: var(--bilmed-tint-bg);
+    min-height: 0;
+}
+.dashHeader{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height: 34px;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    background: rgba(0,0,0,0.08);
+    border-bottom: 1px solid rgba(0,0,0,0.10);
+    z-index:2;
+}
+.dashTitle{
+    font-weight:700;
+    font-size: 0.92rem;
+    line-height: 1;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+.dashSpacer{ flex:1; }
+.dashBadge{
+    font-size: 0.78rem;
+    opacity: 0.78;
+    white-space: nowrap;
+}
+.dashFrameWrap{
+    position:absolute;
+    inset: 34px 0 0 0;
+}
+.dashFrame{
+    width:100%;
+    height:100%;
+    border:0;
+    background: transparent;
+}
+@media (max-width: 768px){
+    #dashRoot{ padding: 8px; }
+    #dashGrid{
+        gap: 12px;
+        padding: 12px;
+    }
+    .dashHeader{
+        height: 30px;
+        padding: 0 8px;
+    }
+    .dashTitle{
+        font-size: 0.9rem;
+    }
+    .dashBadge{
+        font-size: 0.74rem;
+    }
+    .dashFrameWrap{
+        inset: 30px 0 0 0;
+    }
+}
+</style>
+<script src="HB_ItemCatalog.js"></script>
+<script src="HB_SharedLib.js"></script>
+</head>
+<body>
+<div id="dashRoot"></div>
+<script>
+(function(){
+    var WH = { ctx:null, themeId:'', suspended:0, grid:[], childFrames:[], _renderT:0, _readySent:0 };
+
+    function whPostTo(win, msg){
+        if(!win || !msg) { return; }
+        try{ win.postMessage(msg, '*'); }catch(e){}
+    }
+
+    function whBroadcast(msg){
+        var frames = WH.childFrames || [];
+        for(var i = 0; i < frames.length; i += 1){
+            var f = frames[i];
+            if(f && f.contentWindow){ whPostTo(f.contentWindow, msg); }
+        }
+    }
+
+    function whApplyAll(){
+        if(WH.ctx){ whBroadcast({ type:'CTX_SET', payload: WH.ctx }); }
+        if(WH.themeId){ whBroadcast({ type:'THEME_SET', payload: { themeId: WH.themeId } }); }
+        whBroadcast({ type: WH.suspended ? 'SUSPEND' : 'RESUME' });
+    }
+
+    function whGetDrId(){
+        try{
+            var s = String(URLParametreOku('drid') || '').trim();
+            var n = Math.floor(Number(s) || 0);
+            if(n > 0) { return n; }
+        }catch(e){}
+        return 0;
+    }
+
+    function whGridFromCfg(){
+        var drid = whGetDrId();
+        var cfg = (typeof HB_Cfg !== 'undefined' && HB_Cfg && typeof HB_Cfg.getBlob === 'function') ? HB_Cfg.getBlob(drid) : null;
+        var list = (cfg && cfg.dash && Array.isArray(cfg.dash.grid)) ? cfg.dash.grid : [];
+        var out = [];
+        var seen = {};
+        var acc = [];
+        var rej = [];
+
+        try{
+            //console.log('HB_DASH_CFG_BLOB', { drid: drid, blob: cfg });
+            //console.log('HB_DASH_CFG_GRID_RAW', { drid: drid, len: list.length, grid: list });
+            if(console && typeof console.table === 'function'){
+                var _t = [];
+                for(var _i = 0; _i < list.length; _i += 1){
+                    var _g = list[_i];
+                    if(_g && typeof _g === 'object'){
+                        _t.push({ i:_i, id:_g.id, c:_g.c, r:_g.r, w:_g.w, h:_g.h });
+                    }else{
+                        _t.push({ i:_i, id:'', c:'', r:'', w:'', h:'' });
+                    }
+                }
+                //console.table(_t);
+            }
+        }catch(e){}
+
+
+        for(var i = 0; i < list.length; i += 1){
+            var g = list[i];
+            if(!g || typeof g !== 'object') { rej.push({ i:i, reason:'bad_obj' }); continue; }
+            var id = String(g.id || '').trim();
+            if(!id) { rej.push({ i:i, reason:'no_id' }); continue; }
+            if(seen[id]) { rej.push({ i:i, id:id, reason:'dup_id' }); continue; }
+            var it = hbItemGetById(id);
+            if(!it || !it.hasWidget) { rej.push({ i:i, id:id, reason: (!it ? 'not_in_catalog' : 'hasWidget_false') }); continue; }
+            var c = Math.floor(Number(g.c) || 0);
+            var r = Math.floor(Number(g.r) || 0);
+            if(c < 0) { c = 0; }
+            if(r < 0) { r = 0; }
+            out.push({ id:id, c:c, r:r }); acc.push({ i:i, id:id, c:c, r:r, title: String((it && it.title) || '') });
+            seen[id] = 1;
+        }
+
+        if(out.length > 0){
+            var minC = out[0].c, minR = out[0].r;
+            for(var m = 1; m < out.length; m += 1){
+                if(out[m].c < minC) { minC = out[m].c; }
+                if(out[m].r < minR) { minR = out[m].r; }
+            }
+            if(minC > 0 || minR > 0){
+                for(var n = 0; n < out.length; n += 1){
+                    out[n].c = Math.max(0, out[n].c - minC);
+                    out[n].r = Math.max(0, out[n].r - minR);
+                }
+            }
+        }
+        if(out.length === 0){
+            var fallback = ['laboratuvar','radyoloji','tani','test1'];
+            for(var j = 0; j < fallback.length; j += 1){
+                var fid = fallback[j];
+                var fit = hbItemGetById(fid);
+                if(fit && fit.hasWidget){ out.push({ id: fid, c: (j%2)*2, r: Math.floor(j/2)*2 }); }
+            }
+        }
+        try{
+            //console.log('accepted', acc);
+            //if(console.table){ console.table(acc); }
+            //console.log('rejected', rej);
+            //if(console.table){ console.table(rej); }
+            //console.log('normalized', out);
+            //if(console.table){ console.table(out); }
+            //console.groupEnd();
+        }catch(e){}
+        return out;
+    }
+
+    function whSpanGet(id){
+        var it = hbItemGetById(id);
+        var w = 1, h = 1;
+        if(it){
+            w = Math.floor(Number(it.dashSpanW) || 1);
+            h = Math.floor(Number(it.dashSpanH) || 1);
+        }
+        if(w < 1) { w = 1; }
+        if(h < 1) { h = 1; }
+        if(w > 6) { w = 6; }
+        if(h > 6) { h = 6; }
+        return { w:w, h:h };
+    }
+
+    function whModeGet(){
+        var w = window.innerWidth || 0;
+        if(w <= 768) { return 'mobile'; }
+        if(w <= 1024) { return 'tablet'; }
+        return 'pc';
+    }
+
+    function whLayoutApplyVars(cols, cellH, gap){
+        document.documentElement.style.setProperty('--hbDashCols', String(cols));
+        document.documentElement.style.setProperty('--hbDashCellH', String(cellH) + 'px');
+        document.documentElement.style.setProperty('--hbDashGapPx', String(gap) + 'px');
+    }
+
+    function whScheduleRender(){
+        if(WH._renderT){ return; }
+        WH._renderT = window.setTimeout(function(){
+            WH._renderT = 0;
+            if(WH.suspended){ return; }
+            try{ whRender(); }catch(e){ console.error('HB_DASH_RENDER_FAIL', e); }
+        }, 0);
+    }
+
+
+    function whRender(){
+        var root = document.getElementById('dashRoot');
+        if(!root) { return; }
+        root.innerHTML = '';
+        var gridEl = document.createElement('div');
+        gridEl.id = 'dashGrid';
+        root.appendChild(gridEl);
+
+        WH.childFrames = [];
+
+        var mode = whModeGet();
+        var cols = 2;
+        var gap = 16;
+        var cellW = 160;
+        var cellH = 160;
+
+        try{
+            if(typeof hbDashGridColsGet === 'function'){
+                cols = hbDashGridColsGet(mode, window.innerWidth || 0);
+            }
+        }catch(e){}
+
+        if(cols < 1) { cols = 1; }
+        if(cols > 12) { cols = 12; }
+
+        if(mode === 'mobile'){
+            cols = 1;
+            gap = 12;
+        }
+
+        try{
+            var rootW = (root && root.clientWidth) ? root.clientWidth : (window.innerWidth || 0);
+            var innerW = Math.max(0, rootW - (gap * 2));
+            var usableW = Math.max(0, innerW - (gap * (cols - 1)));
+            cellW = Math.floor(usableW / cols);
+        }catch(e){}
+
+        if(cellW < 96) { cellW = 96; }
+
+        cellH = cellW;
+
+        whLayoutApplyVars(cols, cellH, gap);
+
+        WH.grid = whGridFromCfg();
+
+        for(var i = 0; i < WH.grid.length; i += 1){
+            var g = WH.grid[i];
+            var id = String(g.id || '');
+            if(!id) { continue; }
+            var it = hbItemGetById(id);
+            if(!it || !it.hasWidget) { continue; }
+            var span = whSpanGet(id);
+
+            var tile = document.createElement('div');
+            tile.className = 'dashTile';
+            tile.setAttribute('data-item-id', id);
+
+            var gc = (Math.floor(Number(g.c) || 0) + 1);
+            var gr = (Math.floor(Number(g.r) || 0) + 1);
+
+            if(mode === 'mobile'){
+                gc = 1;
+                gr = (i + 1);
+                span.w = 1;
+            }
+
+            tile.style.gridColumn = String(gc) + ' / span ' + String(span.w);
+            tile.style.gridRow = String(gr) + ' / span ' + String(span.h);
+
+            var head = document.createElement('div');
+            head.className = 'dashHeader';
+
+            var title = document.createElement('div');
+            title.className = 'dashTitle';
+            title.textContent = String(it.title || id);
+
+            var spacer = document.createElement('div');
+            spacer.className = 'dashSpacer';
+
+            var badge = document.createElement('div');
+            badge.className = 'dashBadge';
+            badge.textContent = 'Widget';
+
+            head.appendChild(title);
+            head.appendChild(spacer);
+            head.appendChild(badge);
+
+            var wrap = document.createElement('div');
+            wrap.className = 'dashFrameWrap';
+
+            var fr = document.createElement('iframe');
+            fr.className = 'dashFrame';
+            fr.setAttribute('data-child','1');
+            fr.title = String(it.title || id) + ' Widget';
+            var src = hbItemWidgetUrlGet(id);
+            if(!src){ console.error('HB_DASH_WIDGET_SRC_MISSING', id); src = 'about:blank'; }
+            fr.src = src;
+
+            wrap.appendChild(fr);
+            tile.appendChild(head);
+            tile.appendChild(wrap);
+            gridEl.appendChild(tile);
+
+            WH.childFrames.push(fr);
+        }
+
+        whApplyAll();
+        if(!WH._readySent){
+            WH._readySent = 1;
+            whPostTo(window.parent, { type:'READY', payload:{ host:'WidgetHost', version:'v2' } });
+        }
+    }
+
+    function whOnParentMessage(ev){
+        var data = ev && ev.data;
+        if(!data || typeof data !== 'object') { return; }
+        var t = String(data.type || '');
+        if(t === 'CTX_SET'){
+            WH.ctx = data.payload || null;
+            whBroadcast({ type:'CTX_SET', payload: WH.ctx });
+            try{ whScheduleRender(); }catch(e){}
+            return;
+        }
+        if(t === 'THEME_SET'){
+            WH.themeId = String((data.payload && data.payload.themeId) || '');
+            whBroadcast({ type:'THEME_SET', payload: { themeId: WH.themeId } });
+            return;
+        }
+        if(t === 'SUSPEND'){
+            WH.suspended = 1;
+            whBroadcast({ type:'SUSPEND' });
+            return;
+        }
+        if(t === 'RESUME'){
+            WH.suspended = 0;
+            whBroadcast({ type:'RESUME' });
+            try{ whScheduleRender(); }catch(e){}
+            return;
+        }
+    }
+
+    function whOnChildMessage(ev){
+        var data = ev && ev.data;
+        if(!data || typeof data !== 'object') { return; }
+        var t = String(data.type || '');
+        if(t === 'OPEN_FULL' || t === 'ACTION' || t === 'ERROR'){
+            whPostTo(window.parent, data);
+            return;
+        }
+    }
+
+    window.addEventListener('message', whOnParentMessage);
+    window.addEventListener('message', whOnChildMessage);
+
+    window.addEventListener('resize', function(){
+        try{ whRender(); }catch(e){ console.error('HB_DASH_RENDER_FAIL', e); }
+    });
+
+    whRender();
+})();
+</script>
+</body>
+</html>

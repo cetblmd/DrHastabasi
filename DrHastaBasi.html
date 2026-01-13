@@ -1,0 +1,3935 @@
+<!DOCTYPE html>
+<html lang='tr'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>DrHastaBasi</title>
+
+    <script src='BilmedUiLib.js'></script>
+    <script src='HB_ItemCatalog.js'></script>
+    <script src='HB_SharedLib.js'></script>
+    <script>
+
+
+
+
+        function __hb_paramGet(name) {
+            var s = String(window.location.search || "");
+            if(!s) { return ""; }
+            if(s.charAt(0) === "?") { s = s.slice(1); }
+            var parts = s.split("&");
+            for(var i = 0; i < parts.length; i += 1) {
+                var kv = parts[i].split("=");
+                if(!kv || kv.length === 0) { continue; }
+                var k = decodeURIComponent(String(kv[0] || "").replace(/\+/g, " "));
+                if(k !== name) { continue; }
+                var v = decodeURIComponent(String(kv.slice(1).join("=") || "").replace(/\+/g, " "));
+                return v;
+            }
+            return "";
+        }
+
+        function __hb_numOrDefault(v, defVal) {
+            var n = Number(v);
+            if(!isFinite(n) || n <= 0) {
+                return defVal;
+            }
+            return Math.floor(n);
+        }
+
+        var HastaID = __hb_numOrDefault(__hb_paramGet("HastaID"), 99999999);
+        var DrID = __hb_numOrDefault(__hb_paramGet("DrID"), 99999999);
+        var HizmetID = __hb_numOrDefault(__hb_paramGet("HizmetID"), 99999999);
+
+        try {
+            window.__hb_themeCfg = BilmedThema(DrID, document, false);
+        } catch(err) {
+            console.error('BILMED_EARLY_THEME_APPLY_FAIL', err);
+        }
+    </script>
+
+    <style>
+:root{
+    --hbTopScale: 1;
+    --hbTopScaleName: 1;
+    --hbTopScaleMeta: 1;
+    --hbTopBar1H: calc(56px * var(--hbTopScale));
+    --hb-menu-gap: 3px;
+    --hb-slot-size: 44px;
+    --hb-slot-gap: 5px;
+}
+
+html{
+    font-size: calc(16px * var(--bilmed-font-scale));
+}
+
+html, body{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bilmed-page-bg);
+    color: var(--bilmed-surface-text);
+}
+
+.hb-hidden{ display:none !important; }
+.hbHidden{ display:none; }
+
+#hbTopArea{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+#topBar{
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: calc(56px * var(--hbTopScale));
+    padding: 0 calc(12px * var(--hbTopScale));
+    box-sizing: border-box;
+    background: var(--bilmed-header-bg);
+    color: var(--bilmed-header-fg);
+    border-bottom: 1px solid var(--bilmed-header-border);
+    gap: calc(12px * var(--hbTopScale));
+}
+
+#companyLogo{
+    flex: 0 0 auto;
+}
+#companyLogo img{
+    height: calc(34px * var(--hbTopScale));
+    width: auto;
+    display: block;
+}
+
+#hbPatientArea,
+#hbDoctorArea{
+    display: flex;
+    align-items: center;
+    gap: calc(10px * var(--hbTopScale));
+    min-width: 0;
+    max-width: calc(50% - 40px);
+    padding: 4px 8px;
+    border: 1px solid var(--bilmed-header-border);
+    border-radius: 12px;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.06);
+    cursor: pointer;
+}
+
+#hbPatientAvatar{
+    width: calc(34px * var(--hbTopScale));
+    height: calc(34px * var(--hbTopScale));
+    border-radius: 50%;
+    background: var(--bilmed-avatar-bg);
+    color: var(--bilmed-avatar-fg);
+    border: 1px solid var(--bilmed-avatar-border);
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    user-select: none;
+}
+#hbPatientAvatarText{
+    font-size: 0.72rem;
+    font-weight: 800;
+    opacity: 0.92;
+}
+
+#hbPatientText,
+#hbDoctorText{
+    min-width: 0;
+}
+#hbPatientText{ text-align: left; }
+#hbDoctorText{ text-align: right; }
+
+#hbTopSpacer{ flex: 1; }
+
+#doctorAvatarWrap{
+    position: relative;
+    width: calc(34px * var(--hbTopScale));
+    height: calc(34px * var(--hbTopScale));
+    flex: 0 0 auto;
+}
+#doctorAvatar{
+    width: calc(34px * var(--hbTopScale));
+    height: calc(34px * var(--hbTopScale));
+    border-radius: 50%;
+    background: var(--bilmed-avatar-bg);
+    color: var(--bilmed-avatar-fg);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    border: 1px solid var(--bilmed-avatar-border);
+    user-select: none;
+    cursor: pointer;
+}
+#doctorAvatarText{
+    font-size: 0.75rem;
+    font-weight: 700;
+    opacity: 0.9;
+}
+#doctorGear{
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--bilmed-gear-border);
+    background: var(--bilmed-gear-bg);
+    color: var(--bilmed-gear-fg);
+    cursor: pointer;
+    opacity: 1;
+    transform: scale(0.9);
+    pointer-events: auto;
+    transition: opacity 120ms ease, transform 120ms ease;
+}
+#doctorGear svg{
+    width: 12px;
+    height: 12px;
+    display: block;
+}
+
+/*CETCET*/
+#hbHospitalLogoTop{
+    flex: 0 0 auto;
+    margin-right: -6px;
+    margin-left: calc(-4px * var(--hbTopScale));
+    opacity: 0.90;
+
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+
+
+#hbJobCenterText{
+    position: absolute;
+    left: 50%;
+    top: calc(var(--hbTopBar1H) / 2);
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    max-width: calc(100% - 200px);
+    padding: 2px 8px;
+    border: 1px solid var(--bilmed-header-border);
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.06);
+    color: var(--bilmed-header-fg);
+    font-size: calc(0.78rem * var(--hbTopScaleMeta));
+    font-weight: 900;
+    opacity: 0.92;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 80;
+    text-align: center;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+#hbTopBar2{
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: calc(10px * var(--hbTopScale));
+    height: calc(40px * var(--hbTopScale));
+    padding: 0 calc(12px * var(--hbTopScale));
+    box-sizing: border-box;
+    background: var(--bilmed-header2-bg);
+    color: var(--bilmed-header2-fg);
+    border-bottom: 1px solid var(--bilmed-header2-border);
+}
+
+#hbTopLeftActions,
+#hbTopRightActions{
+    display: flex;
+    align-items: center;
+    gap: 8px;    position: relative;
+}
+
+
+#hbTopBar2Spacer{ flex: 0; }
+
+#hbTopSelectedIcons{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-right: 86px; /* reserve action buttons space */
+}
+
+
+
+#hbTopSelectedIcons.hbSlotGridH{
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    justify-content: end;
+}
+
+
+
+#hbTopSelectedIcons .hbTopSelBtn{
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.08);
+    color: currentColor;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+}
+#hbTopSelectedIcons .hbTopSelBtn:hover{
+    background: rgba(255,255,255,0.14);
+}
+#hbTopSelectedIcons .hbTopSelBtn svg{
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+
+#hbTopDashBtn{
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.10);
+    color: currentColor;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    position: absolute;
+    right: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#hbTopDashBtn svg{
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+#hbTopDashBtn:hover{
+    background: rgba(255,255,255,0.14);
+}
+#hbTopDashBtn:active{
+    background: rgba(255,255,255,0.18);
+}
+
+#hbTopMenuBtn{
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.10);
+    color: currentColor;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#hbTopMenuBtn svg{
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+#hbTopMenuPanel{
+    position: fixed;
+    width: 240px;
+    display: none;
+    background: var(--bilmed-surface-bg);
+    color: var(--bilmed-surface-text);
+    border: 1px solid var(--bilmed-surface-border);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.20);
+    padding: 8px;
+    z-index: 99999;
+    box-sizing: border-box;
+}
+
+#hbTopMenuPanel .hbTopMenuItemBtn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: inherit;
+    border-radius: 12px;
+    padding: 10px 10px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+#hbTopMenuPanel .hbTopMenuItemBtn:hover{
+    background: rgba(0,0,0,0.06);
+    border-color: rgba(0,0,0,0.06);
+}
+#hbTopMenuPanel .hbTopMenuItemIcon{
+    width: 26px;
+    height: 26px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.04);
+}
+#hbTopMenuPanel .hbTopMenuItemIcon svg{
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+#hbTopMenuPanel .hbTopMenuItemText{
+    flex: 1;
+    text-align: left;
+    font-size: 14px;
+    line-height: 18px;
+    user-select: none;
+}
+
+.hbLogoChip{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(28px * var(--hbTopScale));
+    padding: 0 6px;
+    border-radius: calc(9px * var(--hbTopScale));
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.08);
+    box-shadow: none;
+    transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.hbLogoChip img{
+    height: calc(20px * var(--hbTopScale));
+    max-height: 20px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+.hbLogoChip:hover{
+    background: rgba(255,255,255,0.22);
+    border-color: rgba(255,255,255,0.55);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.22);
+}
+.hbLogoChip:active{
+    background: rgba(255,255,255,0.30);
+    border-color: rgba(255,255,255,0.70);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.28);
+}
+.hbLogoTip{
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 6px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+    background: rgba(0,0,0,0.78);
+    color: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+}
+.hbLogoChip:hover .hbLogoTip{ opacity: 1; }
+
+.bilmedCard{
+    transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+.bilmedCard:hover{
+    background: rgba(15, 23, 42, 0.06);
+    border-color: rgba(15, 23, 42, 0.28);
+    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.14);
+}
+.bilmedCard:active{
+    background: rgba(15, 23, 42, 0.10);
+    border-color: rgba(15, 23, 42, 0.34);
+    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.18);
+}
+.bilmedCard:focus-visible{
+    outline: 2px solid rgba(15, 23, 42, 0.22);
+    outline-offset: 2px;
+}
+
+#hbLayout{
+    position: relative;
+    height: calc(100vh - 96px);
+    display: flex;
+    box-sizing: border-box;
+}
+
+#hbTopArea{ position: relative; z-index: 2000; }
+#hbTopBar2{ position: relative; z-index: 2000; }
+#hbLayout{ position: relative; z-index: 1; }
+
+.hbInset{ margin: 10px; }
+#hbMiniRail.hbInset{ margin-right: 1px; }
+#hbMiniPanel.hbInset{ margin-left: 1px; }
+
+#hbMiniPanel,
+#hbMiniRail,
+#hbDashboard{
+    background: var(--bilmed-surface-bg);
+    color: var(--bilmed-surface-text);
+    border: 1px solid var(--bilmed-surface-border);
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#hbDashboard{
+    flex: 1;
+    overflow: auto;
+}
+
+#hbMiniRail{
+    width: 56px;
+    position: relative;
+}
+#hbMiniRailIcons{
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+    scrollbar-width: none;
+}
+#hbMiniRailIcons::-webkit-scrollbar{ width:0; height:0; }
+
+#hbMiniPanel{ position: relative; }
+
+#hbMiniRailHeader,
+#hbMiniPanelHeader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 10;
+}
+#hbMiniRailHeader{
+    justify-content: center;
+    gap: 4px;
+}
+#hbMiniPanelHeader{
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+#hbMiniRailScroll,
+#hbMiniPanelScroll{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 28px;
+}
+#hbMiniPanelScroll{ overflow: auto; }
+
+#hbMiniCollapseBtn,
+#hbMiniExpandBtn{
+    width: 24px;
+    height: 24px;
+    border-radius: 9px;
+    border: 1px solid var(--bilmed-surface-border);
+    background: rgba(255,255,255,0.60);
+    color: var(--bilmed-surface-text);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    pointer-events: auto;
+}
+#hbMiniCollapseBtn svg,
+#hbMiniExpandBtn svg{
+    width: 14px;
+    height: 14px;
+    display: block;
+}
+#hbMiniCollapseBtn:hover,
+#hbMiniExpandBtn:hover{ background: rgba(255,255,255,0.80); }
+#hbMiniCollapseBtn:active,
+#hbMiniExpandBtn:active{ background: rgba(255,255,255,0.92); }
+
+#hbResizeBar{
+    width: 6px;
+    cursor: col-resize;
+    background: transparent;
+    position: relative;
+    flex: 0 0 auto;
+    user-select: none;
+    touch-action: none;
+}
+#hbResizeBar::after{
+    content:'';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 2px;
+    width: 2px;
+    background: rgba(0,0,0,0.18);
+}
+
+#hbLayout.hb-mini-collapsed #hbMiniRail{ margin-right: 0; }
+#hbLayout.hb-mini-collapsed #hbDashboard{ margin-left: 10px; }
+
+.hbItemRailBtn{
+    width: 40px;
+    height: 40px;
+    margin: 1.5px auto;
+    border-radius: 12px;
+    border: 1px solid var(--bilmed-surface-border);
+    background: var(--bilmed-surface-bg);
+    color: var(--bilmed-surface-text);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    user-select: none;
+}
+.hbItemRailBtn svg{ width:18px; height:18px; display:block; }
+.hbItemRailBtn:hover,
+.hbItemRailBtn[data-hovered='1']{
+    background: var(--bilmed-tint-bg);
+    border-color: var(--bilmed-surface-border);
+    box-shadow: none;
+}
+.hbItemRailBtn:active{
+    background: var(--bilmed-tint-bg);
+    border-color: var(--bilmed-surface-border);
+    box-shadow: none;
+}
+.hbItemRailBtn[data-selected='1']{
+    background: var(--bilmed-tint-bg);
+    border-color: var(--bilmed-primary-bg);
+    box-shadow: none;
+}
+
+.hbMenuTitleList{
+    padding: 0 10px 10px 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--hb-menu-gap);
+}
+.hbMenuTitleRow{
+    width: 100%;
+    border: 1px solid var(--bilmed-surface-border);
+    background: transparent;
+    color: var(--bilmed-surface-text);
+    border-radius: 14px;
+    padding: 0 12px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    font-weight: 800;
+    font-size: 0.9rem;
+    min-height: 40px;
+    justify-content: flex-start;
+    text-align: left;
+    margin: 2px auto;
+}
+.hbMenuTitleRow:hover,
+.hbMenuTitleRow[data-hovered='1']{
+    background: rgba(15, 23, 42, 0.04);
+    border-color: rgba(15, 23, 42, 0.24);
+}
+.hbMenuTitleRow:active{
+    background: rgba(15, 23, 42, 0.07);
+    border-color: rgba(15, 23, 42, 0.30);
+}
+
+.hbItemListIcon{
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    border: 1px solid var(--bilmed-surface-border);
+    display: none;
+    place-items: center;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    font-weight: 900;
+}
+.hbItemListIcon svg{ width:18px; height:18px; display:block; }
+
+.hbItemTextWrap{
+    flex: 1;
+    min-width: 0;
+}
+.hbItemListText{
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hbItemListDesc{
+    font-size: 12px;
+    opacity: 0.72;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hb-mobile-mode .hbItemListIcon{
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+}
+.hb-mobile-mode .hbMenuTitleRow{ gap: 12px; }
+
+.hbItemFrame{
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.hb-btn-hidden{
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+#hbPatientName,
+#hbDoctorName{
+    font-size: calc(0.9rem * var(--hbTopScaleName));
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#hbPatientMeta{
+    font-size: calc(0.8rem * var(--hbTopScaleMeta));
+    text-align: left;
+}
+#hbDoctorMeta{
+    font-size: calc(0.8rem * var(--hbTopScaleMeta));
+    text-align: right;
+}
+
+.hbCtxOverlay{ position: fixed; inset: 0; z-index: 9999; }
+.hbCtxOverlay[hidden]{ display: none; }
+.hbCtxBackdrop{ position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
+.hbCtxPanel{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 520px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow: auto;
+    background: var(--bilmed-surface-bg, var(--bilmed-panel-bg, var(--bilmed-body-bg, #f5f5f5)));
+    color: var(--bilmed-text-fg, #111);
+    border-radius: 12px;
+}
+.hbCtxHeader{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.10);
+}
+.hbCtxTitle{ font-weight: 700; }
+.hbCtxBody{ padding: 12px 14px; }
+.hbCtxGrid{
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    row-gap: 8px;
+    column-gap: 12px;
+}
+.hbCtxClose{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.08);
+    color: inherit;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    border: 0;
+}
+.hbCtxClose:hover{ background: rgba(0,0,0,0.15); }
+
+.hbSlotGridV{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: var(--hb-slot-size);
+    gap: var(--hb-slot-gap);
+    align-content: start;
+}
+.hbSlotGridH{
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-rows: 1fr;
+    gap: var(--hb-slot-gap);
+    align-content: center;
+    justify-content: end;
+}
+
+
+
+/* ============ Özelleştir (Backdrop/Panel) ============ */
+#hbOzBackdrop{
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(0,0,0,0.18);
+    z-index: 9999;
+}
+#hbOzPanel{
+    width: min(320px, calc(100vw - 20px));
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(0,0,0,0.10);
+    box-shadow: 0 12px 34px rgba(0,0,0,0.20);
+    color: #0b2239;
+    user-select: none;
+}
+#hbOzHeader{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.04);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+#hbOzTitle{
+    font-weight: 700;
+    font-size: 14px;
+}
+#hbOzSpacer{
+    flex: 1 1 auto;
+}
+#hbOzClose{
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.90);
+    cursor: pointer;
+}
+#hbOzClose:hover{
+    background: rgba(255,255,255,1);
+}
+#hbOzBody{
+    padding: 8px;
+    display: grid;
+    gap: 6px;
+}
+.hbOzItem{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.02);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+.hbOzItem:hover{
+    background: rgba(0,0,0,0.05);
+}
+.hbOzIcon{
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.04);
+    flex: 0 0 auto;
+}
+.hbOzText{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.hbOzText > div{
+    font-size: 13px;
+    font-weight: 600;
+}
+
+@media (max-width: 1024px){
+    :root{ --hbTopBar1H: 48px; }
+    #topBar{ height:48px; padding:0 10px; gap:10px; }
+    #hbPatientAvatar{ width:30px; height:30px; }
+    #doctorAvatarWrap{ width:30px; height:30px; }
+    #doctorAvatar{ width:30px; height:30px; }
+    #doctorGear{ width:16px; height:16px; }
+
+    #hbTopBar2{ height:38px; padding:0 10px; gap:8px; }
+    .hbLogoChip{ height:24px; border-radius:8px; padding:0 6px; }
+    .hbLogoChip img{ height:16px; max-height:16px; }
+    #hbTopMenuBtn{ width:30px; height:30px; border-radius:10px; }
+    #hbTopMenuBtn svg{ width:16px; height:16px; }
+}
+
+@media (max-width: 768px){
+    #hbResizeBar,
+    #hbMiniRail{ display:none !important; }
+
+    #hbDashboard{ display:block !important; }
+    #hbDashboard.hb-hidden{ display:none !important; }
+
+    #topBar #companyLogo img{
+        height: 26px;
+        max-height: 26px;
+        width: auto;
+    }
+
+    #topBar .hbLogoChip{
+        height: 22px;
+        padding: 0 4px;
+        border-radius: 7px;
+    }
+    #topBar .hbLogoChip img{
+        height: 14px;
+        max-height: 14px;
+    }
+
+    #hbPatientName,
+    #hbDoctorName{
+        font-size: calc(0.62rem * var(--hbTopScaleName));
+    }
+
+    #hbMiniCollapseBtn{ display:none; }
+    #hbMiniPanel{
+        width:100% !important;
+        border:none;
+        margin:0 !important;
+    }
+    #hbLayout{
+        height: calc(100vh - 96px);
+        display: block;
+    }
+
+    #hbPatientArea{ max-width: calc(50% - 16px); }
+    #hbDoctorArea{ max-width: calc(50% - 16px); }
+    #hbPatientArea,
+    #hbDoctorArea{
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #topBar #hbPatientName,
+    #topBar #hbDoctorName{
+        font-size: calc(0.62rem * var(--hbTopScaleName)) !important;
+    }
+
+    #hbJobCenterText{
+        top: auto;
+        left: auto;
+        right: 48px;
+        transform: translateY(-50%);
+        top: 50%;
+        max-width: calc(100% - 180px);
+    }
+
+    #hbTopBar2 .hbLogoChip{
+        height: 14px !important;
+        border-radius: 6px !important;
+        padding: 0 3px !important;
+    }
+    #hbTopBar2 .hbLogoChip img{
+        height: 6px !important;
+        max-height: 6px !important;
+        width: auto !important;
+    }
+    #hbTopMenuBtn{
+        width: 24px !important;
+        height: 14px !important;
+        border-radius: 6px !important;
+    }
+    #hbTopMenuBtn svg{
+        width: 10px !important;
+        height: 10px !important;
+    }
+
+    #hbTopDashBtn{
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 7px !important;
+    }
+    #hbTopDashBtn svg{
+        width: 12px !important;
+        height: 12px !important;
+        display: block;
+    }
+
+
+    .hbCtxPanel{ width: 360px; max-width: 92vw; }
+    .hbCtxGrid{ grid-template-columns: 110px 1fr; }
+
+    #hbOzBackdrop{
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+    }
+    #hbOzPanel{
+        width: min(360px, calc(100vw - 24px));
+    }
+
+}
+@media (max-width: 420px){
+    :root{ --hbTopBar1H: 44px; }
+    #topBar{ height:44px; padding:0 8px; gap:8px; }
+    #hbPatientAvatar{ width:20px; height:20px; }
+    #doctorAvatarWrap{ width:20px; height:20px; }
+    #doctorAvatar{ width:20px; height:20px; }
+    #doctorGear{ width:15px; height:15px; right:-6px; bottom:-4px; }
+
+    #hbTopBar2{ height:34px; padding:0 8px; gap:6px; }
+    .hbLogoChip{ height:20px; border-radius:4px; padding:0 3px; }
+    .hbLogoChip img{ height:10px; max-height:10px; }
+}
+
+.hbRow2Dummy{visibility:hidden;pointer-events:none;}
+
+#hbDashHost{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+#hbDashHost iframe{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+}
+
+#hbDashHint{
+    position:absolute;
+    inset: 12px;
+    border: 1px dashed var(--bilmed-surface-border);
+    border-radius: 12px;
+    background: rgba(0,0,0,0.02);
+    color: var(--bilmed-surface-text);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 12px;
+    text-align:center;
+    font-size: 13px;
+    pointer-events:none;
+}
+#hbDashHost.hb-pulse{
+    outline: 2px solid rgba(0,0,0,0.12);
+    outline-offset: 2px;
+}
+#hbDashHost iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+}
+#hbDashHost iframe.hbDashFrame-passive{
+    z-index: 1;
+    visibility: hidden;
+    pointer-events: none;
+}
+#hbDashHost iframe.hbDashFrame-active{
+    z-index: 10;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#hbFloatingWidget{
+    position: fixed;
+    left: 120px;
+    top: 90px;
+    width: 360px;
+    height: 260px;
+    z-index: 999999;
+    border: 1px solid rgba(0,0,0,0.16);
+    border-radius: 12px;
+    background: var(--bilmed-surface-bg);
+    color: var(--bilmed-surface-text);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    overflow: hidden;
+    display: none;
+}
+#hbFloatingWidget[data-open='1']{ display: block; }
+
+#hbFloatingBar{
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.10);
+    background: rgba(0,0,0,0.03);
+    cursor: grab;
+    user-select: none;
+}
+#hbFloatingBar:active{ cursor: grabbing; }
+
+#hbFloatingTitle{
+    font-size: 0.86rem;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+}
+#hbFloatingWinBtns{
+    display: inline-flex;
+    align-items: stretch;
+    height: 28px;
+}
+#hbFloatingWinBtns button{
+    width: 38px;
+    height: 28px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 16px;
+    line-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+#hbFloatingWinBtns button:hover{
+    background: rgba(0,0,0,0.08);
+}
+#hbFloatingClose:hover{
+    background: rgba(210,0,0,0.16);
+}
+#hbFloatingClose:hover{
+    background: rgba(0,0,0,0.06);
+}
+#hbFloatingBody{
+    height: calc(100% - 28px);
+    background: var(--bilmed-surface-bg);
+}
+#hbFloatingFrame{
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+}
+#hbFloatingWidget[data-drop='1'] #hbFloatingFrame{ pointer-events: none; }
+
+#hbFloatingWidget[data-min='1']{
+    height: 28px !important;
+}
+#hbFloatingWidget[data-min='1'] #hbFloatingBody{
+    display: none;
+}
+#hbFloatingWidget[data-min='1'] #hbFloatingResize{
+    display: none;
+}
+#hbFloatingResize{
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 16px;
+    height: 16px;
+    cursor: se-resize;
+    opacity: 0.55;
+}
+#hbFloatingResize:hover{
+    opacity: 0.85;
+}
+#hbFloatingResize:before{
+    content: '';
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid rgba(0,0,0,0.22);
+    border-bottom: 2px solid rgba(0,0,0,0.22);
+}
+
+#hbFloatingDropHint{
+    position: absolute;
+    inset: 34px 0 0 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    opacity: 0.7;
+    pointer-events: none;
+}
+#hbFloatingWidget[data-empty='1'] #hbFloatingDropHint{
+    display: flex;
+}
+
+</style>
+
+    
+
+</head>
+
+<body>
+
+<div id='hbTopArea'>
+    <div id='topBar'>
+        <div id='companyLogo'>
+            <img src='logolar/bilmed-logo.png' alt='Bilmed'>
+        </div>
+        <div id='hbPatientArea'>
+            <div id='hbPatientAvatar' aria-hidden='true'>
+                <div id='hbPatientAvatarText'>HA</div>
+            </div>
+            <div id='hbPatientText'>
+                <div id='hbPatientName'></div>
+                <div id='hbPatientMeta'></div>
+            </div>
+        </div>
+
+        <div id='hbTopSpacer'></div>
+
+        <div id='hbDoctorArea'>
+            <div id='hbDoctorText'>
+                <div id='hbDoctorName'></div>
+                <div id='hbDoctorMeta'></div>
+            </div>
+
+            <div id='doctorAvatarWrap'>
+                <div id='doctorAvatar' role='button' tabindex='0'>
+                    <div id='doctorAvatarText'>DR</div>
+                </div>
+
+                <div id='doctorGear' role='button' tabindex='0' aria-label='Özelleştir'>
+                    <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                        <path d='M12 15.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Z' stroke='currentColor' stroke-width='2'/>
+                        <path d='M19.4 15a7.9 7.9 0 0 0 .1-1 7.9 7.9 0 0 0-.1-1l2-1.55-2-3.46-2.35.8a7.54 7.54 0 0 0-1.72-1L15 3h-4l-.32 2.79a7.54 7.54 0 0 0-1.72 1l-2.35-.8-2 3.46L6.6 12a7.9 7.9 0 0 0-.1 1 7.9 7.9 0 0 0 .1 1l-2 1.55 2 3.46 2.35-.8a7.54 7.54 0 0 0 1.72 1L11 21h4l.32-2.79a7.54 7.54 0 0 0 1.72-1l2.35.8 2-3.46-2-1.55Z' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div id='hbHospitalLogoTop' class='hbLogoChip' aria-hidden='true'>
+            <img src='logolar/HastaneLogo.png' alt='Hastane'>
+        </div>
+
+    </div>
+
+    <div id='hbTopBar2'>
+        <div id='hbTopLeftActions'>
+            <div class='hbLogoChip' data-hb-logo='e-Nabız'>
+                <img src='logolar/eNabizLogo.png' alt='e-Nabız'>
+                <span class='hbLogoTip'>e-Nabız</span>
+            </div>
+            <div class='hbLogoChip' data-hb-logo='İlaç Yan Etki'>
+                <img src='logolar/IlacYanEtki.png' alt='İlaç Yan Etki'>
+                <span class='hbLogoTip'>İlaç Yan Etki</span>
+            </div>
+            <div class='hbLogoChip' data-hb-logo='SGK'>
+                <img src='logolar/sgk.jpg' alt='SGK'>
+                <span class='hbLogoTip'>SGK</span>
+            </div>
+            <div class='hbLogoChip' data-hb-logo='SİNA'>
+                <img src='logolar/SINALogo.png' alt='SİNA'>
+                <span class='hbLogoTip'>SİNA</span>
+            </div>
+        </div>
+
+        
+        <div id='hbTopSelectedIcons' aria-hidden='true'></div>
+
+        <div id='hbTopBar2Spacer'></div>
+
+        <div id='hbTopRightActions'>
+            <button id='hbTopDashBtn' type='button' aria-label='Gösterge Paneli' title='Gösterge Paneli'>
+                <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>
+                    <rect x='4' y='4' width='7' height='7' rx='1.6' fill='currentColor'></rect>
+                    <rect x='13' y='4' width='7' height='7' rx='1.6' fill='currentColor'></rect>
+                    <rect x='4' y='13' width='7' height='7' rx='1.6' fill='currentColor'></rect>
+                    <rect x='13' y='13' width='7' height='7' rx='1.6' fill='currentColor'></rect>
+                </svg>
+            </button>
+            <button id='hbTopMenuBtn' type='button' aria-haspopup='menu' aria-expanded='false' aria-label='Menü'>
+                <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>
+                    <circle cx='6.5' cy='12' r='1.6' fill='currentColor'></circle>
+                    <circle cx='12' cy='12' r='1.6' fill='currentColor'></circle>
+                    <circle cx='17.5' cy='12' r='1.6' fill='currentColor'></circle>
+                </svg>
+            </button>
+
+            <div id='hbTopMenuPanel' role='menu' aria-hidden='true'></div>
+        </div>
+    </div>
+</div>
+
+<div id='hbLayout'>
+    <div id='hbMiniRail' class='hbInset' aria-hidden='true'>
+        <div id='hbMiniRailHeader' aria-hidden='true'>
+            <button id='hbMiniExpandBtn' type='button' aria-label='Paneli Aç' title='Aç'>
+                <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>
+                    <path d='M9 18l6-6-6-6' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+                </svg>
+            </button>
+        </div>
+        <div id='hbMiniRailScroll' aria-hidden='true'>
+            <div id='hbMiniRailIcons' aria-hidden='true'></div>
+        </div>
+    </div>
+
+    <div id='hbMiniPanel' class='hbInset'>
+        <div id='hbMiniPanelHeader' aria-hidden='true'>
+            <button id='hbMiniCollapseBtn' type='button' aria-label='Paneli Kapat' title='Kapat'>
+                <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>
+                    <path d='M15 18l-6-6 6-6' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+                </svg>
+            </button>
+        </div>
+        <div id='hbMiniPanelScroll'>
+            <div id='hbMiniPanelBody'></div>
+        </div>
+    </div>
+
+    <div id='hbResizeBar' aria-hidden='true'></div>
+    <div id='hbDashboard' class='hbInset'>
+    <div id='hbDashHost'>
+        <div id='hbDashHint' class='hb-hidden'></div>
+        <iframe id='hbWidgetHostFrame' title='Gösterge Paneli' src='about:blank' loading='eager'></iframe>
+        <iframe id='hbFullHostFrame' title='Detay' src='about:blank' loading='eager'></iframe>
+    </div>
+</div>
+</div>
+
+
+<div id='hbFloatingWidget' data-open='0' data-empty='1' data-min='0' data-max='0'>
+    <div id='hbFloatingBar'>
+        <div id='hbFloatingTitle'>Widget</div>
+        <div id='hbFloatingWinBtns'>
+            <button id='hbFloatingMin' type='button' aria-label='Küçült'>—</button>
+            <button id='hbFloatingMax' type='button' aria-label='Büyüt/Geri Al'>□</button>
+            <button id='hbFloatingClose' type='button' aria-label='Kapat'>×</button>
+        </div>
+    </div>
+    <div id='hbFloatingBody'>
+        <iframe id='hbFloatingFrame' title='Widget' src='about:blank' loading='eager'></iframe>
+        <div id='hbFloatingDropHint'>Item’ı buraya sürükle</div>
+    </div>
+    <div id='hbFloatingResize' aria-hidden='true'></div>
+</div>
+
+
+<div id='hbOzBackdrop'>
+    <div id='hbOzPanel' role='dialog' aria-modal='true'>
+        <div id='hbOzHeader'>
+            <div id='hbOzTitle'>Özelleştir</div>
+            <div id='hbOzSpacer'></div>
+            <button id='hbOzClose' type='button'>Kapat</button>
+        </div>
+        <div id='hbOzBody'>
+            <div id='hbOzGorunum' class='hbOzItem' role='button' tabindex='0'>
+                <div class='hbOzIcon'>🎨</div>
+                <div class='hbOzText'>
+                    <div>Görünüm Ayarları</div>
+                </div>
+            </div>
+            <div id='hbOzMenuAyar' class='hbOzItem' role='button' tabindex='0'>
+                <div class='hbOzIcon'>🧩</div>
+                <div class='hbOzText'>
+                    <div>Menü Ayarları</div>
+                </div>
+            </div>
+            <div id='hbOzDashAyar' class='hbOzItem' role='button' tabindex='0'>
+                <div class='hbOzIcon'>📊</div>
+                <div class='hbOzText'>
+                    <div>Gösterge Paneli Ayarları</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function HastaBilgi(hastaId) {
+        return {
+            adSoyad: 'Mehmet Ali Yılmazoğlu Karacaşahinoğulları',
+            yas: 67,
+            kurum: 'SGK Emekli',
+        };
+    }
+    function DrBilgi(drId) {
+        return {
+            unvan: 'Prof. Dr.',
+            adSoyad: 'Bilmed Test Doktor Kullanıcısı',
+            servis: 'Dahiliye',
+        };
+    }
+    function __hb_initials(s) {
+        var t = String(s || '').trim();
+        if(!t) { return ''; }
+        var parts = t.split(/\s+/g).filter(function(x){ return !!x; });
+        if(parts.length === 0) { return ''; }
+        var a = String(parts[0] || '').charAt(0).toUpperCase();
+        var b = String(parts.length > 1 ? parts[parts.length - 1] : '').charAt(0).toUpperCase();
+        return (a + b).trim();
+    }
+    function UstSatirSet(hastaInfo, drInfo) {
+        var pn = document.getElementById('hbPatientName');
+        var pm = document.getElementById('hbPatientMeta');
+        var dn = document.getElementById('hbDoctorName');
+        var dm = document.getElementById('hbDoctorMeta');
+        var pa = document.getElementById('hbPatientAvatarText');
+        var da = document.getElementById('doctorAvatarText');
+
+        if(pn) { pn.textContent = String(hastaInfo.adSoyad || ''); }
+        if(pm) { pm.textContent = String(hastaInfo.yas || '') + ' Yaş · ' + String(hastaInfo.kurum || ''); }
+
+        if(dn) { dn.textContent = String(drInfo.unvan || '') + ' ' + String(drInfo.adSoyad || ''); }
+        if(dm) { dm.textContent = String(drInfo.servis || ''); }
+
+        if(pa) { pa.textContent = __hb_initials(String(hastaInfo.adSoyad || 'Hasta')); }
+        if(da) { da.textContent = __hb_initials(String(drInfo.adSoyad || 'Dr')); }
+    }
+
+    function HizmetiGoster(hizmetId) {
+        var hid = Number(hizmetId);
+        if(!isFinite(hid) || hid <= 0) {
+            hid = 99999999;
+        }
+        window.HizmetID = hid;
+
+        var top = document.getElementById('hbTopArea');
+        if(!top) { return; }
+
+        var el = document.getElementById('hbJobCenterText');
+        if(!el) {
+            el = document.createElement('div');
+            el.id = 'hbJobCenterText';
+            top.appendChild(el);
+        }
+        el.textContent = 'İş: Dr.Muayene Hizmeti';
+        if(!el.__hbJobBound){
+            el.__hbJobBound = 1;
+            el.addEventListener('click', function(ev){
+                try{ ev.preventDefault(); ev.stopPropagation(); }catch(e){}
+                try{ if(typeof window.__hbCtxRenderJob === 'function'){ window.__hbCtxRenderJob(); } }catch(e){}
+                try{ if(typeof window.__hbOpenContextOverlay === 'function'){ window.__hbOpenContextOverlay('İşlem · ' + (el.textContent || '')); } }catch(e){}
+            });
+        }
+    }
+
+    function __hb_ozOpen() {
+        var bd = document.getElementById('hbOzBackdrop');
+        if(!bd) { return; }
+        bd.style.display = 'flex';
+    }
+
+    function __hb_ozClose() {
+        var bd = document.getElementById('hbOzBackdrop');
+        if(!bd) { return; }
+        bd.style.display = 'none';
+    }
+
+    var __hb_topMenuOpenFlag = false;
+
+    function __hb_row2IsVisible() {
+        var el = document.getElementById('hbTopBar2');
+        if(!el) { return false; }
+        if(el.style && el.style.display === 'none') { return false; }
+        var cs = window.getComputedStyle(el);
+        if(!cs) { return true; }
+        if(cs.display === 'none') { return false; }
+        return true;
+    }
+
+    function __hb_row2IconSync() {
+        var iconWrap = document.querySelector('#hbTopMenuPanel .hbTopMenuItemIcon');
+        if(!iconWrap) { return; }
+        if(__hb_row2IsVisible()) {
+            iconWrap.classList.remove('hbRow2IsOff');
+            iconWrap.classList.add('hbRow2IsOn');
+        } else {
+            iconWrap.classList.remove('hbRow2IsOn');
+            iconWrap.classList.add('hbRow2IsOff');
+        }
+    }
+
+    function __hb_topMenuClose() {
+        var p = document.getElementById('hbTopMenuPanel');
+        if(!p) { return; }
+        p.style.display = 'none';
+        p.setAttribute('aria-hidden', 'true');
+        __hb_topMenuOpenFlag = false;
+    }
+
+    function __hb_topMenuOpen() {
+        var btn = document.getElementById('hbTopMenuBtn');
+        var p = document.getElementById('hbTopMenuPanel');
+        if(!btn || !p) { return; }
+
+        var r = btn.getBoundingClientRect();
+        var top = Math.round(r.bottom + 10);
+        var left = Math.round(r.right - 240);
+
+        p.style.top = String(top) + 'px';
+        p.style.left = String(Math.max(10, left)) + 'px';
+        p.style.display = 'block';
+        p.setAttribute('aria-hidden', 'false');
+        __hb_topMenuOpenFlag = true;
+    }
+
+    function __hb_topMenuToggle(ev) {
+        if(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        if(__hb_topMenuOpenFlag) {
+            __hb_topMenuClose();
+            return;
+        }
+        __hb_topMenuOpen();
+    }
+
+    function __hb_topMenuDocDown(ev) {
+        if(!__hb_topMenuOpenFlag) { return; }
+        var p = document.getElementById('hbTopMenuPanel');
+        var btn = document.getElementById('hbTopMenuBtn');
+        if(!p || !btn) { return; }
+        if(p.contains(ev.target) || btn.contains(ev.target)) { return; }
+        __hb_topMenuClose();
+    }
+
+    function __hb_wireTopMenu() {
+        var btn = document.getElementById('hbTopMenuBtn');
+        if(!btn) { return; }
+        btn.addEventListener('click', __hb_topMenuToggle);
+        document.addEventListener('pointerdown', __hb_topMenuDocDown);
+    }
+
+    function __hb_wire() {
+        var wrap = document.getElementById('doctorAvatarWrap');
+        var gear = document.getElementById('doctorGear');
+
+        var lpTimer = null;
+        var lpFired = false;
+
+        function clearLp() {
+            if(lpTimer) {
+                clearTimeout(lpTimer);
+                lpTimer = null;
+            }
+        }
+
+        function startLp() {
+            clearLp();
+            lpFired = false;
+            lpTimer = setTimeout(function() {
+                lpFired = true;
+                __hb_ozOpen();
+            }, 650);
+        }
+
+        function endLp() {
+            clearLp();
+        }
+
+        gear.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            __hb_ozOpen();
+        });
+
+        wrap.addEventListener('pointerdown', function() {
+            startLp();
+        });
+
+        wrap.addEventListener('pointerup', function() {
+            endLp();
+        });
+
+        wrap.addEventListener('pointercancel', function() {
+            endLp();
+        });
+
+        wrap.addEventListener('pointerleave', function() {
+            endLp();
+        });
+
+        wrap.addEventListener('click', function() {
+            if(lpFired) {
+                return;
+            }
+        });
+    }
+
+    
+    function __hb_layoutViewportW(){
+    var vw = 0;
+    var sw = 0;
+
+    try {
+        if(document.documentElement && document.documentElement.clientWidth) {
+            vw = Math.floor(document.documentElement.clientWidth);
+        } else if(window.innerWidth) {
+            vw = Math.floor(window.innerWidth);
+        }
+    } catch(e) {
+        console.error('HB_LAYOUT_VIEWPORTW_VW_FAIL', e);
+        vw = 0;
+    }
+
+    try {
+        if(window.screen && window.screen.width) {
+            sw = Math.floor(window.screen.width);
+        }
+    } catch(e) {
+        console.error('HB_LAYOUT_VIEWPORTW_SW_FAIL', e);
+        sw = 0;
+    }
+
+    if(vw > 0 && sw > 0) {
+        if(Math.abs(vw - sw) >= 180) {
+}
+        return Math.min(vw, sw);
+    }
+
+    if(vw > 0) { return vw; }
+    if(sw > 0) { return sw; }
+
+    console.error('HB_LAYOUT_VIEWPORTW_ZERO');
+    return 0;
+}
+
+function __hb_applyTopScale(){
+    var w = __hb_layoutViewportW();
+
+    var s = 1;
+    var sn = 1;
+    var sm = 1;
+
+    if(w > 0 && w <= 420) {
+        s = 0.84;
+        sn = 0.82;
+        sm = 0.50;
+    } else if(w > 0 && w <= 520) {
+        s = 0.88;
+        sn = 0.88;
+        sm = 0.65;
+    } else if(w > 0 && w <= 768) {
+        s = 0.92;
+        sn = 0.92;
+        sm = 0.80;
+    } else if(w > 0 && w <= 1024) {
+        s = 0.96;
+        sn = 0.96;
+        sm = 0.90;
+    }
+
+    document.documentElement.style.setProperty('--hbTopScale', String(s));
+    document.documentElement.style.setProperty('--hbTopScaleName', String(sn));
+    document.documentElement.style.setProperty('--hbTopScaleMeta', String(sm));
+}
+
+
+
+
+var HB_ITEM_STATE = {
+    selectedId: '',
+    miniBody: null,
+    railWrap: null,
+    dash: null,
+    widgetFrame: null,
+};
+
+function __hb_svgIcon(kind){
+    var k = String(kind || '');
+    if(__hb_svgIcons && __hb_svgIcons[k]) {
+        return String(__hb_svgIcons[k]);
+    }
+    return '';
+}
+
+function __hb_itemsSetIconNode(el, it){
+    if(!el) { return; }
+    var svg = '';
+    try {
+        svg = String(it && it.iconSvg ? it.iconSvg : '');
+        if(!svg && it && it.iconKey) {
+            svg = __hb_svgIcon(it.iconKey);
+        }
+    } catch(e) {
+        console.error(e);
+        svg = '';
+    }
+
+    if(svg) {
+        el.innerHTML = svg;
+        return;
+    }
+
+    el.textContent = __hb_itemsInitials(it ? (it.title || it.id) : '');
+}
+
+
+
+function __hb_catalogCount(){
+    var cat = window.HB_ITEM_CATALOG;
+    if(!cat) { return 0; }
+    if(Array.isArray(cat)) { return cat.length; }
+    var c = 0;
+    for(var k in cat){
+        if(Object.prototype.hasOwnProperty.call(cat, k)) { c += 1; }
+    }
+    return c;
+}
+
+function __hb_catalogList(){
+    var cat = window.HB_ITEM_CATALOG;
+    if(!cat) { return []; }
+    if(Array.isArray(cat)) { return cat; }
+    var out = [];
+    for(var k in cat){
+        if(Object.prototype.hasOwnProperty.call(cat, k)) { out.push(cat[k]); }
+    }
+    return out;
+}
+
+function __hb_itemsFind(id){
+    var cat = window.HB_ITEM_CATALOG;
+    var sid = String(id || '');
+    if(!cat || !sid) { return null; }
+
+    if(Array.isArray(cat)){
+        for(var i = 0; i < cat.length; i += 1){
+            var itA = cat[i];
+            if(itA && String(itA.id || '') === sid) { return itA; }
+        }
+        return null;
+    }
+
+    var it = cat[sid];
+    if(it && String(it.id || sid) === sid) { return it; }
+
+    for(var k in cat){
+        if(!Object.prototype.hasOwnProperty.call(cat, k)) { continue; }
+        var itB = cat[k];
+        if(itB && String(itB.id || '') === sid) { return itB; }
+    }
+    return null;
+}
+
+function __hb_itemsInitials(title){
+    var t = String(title || '').trim();
+    if(!t) { return ''; }
+
+    var rawParts = t.split(/\s+/g);
+    var parts = [];
+    var i = 0;
+
+    for(i = 0; i < rawParts.length; i += 1){
+        var p = String(rawParts[i] || '').trim();
+        if(p) { parts.push(p); }
+    }
+
+    if(parts.length === 0) { return ''; }
+
+    if(parts.length === 1) {
+        return String(parts[0]).slice(0, 2).toUpperCase();
+    }
+
+    return (String(parts[0]).charAt(0) + String(parts[parts.length - 1]).charAt(0)).toUpperCase();
+}
+
+function __hb_itemsCreateTextBlock(it){
+    var wrap = document.createElement('div');
+    wrap.className = 'hbItemTextWrap';
+
+    var title = document.createElement('div');
+    title.className = 'hbItemListText';
+    title.textContent = String(it ? (it.title || it.id || '') : '');
+    wrap.appendChild(title);
+
+    var d = '';
+    try {
+        d = String(it ? (it.desc || it.description || '') : '').trim();
+    } catch(e) {
+        console.error(e);
+        d = '';
+    }
+
+    if(d) {
+        var desc = document.createElement('div');
+        desc.className = 'hbItemListDesc';
+        desc.textContent = d;
+        wrap.appendChild(desc);
+    }
+
+    return wrap;
+}
+
+function __hb_itemsWidgetUrl(it){
+    if(!it) { return ''; }
+    if(!it.hasWidget) { return ''; }
+    var u = String(it.WidgetHTML || '');
+    if(!u) {
+        console.warn('HB_ITEM_WIDGET_HTML_MISSING', it.id);
+        return '';
+    }
+    return u;
+}
+function __hb_itemsFullUrl(it){
+    if(!it) { return ''; }
+    var u = String(it.FullHTML || '');
+    if(!u) {
+        console.warn('HB_ITEM_FULL_HTML_MISSING', it.id);
+        return '';
+    }
+    return u;
+}
+function __hb_itemsEnsureFrames(){
+    if(!HB_ITEM_STATE.miniBody || !HB_ITEM_STATE.dash) {
+        console.error('HB_ITEMS_DOM_MISSING', !!HB_ITEM_STATE.miniBody, !!HB_ITEM_STATE.dash);
+        return;
+    }
+
+    if(!HB_ITEM_STATE.widgetFrame) {
+        HB_ITEM_STATE.widgetFrame = document.createElement('iframe');
+        HB_ITEM_STATE.widgetFrame.className = 'hbItemFrame';
+        HB_ITEM_STATE.widgetFrame.setAttribute('title', 'Widget');
+        HB_ITEM_STATE.widgetFrame.setAttribute('loading', 'lazy');
+    }
+}
+
+function __hb_itemsClearMini(){
+    if(!HB_ITEM_STATE.miniBody) { return; }
+    HB_ITEM_STATE.miniBody.innerHTML = '';
+}
+
+function __hb_itemsClearDash(){
+    if(!HB_ITEM_STATE.dash) { return; }
+    HB_ITEM_STATE.dash.innerHTML = '';
+}
+
+function __hb_itemsRenderList(){
+    var wrap = document.createElement('div');
+    wrap.className = 'hbMenuTitleList';
+
+    var i = 0;
+    for(i = 0; i < HB_ITEM_CATALOG.length; i += 1){
+        var it = HB_ITEM_CATALOG[i];
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'hbMenuTitleRow';
+        b.setAttribute('data-hb-item-id', String(it.id || ''));
+        b.setAttribute('data-hovered', '0');
+
+        var ic = document.createElement('div');
+        ic.className = 'hbItemListIcon';
+        __hb_itemsSetIconNode(ic, it);
+
+        var tx = __hb_itemsCreateTextBlock(it);
+
+        b.appendChild(ic);
+        b.appendChild(tx);
+
+        b.addEventListener('click', __hb_itemsListClick);
+        b.addEventListener('mouseenter', __hb_itemsHoverEnter);
+        b.addEventListener('mouseleave', __hb_itemsHoverLeave);
+        wrap.appendChild(b);
+    }
+
+    __hb_itemsClearMini();
+    HB_ITEM_STATE.miniBody.appendChild(wrap);
+
+    var e = null;
+    if(typeof Event === 'function') {
+        e = new Event('HB_MINI_ROWS_READY');
+    } else {
+        e = document.createEvent('Event');
+        e.initEvent('HB_MINI_ROWS_READY', true, true);
+    }
+    document.dispatchEvent(e);
+}
+
+function __hb_itemsSetRailSelected(){
+    if(!HB_ITEM_STATE.railWrap) { return; }
+    var nodes = HB_ITEM_STATE.railWrap.querySelectorAll('[data-hb-item-id]');
+    var i = 0;
+    for(i = 0; i < nodes.length; i += 1){
+        var id = String(nodes[i].getAttribute('data-hb-item-id') || '');
+        nodes[i].setAttribute('data-selected', HB_ITEM_STATE.selectedId === id ? '1' : '0');
+    }
+}
+
+function __hb_itemsSetHover(id, on){
+    var v = on ? '1' : '0';
+
+    try {
+        if(HB_ITEM_STATE.railWrap) {
+            var r = HB_ITEM_STATE.railWrap.querySelector("[data-hb-item-id='" + String(id) + "']");
+            if(r) { r.setAttribute('data-hovered', v); }
+        }
+        if(HB_ITEM_STATE.miniBody) {
+            var m = HB_ITEM_STATE.miniBody.querySelector("[data-hb-item-id='" + String(id) + "']");
+            if(m) { m.setAttribute('data-hovered', v); }
+        }
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+function __hb_itemsHoverEnter(ev){
+    var id = '';
+    try {
+        id = String(ev.currentTarget.getAttribute('data-hb-item-id') || '');
+    } catch(e) {
+        console.error(e);
+        id = '';
+    }
+    if(!id) { return; }
+    __hb_itemsSetHover(id, 1);
+}
+
+function __hb_itemsHoverLeave(ev){
+    var id = '';
+    try {
+        id = String(ev.currentTarget.getAttribute('data-hb-item-id') || '');
+    } catch(e) {
+        console.error(e);
+        id = '';
+    }
+    if(!id) { return; }
+    __hb_itemsSetHover(id, 0);
+}
+
+
+function __hb_itemsRailClick(ev){
+    var id = '';
+    try {
+        id = String(ev.currentTarget.getAttribute('data-hb-item-id') || '');
+    } catch(e) {
+        console.error(e);
+        id = '';
+    }
+    __hb_itemsOpenById(id);
+}
+
+function __hb_itemsListClick(ev){
+    var id = '';
+    try {
+        id = String(ev.currentTarget.getAttribute('data-hb-item-id') || '');
+    } catch(e) {
+        console.error(e);
+        id = '';
+    }
+    __hb_itemsOpenById(id);
+}
+
+function __hb_itemsRenderRail(slotIds){
+    if(!HB_ITEM_STATE.railWrap) { return; }
+    HB_ITEM_STATE.railWrap.innerHTML = '';
+    HB_ITEM_STATE.railWrap.classList.remove('hbSlotGridV');
+
+    var useMap = (!!slotIds && typeof slotIds === 'object' && !Array.isArray(slotIds));
+    var ids = null;
+    var pairs = null;
+
+    if(useMap) {
+        pairs = __hb_menuSlotPairs(slotIds, __hb_row2MaxSlotsFromConst());
+        HB_ITEM_STATE.railWrap.classList.add('hbSlotGridV');
+    } else if(Array.isArray(slotIds) && slotIds.length > 0) {
+        ids = __hb_menuFilterIds(slotIds);
+    }
+
+    var i = 0;
+    var all = (!pairs && !ids) ? __hb_catalogList() : null;
+
+    var n = pairs ? pairs.pairs.length : (ids ? ids.length : (all ? all.length : 0));
+
+    for(i = 0; i < n; i += 1){
+        var it = null;
+        var slot = 0;
+
+        if(pairs) {
+            slot = pairs.pairs[i].slot;
+            it = __hb_itemsFind(pairs.pairs[i].id);
+        } else {
+            it = ids ? __hb_itemsFind(ids[i]) : (all ? all[i] : null);
+        }
+
+        if(!it) { continue; }
+
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'hbItemRailBtn';
+        b.setAttribute('data-hb-item-id', String(it.id || ''));
+        b.setAttribute('data-hovered', '0');
+        b.setAttribute('title', String(it.title || it.id || ''));
+
+        if(pairs) {
+            b.style.gridRowStart = String(slot);
+        }
+
+        __hb_itemsSetIconNode(b, it);
+
+        b.addEventListener('click', __hb_itemsListClick);
+        b.addEventListener('mouseenter', __hb_itemsHoverEnter);
+        b.addEventListener('mouseleave', __hb_itemsHoverLeave);
+        HB_ITEM_STATE.railWrap.appendChild(b);
+    }
+}
+
+var HB_ITEMS_SCROLL_SYNC_LOCK = 0;
+
+function __hb_itemsSyncScroll(fromEl, toEl){
+    if(HB_ITEMS_SCROLL_SYNC_LOCK) { return; }
+    if(!fromEl || !toEl) { return; }
+    HB_ITEMS_SCROLL_SYNC_LOCK = 1;
+    try {
+        toEl.scrollTop = fromEl.scrollTop;
+    } catch(e) {
+        console.error('HB_ITEMS_SCROLL_SYNC_FAIL', e);
+    }
+    HB_ITEMS_SCROLL_SYNC_LOCK = 0;
+}
+
+function __hb_itemsWireScrollSync(){
+    var miniScroll = document.getElementById('hbMiniPanelScroll');
+    var railScroll = document.getElementById('hbMiniRailIcons');
+
+    if(!miniScroll || !railScroll) { return; }
+
+    miniScroll.onscroll = function(){
+        __hb_itemsSyncScroll(miniScroll, railScroll);
+    };
+    railScroll.onscroll = function(){
+        __hb_itemsSyncScroll(railScroll, miniScroll);
+    };
+}
+
+function __hb_itemsLoadWidget(it){
+    console.warn('HB_MINI_WIDGET_DISABLED', it ? it.id : null);
+    __hb_itemsRenderList();
+}
+
+function __hb_itemsLoadFull(it){
+    var url = __hb_itemsFullUrl(it);
+    if(!url) {
+        console.error('HB_ITEM_FULL_URL_EMPTY', it ? it.id : null);
+        return;
+    }
+var f = document.getElementById('hbFullHostFrame');
+    if(!f){
+        console.error('HB_FULLHOST_MISSING');
+        return;
+    }
+
+    try{ f.setAttribute('data-page-id', String(it && it.id != null ? it.id : '')); }catch(e1){}
+    try{ f.src = url; }catch(e2){ console.error('HB_FULLHOST_SRC_FAIL', e2); }
+
+    try{ if(typeof window.hbDashSetView==='function'){ window.hbDashSetView('full'); } else { console.error('HB_DASH_SET_VIEW_MISSING'); } }catch(e3){ console.error('HB_DASH_SET_VIEW_FAIL', e3); }
+}function __hb_itemsOpenById(id){
+    var it = __hb_itemsFind(id);
+    if(!it) {
+        console.warn('HB_ITEM_NOT_FOUND', id);
+        return;
+    }
+
+    HB_ITEM_STATE.selectedId = String(it.id || '');
+    __hb_itemsSetRailSelected();
+    __hb_itemsLoadFull(it);
+}
+
+function __hb_itemsInit(){
+    HB_ITEM_STATE.miniBody = document.getElementById('hbMiniPanelBody');
+    HB_ITEM_STATE.railWrap = document.getElementById('hbMiniRailIcons');
+    HB_ITEM_STATE.dash = document.getElementById('hbDashboard');
+
+    if(!HB_ITEM_STATE.miniBody || !HB_ITEM_STATE.railWrap || !HB_ITEM_STATE.dash) {
+        console.error('HB_ITEMS_INIT_DOM_MISSING', !!HB_ITEM_STATE.miniBody, !!HB_ITEM_STATE.railWrap, !!HB_ITEM_STATE.dash);
+        return;
+    }
+
+    __hb_itemsRenderRail();
+
+    if(!window.HB_ITEM_CATALOG || __hb_catalogCount() === 0) {
+        console.warn('HB_ITEMS_CATALOG_EMPTY');
+    }
+
+    __hb_itemsRenderList();
+
+    __hb_itemsWireScrollSync();
+}
+
+
+
+var HB_FLOATING = {
+    root: null,
+    bar: null,
+    title: null,
+    btnMin: null,
+    btnMax: null,
+    closeBtn: null,
+    frame: null,
+    dropHint: null,
+    resizer: null,
+    open: 0,
+    min: 0,
+    max: 0,
+    drag: 0,
+    pid: 0,
+    offX: 0,
+    offY: 0,
+    x: 120,
+    y: 90,
+    w: 360,
+    h: 260,
+    prev: null,
+    resizing: 0,
+    rsPid: 0,
+    rsW: 0,
+    rsH: 0,
+    rsX: 0,
+    rsY: 0,
+    itemId: '',
+    widgetUrl: ''
+};
+
+function __hb_fwIsEnabledCfg(cfg){
+    var c = cfg;
+    if(!c || typeof c !== 'object') { return 0; }
+    if(!c.layout || typeof c.layout !== 'object') { return 0; }
+    if(!c.layout.floatingWidget || typeof c.layout.floatingWidget !== 'object') { return 0; }
+    return c.layout.floatingWidget.enabled ? 1 : 0;
+}
+
+function __hb_fwCfgEnsure(cfg){
+    var c = __hb_uiCfgEnsureRoot(cfg);
+    if(!c.layout.floatingWidget || typeof c.layout.floatingWidget !== 'object') {
+        c.layout.floatingWidget = {};
+    }
+    if(typeof c.layout.floatingWidget.enabled !== 'number') { c.layout.floatingWidget.enabled = 1; }
+    if(typeof c.layout.floatingWidget.x !== 'number') { c.layout.floatingWidget.x = 120; }
+    if(typeof c.layout.floatingWidget.y !== 'number') { c.layout.floatingWidget.y = 90; }
+    if(typeof c.layout.floatingWidget.itemId !== 'string') { c.layout.floatingWidget.itemId = ''; }
+    if(typeof c.layout.floatingWidget.widgetUrl !== 'string') { c.layout.floatingWidget.widgetUrl = ''; }
+    return c;
+}
+
+function __hb_fwLoadFromCfg(){
+    var cfg = __hb_fwCfgEnsure(__hb_uiCfgLoad());
+    var fw = cfg.layout.floatingWidget;
+    HB_FLOATING.open = fw.enabled ? 1 : 0;
+    HB_FLOATING.x = typeof fw.x === 'number' ? fw.x : HB_FLOATING.x;
+    HB_FLOATING.y = typeof fw.y === 'number' ? fw.y : HB_FLOATING.y;
+    HB_FLOATING.w = typeof fw.w === 'number' ? fw.w : HB_FLOATING.w;
+    HB_FLOATING.h = typeof fw.h === 'number' ? fw.h : HB_FLOATING.h;
+    HB_FLOATING.itemId = String(fw.itemId || '');
+    HB_FLOATING.widgetUrl = String(fw.widgetUrl || '');
+    return cfg;
+}
+function __hb_fwSaveToCfg(enabled, x, y, w, h, itemId, widgetUrl){
+    var cfg = __hb_fwCfgEnsure(__hb_uiCfgLoad());
+    var fw = cfg.layout.floatingWidget;
+    fw.enabled = enabled ? 1 : 0;
+    if(typeof x === 'number') { fw.x = x; }
+    if(typeof y === 'number') { fw.y = y; }
+    if(typeof w === 'number') { fw.w = w; }
+    if(typeof h === 'number') { fw.h = h; }
+    if(typeof itemId === 'string') { fw.itemId = itemId; }
+    if(typeof widgetUrl === 'string') { fw.widgetUrl = widgetUrl; }
+    __hb_uiCfgSave(cfg);
+}
+
+function __hb_fwApplyPos(){
+    if(!HB_FLOATING.root) { return; }
+    var x = Math.floor(HB_FLOATING.x);
+    var y = Math.floor(HB_FLOATING.y);
+    HB_FLOATING.root.style.left = String(x) + 'px';
+    HB_FLOATING.root.style.top = String(y) + 'px';
+}
+
+function __hb_fwApplySize(){
+    if(!HB_FLOATING.root) { return; }
+    if(HB_FLOATING.max) { return; }
+    var w = Math.floor(HB_FLOATING.w);
+    var h = Math.floor(HB_FLOATING.h);
+    HB_FLOATING.root.style.width = String(w) + 'px';
+    HB_FLOATING.root.style.height = String(h) + 'px';
+}
+
+function __hb_fwSetEmpty(isEmpty){
+    if(!HB_FLOATING.root) { return; }
+    HB_FLOATING.root.setAttribute('data-empty', isEmpty ? '1' : '0');
+}
+
+function __hb_fwSetOpen(isOpen){
+    if(!HB_FLOATING.root) { return; }
+    HB_FLOATING.open = isOpen ? 1 : 0;
+    HB_FLOATING.root.setAttribute('data-open', HB_FLOATING.open ? '1' : '0');
+    if(!HB_FLOATING.open) { try{ HB_FLOATING.root.removeAttribute('data-drop'); }catch(e){} }
+}
+
+function __hb_fwSetMin(isMin){
+    if(!HB_FLOATING.root) { return; }
+    HB_FLOATING.min = isMin ? 1 : 0;
+    HB_FLOATING.root.setAttribute('data-min', HB_FLOATING.min ? '1' : '0');
+}
+
+function __hb_fwSetMax(isMax){
+    if(!HB_FLOATING.root) { return; }
+    if(isMax) {
+        if(HB_FLOATING.max) { return; }
+        HB_FLOATING.prev = { x: HB_FLOATING.x, y: HB_FLOATING.y, w: HB_FLOATING.w, h: HB_FLOATING.h };
+        HB_FLOATING.max = 1;
+        HB_FLOATING.root.setAttribute('data-max', '1');
+        HB_FLOATING.root.style.left = '12px';
+        HB_FLOATING.root.style.top = '12px';
+        HB_FLOATING.root.style.width = 'calc(100vw - 24px)';
+        HB_FLOATING.root.style.height = 'calc(100vh - 24px)';
+        __hb_fwSetMin(0);
+        return;
+    }
+    if(!HB_FLOATING.max) { return; }
+    HB_FLOATING.max = 0;
+    HB_FLOATING.root.setAttribute('data-max', '0');
+    if(HB_FLOATING.prev) {
+        HB_FLOATING.x = HB_FLOATING.prev.x;
+        HB_FLOATING.y = HB_FLOATING.prev.y;
+        HB_FLOATING.w = HB_FLOATING.prev.w;
+        HB_FLOATING.h = HB_FLOATING.prev.h;
+        HB_FLOATING.prev = null;
+    }
+    __hb_fwApplyPos();
+    __hb_fwApplySize();
+}
+
+function __hb_fwMinToggle(){
+    if(__hb_layoutIsMobile()) { return; }
+    if(!HB_FLOATING.open) { return; }
+    __hb_fwSetMin(HB_FLOATING.min ? 0 : 1);
+}
+
+function __hb_fwMaxToggle(){
+    if(__hb_layoutIsMobile()) { return; }
+    if(!HB_FLOATING.open) { return; }
+    __hb_fwSetMax(HB_FLOATING.max ? 0 : 1);
+}
+
+function __hb_fwResizeBegin(ev){
+    if(__hb_layoutIsMobile()) { return; }
+    if(!HB_FLOATING.open) { return; }
+    if(HB_FLOATING.max || HB_FLOATING.min) { return; }
+    if(!ev) { return; }
+    HB_FLOATING.resizing = 1;
+    HB_FLOATING.rsPid = ev.pointerId || 0;
+    HB_FLOATING.rsW = HB_FLOATING.w;
+    HB_FLOATING.rsH = HB_FLOATING.h;
+    HB_FLOATING.rsX = Math.floor(ev.clientX);
+    HB_FLOATING.rsY = Math.floor(ev.clientY);
+    try{ HB_FLOATING.resizer.setPointerCapture(HB_FLOATING.rsPid); }catch(e){ console.error('HB_FW_RS_CAPTURE_FAIL', e); }
+}
+
+function __hb_fwResizeMove(ev){
+    if(!HB_FLOATING.resizing) { return; }
+    if(!ev) { return; }
+    var dx = Math.floor(ev.clientX) - HB_FLOATING.rsX;
+    var dy = Math.floor(ev.clientY) - HB_FLOATING.rsY;
+    var w = HB_FLOATING.rsW + dx;
+    var h = HB_FLOATING.rsH + dy;
+    if(w < 180) { w = 180; }
+    if(h < 120) { h = 120; }
+    HB_FLOATING.w = w;
+    HB_FLOATING.h = h;
+    __hb_fwApplySize();
+}
+
+function __hb_fwResizeEnd(ev){
+    if(!HB_FLOATING.resizing) { return; }
+    HB_FLOATING.resizing = 0;
+    try{ HB_FLOATING.resizer.releasePointerCapture(HB_FLOATING.rsPid); }catch(e){}
+    __hb_fwSaveToCfg(HB_FLOATING.open, HB_FLOATING.x, HB_FLOATING.y, HB_FLOATING.w, HB_FLOATING.h, HB_FLOATING.itemId, HB_FLOATING.widgetUrl);
+}
+function __hb_fwTitleSet(text){
+    if(!HB_FLOATING.title) { return; }
+    HB_FLOATING.title.textContent = String(text || 'Widget');
+}
+
+function __hb_fwResolveWidgetUrl(itemId){
+    var it = __hb_itemsFind(itemId);
+    if(!it) {
+        console.warn('HB_FW_ITEM_NOT_FOUND', itemId);
+        return '';
+    }
+    var url = __hb_itemsWidgetUrl(it);
+    if(!url) {
+        console.warn('HB_FW_WIDGET_URL_EMPTY', itemId);
+        return '';
+    }
+    return url;
+}
+
+function __hb_fwOpenItem(itemId){
+    if(__hb_layoutIsMobile()) { return; }
+    var id = String(itemId || '');
+    if(!id) { return; }
+
+    var url = __hb_fwResolveWidgetUrl(id);
+    if(!url) { return; }
+
+    HB_FLOATING.itemId = id;
+    HB_FLOATING.widgetUrl = url;
+
+    __hb_fwTitleSet(id);
+    if(HB_FLOATING.frame) {
+        try{ HB_FLOATING.frame.src = url; }catch(e){ console.error('HB_FW_SRC_FAIL', e); }
+    }
+    __hb_fwSetEmpty(0);
+    __hb_fwSetOpen(1);
+    __hb_fwSaveToCfg(1, HB_FLOATING.x, HB_FLOATING.y, HB_FLOATING.w, HB_FLOATING.h, id, url);
+}
+
+function __hb_fwClose(){
+    if(__hb_layoutIsMobile()) { return; }
+    if(HB_FLOATING.frame) {
+        try{ HB_FLOATING.frame.src = 'about:blank'; }catch(e){}
+    }
+    HB_FLOATING.itemId = '';
+    HB_FLOATING.widgetUrl = '';
+    __hb_fwTitleSet('Widget');
+    __hb_fwSetEmpty(1);
+    __hb_fwSetOpen(0);
+    __hb_fwSetMin(0);
+    __hb_fwSetMax(0);
+    __hb_fwSaveToCfg(0, HB_FLOATING.x, HB_FLOATING.y, HB_FLOATING.w, HB_FLOATING.h, '', '');
+}
+
+function __hb_fwDragBegin(ev){
+    if(__hb_layoutIsMobile()) { return; }
+    if(!ev) { return; }
+    if(ev.target && (ev.target.id === 'hbFloatingClose' || ev.target.id === 'hbFloatingMin' || ev.target.id === 'hbFloatingMax')) { return; }
+    if(HB_FLOATING.max) { return; }
+    if(!HB_FLOATING.root) { return; }
+    if(HB_FLOATING.drag) { return; }
+
+    HB_FLOATING.drag = 1;
+    HB_FLOATING.pid = ev.pointerId || 0;
+
+    var r = HB_FLOATING.root.getBoundingClientRect();
+    HB_FLOATING.offX = Math.floor(ev.clientX) - Math.floor(r.left);
+    HB_FLOATING.offY = Math.floor(ev.clientY) - Math.floor(r.top);
+
+    try{ HB_FLOATING.bar.setPointerCapture(HB_FLOATING.pid); }catch(e){ console.error('HB_FW_CAPTURE_FAIL', e); }
+}
+
+function __hb_fwDragMove(ev){
+    if(!HB_FLOATING.drag) { return; }
+    if(!ev) { return; }
+    var x = Math.floor(ev.clientX) - HB_FLOATING.offX;
+    var y = Math.floor(ev.clientY) - HB_FLOATING.offY;
+    HB_FLOATING.x = x;
+    HB_FLOATING.y = y;
+    __hb_fwApplyPos();
+}
+
+function __hb_fwDragEnd(ev){
+    if(!HB_FLOATING.drag) { return; }
+    HB_FLOATING.drag = 0;
+    if(HB_FLOATING.bar) {
+        try{ HB_FLOATING.bar.releasePointerCapture(HB_FLOATING.pid); }catch(e){}
+    }
+    __hb_fwSaveToCfg(HB_FLOATING.open, HB_FLOATING.x, HB_FLOATING.y, HB_FLOATING.w, HB_FLOATING.h, HB_FLOATING.itemId, HB_FLOATING.widgetUrl);
+}
+
+function __hb_fwDragStart(ev){
+    if(__hb_layoutIsMobile()) { return; }
+    var el = ev && ev.target ? ev.target : null;
+    if(!el) { return; }
+    var src = el.closest ? el.closest('[data-hb-item-id]') : null;
+    if(!src) { return; }
+    var id = String(src.getAttribute('data-hb-item-id') || '');
+    if(!id) { return; }
+
+    __hb_fwShowTempDrop();
+
+    try{
+        ev.dataTransfer.setData('application/x-hb-item', id);
+        ev.dataTransfer.setData('text/plain', id);
+        ev.dataTransfer.effectAllowed = 'copy';
+    }catch(e){}
+}
+
+function __hb_fwShowTempDrop(){
+    if(!HB_FLOATING.root) { return; }
+    if(HB_FLOATING.open) { return; }
+    HB_FLOATING.temp = 1;
+    try{ HB_FLOATING.root.setAttribute('data-drop','1'); }catch(e){}
+    __hb_fwTitleSet('Widget');
+    __hb_fwSetEmpty(1);
+    __hb_fwSetOpen(1);
+}
+
+function __hb_fwDragEndFromSource(){
+    if(!HB_FLOATING.root) { return; }
+    if(!HB_FLOATING.temp) { return; }
+    if(HB_FLOATING.itemId) { HB_FLOATING.temp = 0; return; }
+    HB_FLOATING.temp = 0;
+    try{ HB_FLOATING.root.removeAttribute('data-drop'); }catch(e){}
+    __hb_fwSetOpen(0);
+    __hb_fwSetEmpty(1);
+}
+
+function __hb_fwEnableDragSources(){
+    if(__hb_layoutIsMobile()) { return; }
+    var nodes = document.querySelectorAll('[data-hb-item-id]');
+    var i = 0;
+    for(i = 0; i < nodes.length; i += 1){
+        var n = nodes[i];
+        if(!n || n.nodeType !== 1) { continue; }
+        if(n.getAttribute('data-hb-fw-src') === '1') { continue; }
+        try{ n.setAttribute('draggable', 'true'); }catch(e){}
+        try{ n.addEventListener('dragstart', __hb_fwDragStart, false); }catch(e){}
+        try{ n.addEventListener('dragend', __hb_fwDragEndFromSource, false); }catch(e){}
+        try{ n.setAttribute('data-hb-fw-src', '1'); }catch(e){}
+    }
+}
+
+function __hb_fwDropOver(ev){
+    if(__hb_layoutIsMobile()) { return; }
+    if(!ev) { return; }
+    try{ ev.preventDefault(); }catch(e){}
+    try{ ev.dataTransfer.dropEffect = 'copy'; }catch(e){}
+}
+
+function __hb_fwDrop(ev){
+    if(__hb_layoutIsMobile()) { return; }
+    if(!ev) { return; }
+    try{ ev.preventDefault(); }catch(e){}
+    var id = '';
+    try{
+        id = String(ev.dataTransfer.getData('application/x-hb-item') || ev.dataTransfer.getData('text/plain') || '');
+    }catch(e){}
+    if(!id) { return; }
+    try{ if(HB_FLOATING.root) { HB_FLOATING.root.removeAttribute('data-drop'); } }catch(e){}
+    __hb_fwOpenItem(id);
+}
+
+function __hb_fwInit(){
+    if(__hb_layoutIsMobile()) { return; }
+
+    HB_FLOATING.root = document.getElementById('hbFloatingWidget');
+    HB_FLOATING.bar = document.getElementById('hbFloatingBar');
+    HB_FLOATING.title = document.getElementById('hbFloatingTitle');
+    HB_FLOATING.btnMin = document.getElementById('hbFloatingMin');
+    HB_FLOATING.btnMax = document.getElementById('hbFloatingMax');
+    HB_FLOATING.closeBtn = document.getElementById('hbFloatingClose');
+    HB_FLOATING.frame = document.getElementById('hbFloatingFrame');
+    HB_FLOATING.dropHint = document.getElementById('hbFloatingDropHint');
+    HB_FLOATING.resizer = document.getElementById('hbFloatingResize');
+    HB_FLOATING.resizer = document.getElementById('hbFloatingResize');
+
+    if(!HB_FLOATING.root || !HB_FLOATING.bar || !HB_FLOATING.closeBtn || !HB_FLOATING.frame || !HB_FLOATING.btnMin || !HB_FLOATING.btnMax || !HB_FLOATING.resizer) {
+        console.error('HB_FW_DOM_MISSING');
+        return;
+    }
+
+    __hb_fwLoadFromCfg();
+    __hb_fwApplyPos();
+    __hb_fwApplySize();
+    __hb_fwApplySize();
+
+    if(HB_FLOATING.open && HB_FLOATING.itemId) {
+        __hb_fwSetOpen(1);
+        var url = HB_FLOATING.widgetUrl || __hb_fwResolveWidgetUrl(HB_FLOATING.itemId);
+        if(url) {
+            HB_FLOATING.widgetUrl = url;
+            try{ HB_FLOATING.frame.src = url; }catch(e){ console.error('HB_FW_SRC_FAIL', e); }
+            __hb_fwSetEmpty(0);
+        } else {
+            __hb_fwSetOpen(0);
+            __hb_fwSetEmpty(1);
+            __hb_fwSaveToCfg(0, HB_FLOATING.x, HB_FLOATING.y, HB_FLOATING.w, HB_FLOATING.h, '', '');
+        }
+    } else {
+        __hb_fwSetOpen(0);
+        __hb_fwSetEmpty(1);
+        if(HB_FLOATING.open && !HB_FLOATING.itemId) {
+            __hb_fwSaveToCfg(0, HB_FLOATING.x, HB_FLOATING.y, HB_FLOATING.w, HB_FLOATING.h, '', '');
+        }
+    }
+
+    try{ HB_FLOATING.bar.addEventListener('pointerdown', __hb_fwDragBegin, false); }catch(e){}
+    try{ HB_FLOATING.bar.addEventListener('pointermove', __hb_fwDragMove, false); }catch(e){}
+    try{ HB_FLOATING.bar.addEventListener('pointerup', __hb_fwDragEnd, false); }catch(e){}
+    try{ HB_FLOATING.bar.addEventListener('pointercancel', __hb_fwDragEnd, false); }catch(e){}
+    try{ HB_FLOATING.btnMin.addEventListener('click', __hb_fwMinToggle, false); }catch(e){}
+    try{ HB_FLOATING.btnMax.addEventListener('click', __hb_fwMaxToggle, false); }catch(e){}
+    try{ HB_FLOATING.btnMin.addEventListener('click', __hb_fwMinToggle, false); }catch(e){}
+    try{ HB_FLOATING.btnMax.addEventListener('click', __hb_fwMaxToggle, false); }catch(e){}
+    try{ HB_FLOATING.closeBtn.addEventListener('click', __hb_fwClose, false); }catch(e){}
+
+    try{ HB_FLOATING.resizer.addEventListener('pointerdown', __hb_fwResizeBegin, false); }catch(e){}
+    try{ HB_FLOATING.resizer.addEventListener('pointermove', __hb_fwResizeMove, false); }catch(e){}
+    try{ HB_FLOATING.resizer.addEventListener('pointerup', __hb_fwResizeEnd, false); }catch(e){}
+    try{ HB_FLOATING.resizer.addEventListener('pointercancel', __hb_fwResizeEnd, false); }catch(e){}
+
+    try{ HB_FLOATING.resizer.addEventListener('pointerdown', __hb_fwResizeBegin, false); }catch(e){}
+    try{ HB_FLOATING.resizer.addEventListener('pointermove', __hb_fwResizeMove, false); }catch(e){}
+    try{ HB_FLOATING.resizer.addEventListener('pointerup', __hb_fwResizeEnd, false); }catch(e){}
+    try{ HB_FLOATING.resizer.addEventListener('pointercancel', __hb_fwResizeEnd, false); }catch(e){}
+
+    try{ HB_FLOATING.root.addEventListener('dragover', __hb_fwDropOver, false); }catch(e){}
+    try{ HB_FLOATING.root.addEventListener('drop', __hb_fwDrop, false); }catch(e){}
+
+    try{ document.getElementById('hbFloatingBody').addEventListener('dragover', __hb_fwDropOver, false); }catch(e){}
+    try{ document.getElementById('hbFloatingBody').addEventListener('drop', __hb_fwDrop, false); }catch(e){}
+    try{ HB_FLOATING.bar.addEventListener('dragover', __hb_fwDropOver, false); }catch(e){}
+    try{ HB_FLOATING.bar.addEventListener('drop', __hb_fwDrop, false); }catch(e){}
+
+    __hb_fwEnableDragSources();
+    try{
+        document.addEventListener('HB_MINI_ROWS_READY', __hb_fwEnableDragSources, false);
+    }catch(e){}
+}
+
+
+function __hb_baslat() {
+    var __hb_dashFrame = document.getElementById('hbWidgetHostFrame');
+    if(__hb_dashFrame){
+        __hb_dashFrame.src = 'DrHastaBasiDashboard.html?DrID=' + encodeURIComponent(String(DrID || ''));
+    }
+
+        
+        __hb_applyTopScale();
+        UstSatirSet(HastaBilgi(HastaID), DrBilgi(DrID));
+        HizmetiGoster(HizmetID);
+        __hb_wire();
+        __hb_wireTopMenu();
+
+        __hb_itemsInit();
+
+        __hb_menuApplyPlacementFromCfg();
+
+        
+        __hb_fwInit();
+var ozClose = document.getElementById('hbOzClose');
+        if(ozClose) {
+            ozClose.addEventListener('click', function(){
+                __hb_ozClose();
+            });
+        }
+
+        var ozBackdrop = document.getElementById('hbOzBackdrop');
+        if(ozBackdrop) {
+            ozBackdrop.addEventListener('click', function(ev){
+                if(ev.target === ozBackdrop) {
+                    __hb_ozClose();
+                }
+            });
+        }
+
+        var ozG = document.getElementById('hbOzGorunum');
+        if(ozG) {
+            ozG.addEventListener('click', function(){
+                __hb_ozClose();
+                BilmedThema(DrID, document, true);
+            });
+        }
+
+        var ozM = document.getElementById('hbOzMenuAyar');
+        if(ozM) {
+            ozM.addEventListener('click', function(){
+                __hb_ozClose();
+                window.location.href = 'MenuAyarlari.html?drid=' + encodeURIComponent(String(typeof DrID !== 'undefined' ? DrID : ''));
+            });
+        }
+
+        var ozD = document.getElementById('hbOzDashAyar');
+        if(ozD) {
+            ozD.addEventListener('click', function(){
+                __hb_ozClose();
+                window.location.href = 'GostergePaneliAyarlari.html?drid=' + encodeURIComponent(String(typeof DrID !== 'undefined' ? DrID : ''));
+            });
+        }
+    }
+
+    try {
+    } catch(err) {
+        console.error('BILMED_FATAL_INIT', err);
+    }
+</script>
+
+<script>
+    function __hb_openExternal(id){
+        var url = "";
+        if(id === "e-Nabız"){ url = "https://enabiz.gov.tr/"; }
+        else if(id === "İlaç Yan Etki"){ url = "https://www.titck.gov.tr/"; }
+        else if(id === "SGK"){ url = "https://e.sgk.gov.tr/"; }
+        else if(id === "SİNA"){ url = "https://sina.saglik.gov.tr/"; }
+        else{
+            console.warn("HB_EXT_LINK_NOT_FOUND", id);
+            alert("Bağlantı bulunamadı.");
+            return;
+        }
+
+        window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){
+        var chips = document.querySelectorAll('#hbTopLeftActions .hbLogoChip[data-hb-logo]');
+        for(var i = 0; i < chips.length; i += 1){
+    chips[i].addEventListener('click', function(ev){
+        __hb_openExternal(String(ev.currentTarget.getAttribute('data-hb-logo') || ''));
+    });
+    chips[i].setAttribute('role', 'button');
+    chips[i].setAttribute('tabindex', '0');
+    chips[i].addEventListener('keydown', function(ev){
+        if(ev.key === 'Enter' || ev.key === ' '){
+            ev.preventDefault();
+            __hb_openExternal(String(ev.currentTarget.getAttribute('data-hb-logo') || ''));
+        }
+    });
+}
+
+    });
+</script>
+
+<script>
+var HB_LAYOUT = {
+    panelW: Math.floor(Math.max(1, window.innerWidth) / 4),
+    collapsedW: 56,
+    isCollapsed: false,
+    mobileView: 'mini',
+    dragging: false,
+    dragPointerId: 0,
+};
+
+function __hb_layoutIsMobile(){
+    return __hb_layoutViewportW() <= 768;
+}
+
+
+function __hb_layoutClampPanelW(w){
+    var vw = __hb_layoutViewportW();
+    var minW = Math.floor(vw / 8);
+    var maxW = Math.floor((vw * 7) / 8);
+
+    if(!isFinite(w)) {
+        return Math.max(minW, Math.min(maxW, Math.floor(vw / 4)));
+    }
+
+    return Math.max(minW, Math.min(maxW, Math.floor(w)));
+}
+
+function __hb_uiCfgKey(){
+    var id = 0;
+    if(typeof DrID !== 'undefined') {
+        id = Math.floor(Number(DrID));
+    }
+
+    if(!isFinite(id) || id <= 0) {
+        console.warn('HB_UI_CFG_BAD_DRID', typeof DrID !== 'undefined' ? DrID : null);
+        id = 0;
+    }
+
+    return 'HB_UI_CFG::' + String(id);
+}
+
+function __hb_uiCfgLoad(){
+    if(typeof HB_Cfg === 'undefined' || !HB_Cfg || !HB_Cfg.getBlob) {
+        console.error('HB_CFG_MISSING');
+        return {};
+    }
+    return HB_Cfg.getBlob(typeof DrID !== 'undefined' ? DrID : 0);
+}
+
+function __hb_uiCfgSave(cfg){
+    if(typeof HB_Cfg === 'undefined' || !HB_Cfg || !HB_Cfg.saveBlob) {
+        console.error('HB_CFG_MISSING');
+        return;
+    }
+    HB_Cfg.saveBlob(typeof DrID !== 'undefined' ? DrID : 0, cfg || {});
+}
+
+function __hb_uiCfgEnsureRoot(cfg){
+    var c = cfg;
+    if(!c || typeof c !== 'object') {
+        c = __hb_uiCfgLoad();
+    }
+    if(!c || typeof c !== 'object') { c = {}; }
+    if(!c.v) { c.v = 1; }
+    if(!c.layout) { c.layout = {}; }
+    if(!c.layout.miniPanel) { c.layout.miniPanel = {}; }
+    return c;
+}
+
+function __hb_menuFilterIds(ids){
+    var out = [];
+    var seen = {};
+    var i = 0;
+
+    if(Array.isArray(ids)) {
+        for(i = 0; i < ids.length; i += 1){
+            var idA = String(ids[i] || '').trim();
+            if(!idA) { continue; }
+            if(seen[idA]) { continue; }
+            if(!__hb_itemsFind(idA)) { continue; }
+            seen[idA] = 1;
+            out.push(idA);
+        }
+        return out;
+    }
+
+    if(ids && typeof ids === 'object') {
+        var max = 0;
+        for(var k in ids){
+            if(!Object.prototype.hasOwnProperty.call(ids, k)) { continue; }
+            var n = Number(k);
+            if(isFinite(n) && n > max) { max = Math.floor(n); }
+        }
+
+        for(i = 1; i <= max; i += 1){
+            var key = String(i);
+            if(!(key in ids)) { continue; }
+            var idB = String(ids[key] || '').trim();
+            if(!idB) { continue; }
+            if(seen[idB]) { continue; }
+            if(!__hb_itemsFind(idB)) { continue; }
+            seen[idB] = 1;
+            out.push(idB);
+        }
+    }
+
+    return out;
+}
+
+
+function __hb_menuSlotPairs(slots, maxDefault){
+    var out = [];
+    var seen = {};
+    var max = 0;
+    var i = 0;
+
+    if(Array.isArray(slots)) {
+        max = isFinite(Number(maxDefault)) ? Math.max(slots.length, Math.floor(Number(maxDefault))) : slots.length;
+        for(i = 0; i < slots.length; i += 1){
+            var idA = String(slots[i] || '').trim();
+            if(!idA) { continue; }
+            if(seen[idA]) { continue; }
+            if(!__hb_itemsFind(idA)) { continue; }
+            seen[idA] = 1;
+            out.push({ slot: i + 1, id: idA });
+        }
+                return { max: max, pairs: out };
+    }
+
+    if(slots && typeof slots === 'object') {
+        for(var k in slots){
+            if(!Object.prototype.hasOwnProperty.call(slots, k)) { continue; }
+            var n = Number(k);
+            if(isFinite(n) && n > max) { max = Math.floor(n); }
+        }
+
+        if(isFinite(Number(maxDefault)) && Number(maxDefault) > max) {
+            max = Math.floor(Number(maxDefault));
+        }
+
+        for(i = 1; i <= max; i += 1){
+            var key = String(i);
+            if(!(key in slots)) { continue; }
+            var idB = String(slots[key] || '').trim();
+            if(!idB) { continue; }
+            if(seen[idB]) { continue; }
+            if(!__hb_itemsFind(idB)) { continue; }
+            seen[idB] = 1;
+            out.push({ slot: i, id: idB });
+        }
+        return { max: max, pairs: out };
+    }
+
+    max = isFinite(Number(maxDefault)) ? Math.floor(Number(maxDefault)) : 0;
+    return { max: max, pairs: [] };
+}
+
+function __hb_itemsRenderMiniSlots(slotIds){
+    if(!HB_ITEM_STATE.miniBody) { return; }
+
+    var useMap = (!!slotIds && typeof slotIds === 'object' && !Array.isArray(slotIds));
+    var ids = null;
+    var pairs = null;
+
+    if(useMap) {
+        pairs = __hb_menuSlotPairs(slotIds, __hb_row2MaxSlotsFromConst());
+    } else {
+        ids = __hb_menuFilterIds(slotIds);
+    }
+
+    var wrap = document.createElement('div');
+    wrap.className = 'hbMenuTitleList';
+
+    if(pairs) {
+        wrap.classList.add('hbSlotGridV');
+    }
+
+    var i = 0;
+    var n = pairs ? pairs.pairs.length : ids.length;
+
+    for(i = 0; i < n; i += 1){
+        var it = null;
+        var slot = 0;
+
+        if(pairs) {
+            slot = pairs.pairs[i].slot;
+            it = __hb_itemsFind(pairs.pairs[i].id);
+        } else {
+            it = __hb_itemsFind(ids[i]);
+        }
+
+        if(!it) { continue; }
+
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'hbMenuTitleRow';
+        b.setAttribute('data-hb-item-id', String(it.id || ''));
+        b.setAttribute('data-hovered', '0');
+
+        if(pairs) {
+            b.style.gridRowStart = String(slot);
+        }
+
+        var ic = document.createElement('div');
+        ic.className = 'hbItemListIcon';
+        __hb_itemsSetIconNode(ic, it);
+
+        var tx = document.createElement('div');
+        tx.className = 'hbItemListText';
+
+        var t = document.createElement('div');
+        t.className = 'hbItemListTitle';
+        t.textContent = String(it.title || it.id || '');
+
+        tx.appendChild(t);
+
+        var d = String(it.desc || it.description || '').trim();
+        if(d) {
+            var ds = document.createElement('div');
+            ds.className = 'hbItemListDesc';
+            ds.textContent = d;
+            tx.appendChild(ds);
+        }
+
+        b.appendChild(ic);
+        b.appendChild(tx);
+
+        b.addEventListener('click', __hb_itemsListClick);
+        b.addEventListener('mouseenter', __hb_itemsHoverEnter);
+        b.addEventListener('mouseleave', __hb_itemsHoverLeave);
+        wrap.appendChild(b);
+    }
+
+    __hb_itemsClearMini();
+    HB_ITEM_STATE.miniBody.appendChild(wrap);
+
+    var e = null;
+    if(typeof Event === 'function') {
+        e = new Event('HB_MINI_ROWS_READY');
+    } else {
+        e = document.createEvent('Event');
+        e.initEvent('HB_MINI_ROWS_READY', true, true);
+    }
+    document.dispatchEvent(e);
+}
+
+function __hb_topRenderRow2(slotIds){
+    var host = document.getElementById('hbTopSelectedIcons');
+    if(!host) { return; }
+    host.innerHTML = '';
+    host.classList.remove('hbSlotGridH');
+    host.style.removeProperty('grid-template-columns');
+
+    var pairs = null;
+    var ids = null;
+
+    if(!!slotIds && typeof slotIds === 'object') {
+        pairs = __hb_menuSlotPairs(slotIds, __hb_row2MaxSlotsFromConst());
+        if(pairs && pairs.max > 0 && pairs.pairs && pairs.pairs.length){
+            host.classList.add('hbSlotGridH');
+            host.style.gridTemplateColumns = 'repeat(' + String(pairs.max) + ', var(--hbTopSlotSize, 38px))';
+
+            if(!__hb_layoutIsMobile()) {
+                                                            }
+        } else {
+            pairs = null;
+        }
+    }
+
+    if(!pairs) {
+        ids = __hb_menuFilterIds(slotIds);
+
+        if(!__hb_layoutIsMobile()) {
+                                }
+    }
+
+    var i = 0;
+    var n = pairs ? pairs.pairs.length : ids.length;
+
+    for(i = 0; i < n; i += 1){
+        var it = null;
+        var slot = 0;
+
+        if(pairs) {
+            slot = pairs.pairs[i].slot;
+            it = __hb_itemsFind(pairs.pairs[i].id);
+        } else {
+            it = __hb_itemsFind(ids[i]);
+        }
+
+        if(!it) { continue; }
+
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'hbTopSelBtn';
+        b.setAttribute('role', 'menuitem');
+        b.setAttribute('data-hb-item-id', String(it.id || ''));
+        b.setAttribute('data-hovered', '0');
+        b.setAttribute('title', String(it.title || it.id || ''));
+
+        if(pairs) {
+            b.style.gridColumnStart = String(slot);
+        }
+
+        __hb_itemsSetIconNode(b, it);
+
+        b.addEventListener('click', __hb_itemsListClick);
+        b.addEventListener('mouseenter', __hb_itemsHoverEnter);
+        b.addEventListener('mouseleave', __hb_itemsHoverLeave);
+
+        host.appendChild(b);
+    }
+
+
+
+    if(pairs && !__hb_layoutIsMobile()) {
+        var __occ = {};
+        for(i = 0; i < pairs.pairs.length; i += 1){ __occ[pairs.pairs[i].slot] = 1; }
+        for(var __s = 1; __s <= pairs.max; __s += 1){
+            if(__occ[__s]) { continue; }
+            var d = document.createElement('button');
+            d.type = 'button';
+            d.className = 'hbTopSelBtn hbRow2Dummy';
+            d.setAttribute('aria-hidden', 'true');
+            d.tabIndex = -1;
+            d.disabled = true;
+            d.style.gridColumnStart = String(__s);
+            host.appendChild(d);
+        }
+    }
+
+    if(pairs && !__hb_layoutIsMobile()) {
+        
+        try {
+            var cs = window.getComputedStyle(host);
+            var pr = host.parentElement ? window.getComputedStyle(host.parentElement) : null;
+            var rr = host.getBoundingClientRect();
+if(pr) {
+
+    try{ if(typeof __hb_fwEnableDragSources === 'function'){ __hb_fwEnableDragSources(); } }catch(e){ console.error(e); }
+}
+        
+            try {
+                var kids = host.children;
+                var k = 0;
+                for(k = 0; k < kids.length; k += 1){
+                    var kd = kids[k];
+                    var kcs = window.getComputedStyle(kd);
+                    var krr = kd.getBoundingClientRect();
+}
+            } catch(e2) {
+                console.warn('[HB_ROW2_CHILD] failed', e2);
+            }
+} catch(e) {
+            console.warn('[HB_ROW2_STYLE] failed', e);
+        }
+    }
+}
+
+function __hb_topRenderRightMenu(slotIds){
+    var host = document.getElementById('hbTopMenuPanel');
+    if(!host) { return; }
+    host.innerHTML = '';
+
+    var ids = __hb_menuFilterIds(slotIds);
+    var i = 0;
+
+    for(i = 0; i < ids.length; i += 1){
+        var it = __hb_itemsFind(ids[i]);
+        if(!it) { continue; }
+
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'hbTopMenuItemBtn';
+        b.setAttribute('role', 'menuitem');
+        b.setAttribute('data-hb-item-id', String(it.id || ''));
+        b.setAttribute('data-hovered', '0');
+
+        var ic = document.createElement('div');
+        ic.className = 'hbTopMenuItemIcon';
+        __hb_itemsSetIconNode(ic, it);
+
+        var tx = document.createElement('div');
+        tx.className = 'hbTopMenuItemText';
+        tx.textContent = String(it.title || it.id || '');
+
+        b.appendChild(ic);
+        b.appendChild(tx);
+
+        b.addEventListener('click', __hb_itemsListClick);
+        b.addEventListener('mouseenter', __hb_itemsHoverEnter);
+        b.addEventListener('mouseleave', __hb_itemsHoverLeave);
+
+        host.appendChild(b);
+    }
+
+    try{ if(typeof __hb_fwEnableDragSources === 'function'){ __hb_fwEnableDragSources(); } }catch(e){ console.error(e); }
+}
+
+function __hb_menuApplyPlacementFromCfg(){
+    var cfg = __hb_uiCfgLoad();
+    if(!cfg || typeof cfg !== 'object') {
+        console.warn('HB_MENU_CFG_EMPTY');
+        return;
+    }
+
+    var menu = cfg.menu;
+    if(!menu || typeof menu !== 'object') {
+        console.warn('HB_MENU_CFG_EMPTY');
+        return;
+    }
+
+    var miniSlots = menu.miniSlots;
+    var row2Slots = menu.row2Slots;
+    var rightMenu = __hb_menuFilterIds(menu.rightMenu);
+
+
+    // HB_ROW2_OVERFLOW_NORMALIZE
+    var __hb_row2Max = __hb_row2MaxSlotsFromConst();
+    if(!__hb_layoutIsMobile() && isFinite(__hb_row2Max) && __hb_row2Max > 0){
+        if(row2Slots && typeof row2Slots === 'object' && !Array.isArray(row2Slots)){
+            for(var __k in row2Slots){
+                if(!Object.prototype.hasOwnProperty.call(row2Slots, __k)) { continue; }
+                var __n = Number(__k);
+                if(!isFinite(__n)) { continue; }
+                if(__n <= __hb_row2Max) { continue; }
+                var __id = String(row2Slots[__k] || '').trim();
+                if(__id){
+                    if(rightMenu.indexOf(__id) === -1){ rightMenu.push(__id); }
+                }
+                try{ delete row2Slots[__k]; }catch(e){ row2Slots[__k] = ''; }
+            }
+        }
+    }
+
+
+        if(__hb_layoutIsMobile()) {
+        var row2Ids = null;
+        if(row2Slots && typeof row2Slots === 'object' && !Array.isArray(row2Slots)) {
+            var pp = __hb_menuSlotPairs(row2Slots, 0);
+            row2Ids = [];
+            if(pp && pp.pairs && pp.pairs.length) {
+                var k = 0;
+                for(k = 0; k < pp.pairs.length; k += 1) {
+                    row2Ids.push(pp.pairs[k].id);
+                }
+            }
+        } else {
+            row2Ids = __hb_menuFilterIds(row2Slots);
+        }
+
+        if(row2Ids && row2Ids.length) {
+            var seen = {};
+            var j = 0;
+            for(j = 0; j < rightMenu.length; j += 1) { seen[rightMenu[j]] = 1; }
+            for(j = 0; j < row2Ids.length; j += 1) {
+                var rid = row2Ids[j];
+                if(!rid || seen[rid]) { continue; }
+                seen[rid] = 1;
+                rightMenu.push(rid);
+            }
+        }
+
+        row2Slots = [];
+    }
+
+__hb_itemsRenderRail(miniSlots);
+    __hb_itemsRenderMiniSlots(miniSlots);
+    __hb_topRenderRow2(row2Slots);
+    __hb_topRenderRightMenu(rightMenu);
+}
+
+
+
+function __hb_layoutSaveToCfg(){
+    var cfg = __hb_uiCfgEnsureRoot(__hb_uiCfgLoad());
+
+    cfg.layout.miniPanel.mode = 'left';
+    cfg.layout.miniPanel.w = HB_LAYOUT.panelW;
+    cfg.layout.miniPanel.collapsed = HB_LAYOUT.isCollapsed ? 1 : 0;
+
+    __hb_uiCfgSave(cfg);
+}
+
+function __hb_layoutLoadFromCfg(){
+    var cfg = __hb_uiCfgLoad();
+    if(!cfg || typeof cfg !== 'object') {
+        console.warn('HB_UI_CFG_BAD_OBJ', cfg);
+        return;
+    }
+
+    if(cfg.layout && cfg.layout.miniPanel) {
+        var mp = cfg.layout.miniPanel;
+
+        if(mp.mode && mp.mode !== 'left') {
+            console.warn('HB_UI_CFG_MINIPANEL_MODE_IGNORED', mp.mode);
+        }
+
+        if(mp.w != null) {
+            HB_LAYOUT.panelW = __hb_layoutClampPanelW(mp.w);
+        }
+
+        if(mp.collapsed != null) {
+            HB_LAYOUT.isCollapsed = Number(mp.collapsed) ? true : false;
+        }
+    }
+}
+
+function __hb_layoutApply(){
+    var layout = document.getElementById('hbLayout');
+    var mini = document.getElementById('hbMiniPanel');
+    var rail = document.getElementById('hbMiniRail');
+    var dash = document.getElementById('hbDashboard');
+    var bar = document.getElementById('hbResizeBar');
+
+    if(!layout || !mini || !rail || !dash || !bar) {
+        console.error('HB_LAYOUT_DOM_MISSING', !!layout, !!mini, !!rail, !!dash, !!bar);
+        return;
+    }
+
+    var isMobile = __hb_layoutIsMobile();
+
+if(isMobile) {
+        try {
+            if(document.body && document.body.classList) { document.body.classList.add('hb-mobile-mode'); }
+        } catch(e) {
+            console.error('HB_LAYOUT_BODYCLASS_MOBILE_FAIL', e);
+        }
+
+        if(HB_LAYOUT.isCollapsed) {
+            console.warn('HB_LAYOUT_COLLAPSE_FORCED_OFF_MOBILE');
+            HB_LAYOUT.isCollapsed = false;
+        }
+
+        layout.classList.remove('hb-mini-collapsed');
+
+        bar.classList.add('hb-hidden');
+        rail.classList.add('hb-hidden');
+
+        if(String(HB_LAYOUT.mobileView || 'mini') === 'dash') {
+            dash.classList.remove('hb-hidden');
+            mini.classList.add('hb-hidden');
+        } else {
+            dash.classList.add('hb-hidden');
+            mini.classList.remove('hb-hidden');
+            mini.style.width = '100%';
+        }
+
+        var btnC = document.getElementById('hbMiniCollapseBtn');
+        var btnE = document.getElementById('hbMiniExpandBtn');
+        if(btnC) { btnC.classList.add('hb-hidden'); }
+        if(btnE) { btnE.classList.add('hb-hidden'); }
+
+        return;
+    }
+
+    try {
+        if(document.body && document.body.classList) { document.body.classList.remove('hb-mobile-mode'); }
+    } catch(e) {
+        console.error('HB_LAYOUT_BODYCLASS_DESKTOP_FAIL', e);
+    }
+
+    dash.classList.remove('hb-hidden');
+
+    var btnC = document.getElementById('hbMiniCollapseBtn');
+    var btnE = document.getElementById('hbMiniExpandBtn');
+    if(btnC) { btnC.classList.remove('hb-hidden'); }
+    if(btnE) { btnE.classList.remove('hb-hidden'); }
+
+    if(HB_LAYOUT.isCollapsed) {
+        if(btnC) { btnC.classList.add('hb-btn-hidden'); } 
+        if(btnE) { btnE.classList.remove('hb-btn-hidden'); }
+    } else {
+        if(btnE) { btnE.classList.add('hb-btn-hidden'); }
+        if(btnC) { btnC.classList.remove('hb-btn-hidden'); }
+    }
+
+
+    if(HB_LAYOUT.isCollapsed) {
+        layout.classList.add('hb-mini-collapsed');
+
+        bar.classList.add('hb-hidden');
+        mini.classList.add('hb-hidden');
+
+        rail.classList.remove('hb-hidden');
+        rail.style.width = String(HB_LAYOUT.collapsedW) + 'px';
+        return;
+    }
+
+    layout.classList.remove('hb-mini-collapsed');
+
+    rail.classList.remove('hb-hidden');
+    rail.style.width = String(HB_LAYOUT.collapsedW) + 'px';
+
+    mini.classList.remove('hb-hidden');
+    bar.classList.remove('hb-hidden');
+
+    HB_LAYOUT.panelW = __hb_layoutClampPanelW(HB_LAYOUT.panelW);
+    mini.style.width = String(HB_LAYOUT.panelW) + 'px';
+}
+
+function __hb_resizeBegin(ev){
+    if(__hb_layoutIsMobile()) { return; }
+    if(HB_LAYOUT.isCollapsed) { return; }
+    if(!ev) { return; }
+
+    HB_LAYOUT.dragging = true;
+    HB_LAYOUT.dragPointerId = ev.pointerId || 0;
+
+    var bar = document.getElementById('hbResizeBar');
+    if(bar && bar.setPointerCapture && HB_LAYOUT.dragPointerId) {
+        try {
+            bar.setPointerCapture(HB_LAYOUT.dragPointerId);
+        } catch(e) {
+            console.error('HB_LAYOUT_CAPTURE_FAIL', e);
+        }
+    }
+}
+
+function __hb_resizeMove(ev){
+    if(!HB_LAYOUT.dragging) { return; }
+    if(!ev) { return; }
+
+    var layout = document.getElementById('hbLayout');
+    if(!layout) {
+        console.error('HB_LAYOUT_DOM_MISSING_LAYOUT');
+        return;
+    }
+
+    var r = layout.getBoundingClientRect();
+    var x = Math.floor(ev.clientX);
+    var w = x - Math.floor(r.left) - 10;
+
+    HB_LAYOUT.panelW = __hb_layoutClampPanelW(w);
+    __hb_layoutApply();
+}
+
+function __hb_resizeEnd(ev){
+    if(!HB_LAYOUT.dragging) { return; }
+
+    HB_LAYOUT.dragging = false;
+
+    var bar = document.getElementById('hbResizeBar');
+    if(bar && bar.releasePointerCapture && HB_LAYOUT.dragPointerId) {
+        try {
+            bar.releasePointerCapture(HB_LAYOUT.dragPointerId);
+        } catch(e) {
+            console.error('HB_LAYOUT_RELEASE_FAIL', e);
+        }
+    }
+
+    HB_LAYOUT.dragPointerId = 0;
+
+    __hb_layoutSaveToCfg();
+}
+
+function __hb_miniCollapse(){
+    if(__hb_layoutIsMobile()) { return; }
+    if(HB_LAYOUT.isCollapsed) { return; }
+    HB_LAYOUT.isCollapsed = true;
+    __hb_layoutApply();
+    __hb_layoutSaveToCfg();
+}
+
+function __hb_miniExpand(){
+    if(__hb_layoutIsMobile()) { return; }
+    if(!HB_LAYOUT.isCollapsed) { return; }
+    HB_LAYOUT.isCollapsed = false;
+    __hb_layoutApply();
+    __hb_layoutSaveToCfg();
+}
+
+function __hb_miniToggle(){
+    if(HB_LAYOUT.isCollapsed) {
+        __hb_miniExpand();
+    } else {
+        __hb_miniCollapse();
+    }
+}
+
+function __hb_wireLayout(){
+    var bar = document.getElementById('hbResizeBar');
+    var btnC = document.getElementById('hbMiniCollapseBtn');
+    var btnE = document.getElementById('hbMiniExpandBtn');
+
+    if(!bar || !btnC || !btnE) {
+        console.error('HB_LAYOUT_WIRE_DOM_MISSING', !!bar, !!btnC, !!btnE);
+        return;
+    }
+
+    bar.addEventListener('pointerdown', function(ev){
+        __hb_resizeBegin(ev);
+    });
+
+    bar.addEventListener('pointermove', function(ev){
+        __hb_resizeMove(ev);
+    });
+
+    bar.addEventListener('pointerup', function(ev){
+        __hb_resizeEnd(ev);
+    });
+
+    bar.addEventListener('pointercancel', function(ev){
+        __hb_resizeEnd(ev);
+    });
+
+    btnC.addEventListener('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        __hb_miniCollapse();
+    });
+
+    btnE.addEventListener('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        __hb_miniExpand();
+    });
+}
+
+function HB_miniPanelCollapse(){
+    __hb_miniCollapse();
+}
+
+function HB_miniPanelExpand(){
+    __hb_miniExpand();
+}
+
+function HB_miniPanelToggle(){
+    __hb_miniToggle();
+}
+
+function __hb_layoutInit(){
+    __hb_layoutLoadFromCfg();
+    __hb_layoutApply();
+    __hb_wireLayout();
+}
+
+window.addEventListener('resize', function(){
+    try{ __hb_layoutApply(); }catch(e){ console.error(e); }
+    try{ __hb_applyTopScale(); }catch(e){ console.error(e); }
+    try{ if(typeof __hb_row2NormalizeAndRender === 'function'){ __hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); }
+});
+
+try{ window.addEventListener('orientationchange', function(){ try{ if(window.__hb_row2NormalizeAndRender){ window.__hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); } }); }catch(e){}
+try{ document.addEventListener('visibilitychange', function(){ try{ if(!document.hidden && window.__hb_row2NormalizeAndRender){ window.__hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); } }); }catch(e){}
+
+
+try{
+    document.addEventListener('fullscreenchange', function(){
+        try{ __hb_layoutApply(); }catch(e){ console.error(e); }
+        try{ __hb_applyTopScale(); }catch(e){ console.error(e); }
+        try{ if(typeof __hb_row2NormalizeAndRender === 'function'){ __hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); }
+    });
+}catch(e){}
+
+
+try {
+    __hb_layoutInit();
+} catch(e) {
+    console.error('HB_LAYOUT_INIT_FAIL', e);
+}
+</script>
+
+
+<script>
+(function(){
+    function __hb_layoutIsMobile(){
+        var w = 0;
+        try{ w = __hb_layoutViewportW(); }catch(e){ w = 0; }
+        if(!isFinite(w) || w <= 0){
+            try{ if(document.documentElement && document.documentElement.clientWidth){ w = Math.floor(document.documentElement.clientWidth); } }catch(e){}
+        }
+        return (w > 0 && w <= 768);
+    }
+
+    function __hb_jobEnsureAndAttach(){
+        var el = document.getElementById('hbJobCenterText');
+        if(!el) { return null; }
+        var host = document.getElementById(__hb_layoutIsMobile() ? 'hbTopBar2' : 'hbTopArea');
+        if(host && el.parentNode !== host) {
+            host.appendChild(el);
+        }
+        return el;
+    }
+
+    function __hb_jobPlace(){
+        var el = __hb_jobEnsureAndAttach();
+        if(!el) { return; }
+
+        if(!__hb_layoutIsMobile()) {
+            el.style.left = '';
+            el.style.right = '';
+            return;
+        }
+
+        var bar2 = document.getElementById('hbTopBar2');
+        var leftA = document.getElementById('hbTopLeftActions');
+        var rightA = document.getElementById('hbTopRightActions');
+        if(!bar2 || !leftA || !rightA) { return; }
+
+        var br = bar2.getBoundingClientRect();
+        var lr = leftA.getBoundingClientRect();
+        var rr = rightA.getBoundingClientRect();
+
+        var left = Math.floor(lr.right - br.left) + 10;
+        var right = Math.floor(br.right - rr.left) + 10;
+
+        if(left < 10) { left = 10; }
+        if(right < 10) { right = 10; }
+
+        el.style.left = String(left) + 'px';
+        el.style.right = String(right) + 'px';
+    }
+
+    window.addEventListener('resize', function(){
+        try { __hb_jobPlace(); } catch(e) { console.error(e); }
+    });
+
+    setTimeout(function(){ try { __hb_jobPlace(); } catch(e) { console.error(e); } }, 0);
+    setTimeout(function(){ try { __hb_jobPlace(); } catch(e) { console.error(e); } }, 200);
+})();
+</script>
+
+
+<div id="hbContextOverlay" class="hbCtxOverlay" hidden>
+  <div class="hbCtxBackdrop"></div>
+  <div class="hbCtxPanel" role="dialog" aria-modal="true">
+    <div class="hbCtxHeader">
+      <div id="hbCtxTitle" class="hbCtxTitle"></div>
+      <button class="hbCtxClose hbCtxCloseX" aria-label="Kapat">✕</button>
+    </div>
+    <div class="hbCtxBody">
+      <!-- içerik modül tarafından doldurulacak -->
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  var ov=document.getElementById('hbContextOverlay');
+  if(!ov) return;
+  var backdrop=ov.querySelector('.hbCtxBackdrop');
+  var closeBtn=ov.querySelector('.hbCtxClose');
+  function openCtx(title){
+    document.getElementById('hbCtxTitle').textContent=title||'';
+    ov.hidden=false;
+    document.addEventListener('keydown',onKey);
+  }
+  function closeCtx(){
+    ov.hidden=true;
+    document.removeEventListener('keydown',onKey);
+  }
+  function onKey(e){ if(e.key==='Escape') closeCtx(); }
+  backdrop.addEventListener('click',closeCtx);
+  closeBtn.addEventListener('click',closeCtx);
+
+  // expose minimal API
+  window.__hbOpenContextOverlay=openCtx;
+  window.__hbCloseContextOverlay=closeCtx;
+
+  // attach clicks
+  var p=document.getElementById('hbPatientArea');
+  var d=document.getElementById('hbDoctorArea');
+  if(p) p.addEventListener('click',function(){__hbCtxRenderPatient();openCtx('Hasta · '+(document.getElementById('hbPatientName')||{}).textContent||'');});
+  if(d) d.addEventListener('click',function(){__hbCtxRenderDoctor();openCtx('Doktor · '+(document.getElementById('hbDoctorName')||{}).textContent||'');});
+})();
+</script>
+
+
+<script>
+(function(){
+  if(!window.__hbOpenContextOverlay) return;
+  var job = document.getElementById('hbJobCenterText');
+  if(job){
+    job.addEventListener('click', function(){
+      window.__hbOpenContextOverlay('İşlem · ' + job.textContent);
+    });
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  var ov=document.getElementById('hbContextOverlay');
+  if(!ov) return;
+  var backdrop=ov.querySelector('.hbCtxBackdrop');
+  var closeBtn=ov.querySelector('.hbCtxClose');
+  var titleEl=document.getElementById('hbCtxTitle');
+
+  function openCtx(title){
+    titleEl.textContent=title||'';
+    ov.hidden=false;
+    document.addEventListener('keydown',onKey);
+  }
+  function closeCtx(){
+    ov.hidden=true;
+    document.removeEventListener('keydown',onKey);
+  }
+  function onKey(e){ if(e.key==='Escape') closeCtx(); }
+
+  backdrop.onclick=closeCtx;
+  closeBtn.onclick=closeCtx;
+
+  window.__hbOpenContextOverlay=openCtx;
+  window.__hbCloseContextOverlay=closeCtx;
+
+  var p=document.getElementById('hbPatientArea');
+  var d=document.getElementById('hbDoctorArea');
+  var j=document.getElementById('hbJobCenterText');
+
+  if(p) p.onclick=function(){
+    __hbCtxRenderPatient();openCtx('Hasta · ' + (document.getElementById('hbPatientName')||{}).textContent);
+  };
+  if(d) d.onclick=function(){
+    __hbCtxRenderDoctor();openCtx('Doktor · ' + (document.getElementById('hbDoctorName')||{}).textContent);
+  };
+  if(j) j.onclick=function(){
+    __hbCtxRenderJob();openCtx('İşlem · ' + j.textContent);
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  function setBody(html){
+    var b=document.querySelector('#hbContextOverlay .hbCtxBody');
+    if(b) b.innerHTML=html;
+  }
+
+  window.__hbCtxRenderPatient=function(){
+    setBody(`
+      <div class="hbCtxGrid">
+        <div><b>TC</b></div><div id="hbCtxTc">12345678901</div>
+        <div><b>Cinsiyet</b></div><div id="hbCtxGender">Erkek</div>
+        <div><b>Yaş</b></div><div id="hbCtxAge">45</div>
+        <div><b>Sigorta</b></div><div id="hbCtxSgk">SGK</div>
+        <div><b>Telefon</b></div><div id="hbCtxTel">0500 000 00 00</div>
+        <div><b>E‑posta</b></div><div id="hbCtxMail">hasta@mail.com</div>
+      </div>
+    `);
+  };
+
+  window.__hbCtxRenderDoctor=function(){
+    setBody(`
+      <div class="hbCtxGrid">
+        <div><b>Ünvan</b></div><div>Prof. Dr.</div>
+        <div><b>Ad Soyad</b></div><div>Ayşe Demir</div>
+        <div><b>Branş</b></div><div>Dahiliye</div>
+        <div><b>Birim</b></div><div>İç Hastalıkları</div>
+      </div>
+    `);
+  };
+
+  window.__hbCtxRenderJob=function(){
+    var j=(document.getElementById('hbJobCenterText')||{}).textContent||'';
+    setBody(`
+      <div class="hbCtxGrid">
+        <div><b>İşlem</b></div><div>${j}</div>
+        <div><b>Tarih</b></div><div id="hbCtxJobDate">01.01.2026</div>
+        <div><b>Saat</b></div><div id="hbCtxJobTime">10:30</div>
+      </div>
+    `);
+  };
+})()
+__hb_baslat();
+;
+
+// HB_ROW2_RESPONSIVE_PATCH
+(function(){
+    function __hb_row2NormalizeAndRender(){
+        try{
+            if(typeof __hb_menuApplyPlacementFromCfg === 'function'){
+                __hb_menuApplyPlacementFromCfg();
+            }else{
+                console.warn('HB_ROW2_NO_APPLY');
+            }
+        }catch(e){
+            console.error('HB_ROW2_RESPONSIVE_FAIL', e);
+        }
+    }
+
+    try{ window.__hb_row2NormalizeAndRender = __hb_row2NormalizeAndRender; }catch(e){}
+
+    function hbDebouncedRow2(){
+        try{
+            if(window.__hb_row2NormalizeAndRender_t){ clearTimeout(window.__hb_row2NormalizeAndRender_t); }
+            window.__hb_row2NormalizeAndRender_t = setTimeout(function(){
+                window.__hb_row2NormalizeAndRender_t = 0;
+                try{ __hb_row2NormalizeAndRender(); }catch(e){ console.error(e); }
+            }, 120);
+        }catch(e){}
+    }
+
+    try{
+        window.addEventListener('resize', hbDebouncedRow2);
+        window.addEventListener('focus', hbDebouncedRow2);
+        window.addEventListener('pageshow', hbDebouncedRow2);
+        window.addEventListener('popstate', hbDebouncedRow2);
+    }catch(e){}
+
+    try{
+        document.addEventListener('visibilitychange', function(){
+            try{
+                if(!document.hidden){ hbDebouncedRow2(); }
+            }catch(e){ console.error(e); }
+        });
+    }catch(e){}
+})();;;
+
+</script>
+
+
+<script>
+(function(){
+    function hbDashMsgSend(targetWin, msg){
+        if(!targetWin || !msg) { return; }
+        try{ targetWin.postMessage(msg, '*'); }catch(e){}
+    }
+    function hbDashGetThemeId(){
+        try{
+            if(window.__hb_themeCfg && window.__hb_themeCfg.themeId) { return String(window.__hb_themeCfg.themeId || ''); }
+        }catch(e){}
+        try{
+            if(window.BilmedConfig && typeof BilmedConfig.load === 'function' && typeof DrID !== 'undefined'){
+                var c = BilmedConfig.load(Math.floor(Number(DrID)) || 0) || {};
+                if(c.themeId) { return String(c.themeId); }
+            }
+        }catch(e2){}
+        return '';
+    }
+    function hbDashCtx(){
+        return {
+            drId: (typeof DrID !== 'undefined' ? Math.floor(Number(DrID)) : 0),
+            hastaId: (typeof HastaID !== 'undefined' ? Math.floor(Number(HastaID)) : 0),
+            hizmetId: (typeof HizmetID !== 'undefined' ? Math.floor(Number(HizmetID)) : 0),
+        };
+    }
+    
+    var HB_DASH_STATE = { widgetReady: 0, hintTimer: 0 };
+
+    function hbDashHintShow(msg){
+        var el = document.getElementById('hbDashHint');
+        if(!el) { return; }
+        el.textContent = String(msg || '');
+        el.classList.remove('hb-hidden');
+    }
+    function hbDashHintHide(){
+        var el = document.getElementById('hbDashHint');
+        if(!el) { return; }
+        el.classList.add('hb-hidden');
+        el.textContent = '';
+    }
+    function hbDashPulse(){
+        var host = document.getElementById('hbDashHost');
+        if(!host) { return; }
+        try{
+            if(typeof __hb_layoutIsMobile === 'function' && __hb_layoutIsMobile()){
+                var __dash = document.getElementById('hbDashboard');var __mini = document.getElementById('hbMiniPanel');if(__dash && __mini){ __dash.classList.remove('hb-hidden'); __mini.classList.add('hb-hidden'); }
+                if(window.HB_LAYOUT && String(window.HB_LAYOUT.mobileView || 'mini') !== 'dash'){
+                    window.HB_LAYOUT.mobileView = 'dash';
+                    if(typeof __hb_layoutApply === 'function'){ __hb_layoutApply(); }
+                }
+            }
+        }catch(e){ console.error('HB_DASH_SET_VIEW_MOBILE_FAIL', e); }
+        host.classList.add('hb-pulse');
+        window.setTimeout(function(){ try{ host.classList.remove('hb-pulse'); }catch(e){} }, 220);
+    }
+    function hbDashActivateWidget(){
+        var w = document.getElementById('hbWidgetHostFrame');
+        if(!w) { return; }
+        hbDashHintHide();
+        hbDashApplyTo(w);
+        hbDashMsgSend(w.contentWindow, { type: 'RESUME' });
+        if(HB_DASH_STATE.hintTimer) { try{ window.clearTimeout(HB_DASH_STATE.hintTimer); }catch(e){} }
+        HB_DASH_STATE.hintTimer = window.setTimeout(function(){
+            if(!HB_DASH_STATE.widgetReady){
+                hbDashHintShow('Gösterge Paneli yüklenemedi. DrHastaBasiDashboard.html dosyası aynı klasörde mi?');
+            }
+        }, 700);
+    }
+
+    function __hb_isMobileNow(){
+        try{ return (typeof __hb_layoutIsMobile === 'function') ? !!__hb_layoutIsMobile() : (window.innerWidth <= 768); }catch(e){ return (window.innerWidth <= 768); }
+    }
+    function __hb_dashDump(tag){
+        try{
+            if(!__hb_isMobileNow()) { return; }
+            var dash = document.getElementById('hbDashboard');
+            var host = document.getElementById('hbDashHost');
+            var w = document.getElementById('hbWidgetHostFrame');
+            var f = document.getElementById('hbFullHostFrame');
+            var sDash = dash ? getComputedStyle(dash) : null;
+            var sHost = host ? getComputedStyle(host) : null;
+            var sW = w ? getComputedStyle(w) : null;
+            var sF = f ? getComputedStyle(f) : null;
+            var rectDash = dash ? dash.getBoundingClientRect() : null;
+            var rectHost = host ? host.getBoundingClientRect() : null;
+            var rectW = w ? w.getBoundingClientRect() : null;
+            var rectF = f ? f.getBoundingClientRect() : null;
+}catch(e){}
+    }
+function hbDashSetLayer(mode){
+        var w = document.getElementById('hbWidgetHostFrame');
+        var f = document.getElementById('hbFullHostFrame');
+        var m = (mode === 'full') ? 'full' : 'widget';
+        if(w){
+            w.classList.remove('hbDashFrame-active','hbDashFrame-passive');
+            w.classList.add(m === 'widget' ? 'hbDashFrame-active' : 'hbDashFrame-passive');
+        }
+        if(f){
+            f.classList.remove('hbDashFrame-active','hbDashFrame-passive');
+            f.classList.add(m === 'full' ? 'hbDashFrame-active' : 'hbDashFrame-passive');
+        }
+try{ __hb_dashDump('hbDashSetLayer:'+m); }catch(e){}
+
+    }
+
+
+function __hb_dashMobileFixHeight(){
+    try{
+        if(!(typeof __hb_layoutIsMobile === 'function' && __hb_layoutIsMobile())){ return; }
+        var dash = document.getElementById('hbDashboard');
+        var host = document.getElementById('hbDashHost');
+        if(!dash || !host){ return; }
+        var top = document.getElementById('hbTopArea');
+        var topH = 0;
+        try{ if(top){ topH = Math.round(top.getBoundingClientRect().height || 0); } }catch(e){}
+        var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+        var h = vh - topH;
+        if(h < 200){ h = 200; }
+        dash.style.height = h + 'px';
+        dash.style.minHeight = h + 'px';
+        host.style.height = h + 'px';
+        host.style.minHeight = h + 'px';
+    }catch(e){}
+}
+
+function hbDashSetView(mode){
+        var host = document.getElementById('hbDashHost');
+        if(!host) { return; }
+        var m = (mode === 'full') ? 'full' : 'widget';
+        host.setAttribute('data-view', m);
+        try{
+            if(typeof __hb_layoutIsMobile === 'function' && __hb_layoutIsMobile()){
+                if(window.HB_LAYOUT && String(window.HB_LAYOUT.mobileView || 'mini') !== 'dash'){
+                    window.HB_LAYOUT.mobileView = 'dash';
+                }
+                try{ if(typeof __hb_layoutApply === 'function'){ __hb_layoutApply(); } }catch(e){}
+                                try{ __hb_dashMobileFixHeight(); }catch(e){}
+try{ __hb_dashDump('hbDashSetView:afterLayoutApply:'+m); }catch(e){}
+            }
+        }catch(e){}
+        try{ hbDashSetLayer(m); }catch(e0){}
+        var w = document.getElementById('hbWidgetHostFrame');
+        var f = document.getElementById('hbFullHostFrame');
+        if(m === 'full'){
+            hbDashMsgSend(w && w.contentWindow, { type: 'SUSPEND' });
+            hbDashMsgSend(f && f.contentWindow, { type: 'RESUME' });
+        } else {
+            hbDashMsgSend(f && f.contentWindow, { type: 'SUSPEND' });
+            hbDashMsgSend(w && w.contentWindow, { type: 'RESUME' });
+        }
+        try{ __hb_dashDump('hbDashSetView:'+m); }catch(e){}
+
+    }
+    function hbDashApplyTo(frame){
+        if(!frame || !frame.contentWindow) { return; }
+        hbDashMsgSend(frame.contentWindow, { type: 'CTX_SET', payload: hbDashCtx() });
+        var tid = hbDashGetThemeId();
+        if(tid) { hbDashMsgSend(frame.contentWindow, { type: 'THEME_SET', payload: { themeId: tid } }); }
+    }
+    function hbDashOpenFull(req){
+        var f = document.getElementById('hbFullHostFrame');
+        if(!f) { return; }
+        var url = '';
+        var pageId = '';
+        var itemId = '';
+        try{
+            if(req && typeof req === 'object'){
+                pageId = String(req.pageId || '');
+                itemId = String(req.id || req.itemId || req.widgetId || '');
+                url = String(req.url || '');
+            }
+        }catch(e){}
+        if(!url){
+            var pick = itemId || pageId;
+            if(pick && typeof hbItemFullUrlGet === 'function'){
+                url = String(hbItemFullUrlGet(pick) || '');
+            }
+        }
+        if(!url) { console.error('HB_DASH_OPEN_FULL_BAD_URL', req); return; }
+        try{
+            f.setAttribute('data-page-id', pageId || itemId || '');
+            f.src = url;
+        }catch(e2){
+            console.error('HB_DASH_OPEN_FULL_FAIL', e2);
+        }
+        hbDashSetView('full');
+    }
+
+    function hbDashOnMessage(ev){
+        var data = ev && ev.data;
+        if(!data || typeof data !== 'object') { return; }
+        var t = String(data.type || '');
+        if(t === 'READY'){
+            var src = String((data.payload && data.payload.host) || '');
+            if(src === 'WidgetHost'){
+                HB_DASH_STATE.widgetReady = 1;
+                hbDashHintHide();
+                var w = document.getElementById('hbWidgetHostFrame');
+                hbDashApplyTo(w);
+                hbDashMsgSend(w && w.contentWindow, { type: 'RESUME' });
+            } else if(src === 'FullHost'){
+                var f = document.getElementById('hbFullHostFrame');
+                hbDashApplyTo(f);
+            }
+            return;
+        }
+        if(t === 'OPEN_FULL'){
+            hbDashOpenFull(data.payload || {});
+            return;
+        }
+        if(t === 'ACTION'){
+            console.warn('HB_DASH_ACTION', data.payload || {});
+            return;
+        }
+        if(t === 'ERROR'){
+            console.error('HB_DASH_ERROR', data.payload || {});
+            return;
+        }
+    }
+
+    try{ window.hbDashSetView = hbDashSetView; }catch(e0){}
+    try{ window.hbDashSetLayer = hbDashSetLayer; }catch(e1){}
+
+    document.addEventListener('DOMContentLoaded', function(){
+        var host = document.getElementById('hbDashHost');
+        if(host && !host.getAttribute('data-view')) { host.setAttribute('data-view','widget'); }
+        var w = document.getElementById('hbWidgetHostFrame');
+        var f = document.getElementById('hbFullHostFrame');
+
+        if(w){
+            w.addEventListener('load', function(){
+                try{ __hb_dashDump('iframeLoad:widget'); }catch(e){}
+                hbDashApplyTo(w);
+            });
+        }
+        if(f){
+            f.addEventListener('load', function(){
+                try{ __hb_dashDump('iframeLoad:full'); }catch(e){}
+                hbDashApplyTo(f);
+                hbDashMsgSend(f.contentWindow, { type: 'RESUME' });
+            });
+        }
+
+        window.addEventListener('message', hbDashOnMessage);
+
+        var btn = document.getElementById('hbTopDashBtn');
+        if(btn){
+            btn.addEventListener('click', function(){
+                try{ __hb_dashDump('dashBtn:before'); }catch(e){}
+
+                try{ var host0=document.getElementById('hbDashHost'); var view0=host0?String(host0.getAttribute('data-view')||'widget'):'widget';  }catch(e0){}
+                try{
+                    if(typeof __hb_layoutIsMobile === 'function' && __hb_layoutIsMobile()){
+                        if(window.HB_LAYOUT){
+                            window.HB_LAYOUT.mobileView = (String(window.HB_LAYOUT.mobileView || 'mini') === 'dash') ? 'mini' : 'dash';
+                        }
+                        try{ if(typeof __hb_layoutApply === 'function'){ __hb_layoutApply(); } }catch(e){}
+                        try{ __hb_dashDump('dashBtn:afterLayoutApply'); }catch(e){}
+
+                        if(window.HB_LAYOUT && String(window.HB_LAYOUT.mobileView || 'mini') !== 'dash') {
+                            return;
+                        }
+                    }
+                }catch(e){}
+
+                try{
+                    var host = document.getElementById('hbDashHost');
+                    var cur = host ? String(host.getAttribute('data-view') || 'widget') : 'widget';
+                    if(cur === 'full'){
+var f = document.getElementById('hbFullHostFrame');
+                        try{ hbDashSetView('widget'); }catch(e1){}
+                        try{
+                            if(f){
+                                f.setAttribute('data-page-id','');
+                                f.src = 'about:blank';
+                            }
+                        }catch(e2){}
+                    } else {
+                        hbDashSetView('widget');
+                    }
+                }catch(e3){
+                    try{ hbDashSetView('widget'); }catch(e4){}
+                }
+
+                window.setTimeout(function(){ hbDashActivateWidget(); hbDashPulse(); }, 0);
+            });
+        }
+
+        hbDashSetView('widget');
+    });
+})();
+</script>
+
+</body>
+</html>

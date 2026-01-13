@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang='tr'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>TestFull_V02</title>
+    <script src='BilmedUiLib.js'></script>
+    <style>
+:root{
+    --fRadius: 16px;
+    --fPad: 14px;
+    --fGap: 12px;
+    --fLine: var(--bilmed-surface-border, rgba(15,23,42,0.12));
+    --fBg: var(--bilmed-page-bg, #f3f4f6);
+    --fSurface: var(--bilmed-surface-bg, #fff);
+    --fText: var(--bilmed-surface-text, #0f172a);
+    --fMuted: rgba(15,23,42,0.72);
+    --fTint: var(--bilmed-tint-bg, rgba(0,0,0,0.04));
+    --fHeader: var(--bilmed-header2-bg, rgba(255,255,255,0.92));
+    --fHeaderBorder: var(--bilmed-header2-border, var(--fLine));
+    --fPrimary: var(--bilmed-primary-bg, #2563eb);
+}
+html, body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--fBg);
+    color: var(--fText);
+}
+#top{
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 14px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--fHeader);
+    border-bottom: 1px solid var(--fHeaderBorder);
+}
+#ttl{
+    font-weight: 900;
+    font-size: 14px;
+}
+#meta{
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--fMuted);
+    white-space: nowrap;
+}
+#actions{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.btn{
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid var(--fLine);
+    background: var(--fSurface);
+    color: var(--fText);
+    font-weight: 900;
+    cursor: pointer;
+}
+.btn:hover{
+    background: var(--fTint);
+}
+.btnPrimary{
+    border-color: var(--fPrimary);
+    background: var(--fPrimary);
+    color: #fff;
+}
+.btnPrimary:hover{
+    opacity: 0.92;
+}
+#main{
+    height: calc(100% - 54px);
+    padding: 12px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+.card{
+    background: var(--fSurface);
+    border: 1px solid var(--fLine);
+    border-radius: var(--fRadius);
+    overflow: hidden;
+}
+.cardHead{
+    padding: var(--fPad);
+    border-bottom: 1px solid var(--fLine);
+    background: var(--fTint);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+.cardTitle{
+    font-weight: 900;
+    font-size: 13px;
+}
+.cardSub{
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--fMuted);
+}
+.cardBody{
+    padding: var(--fPad);
+}
+table{
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border: 1px solid var(--fLine);
+    border-radius: 14px;
+}
+thead th{
+    text-align: left;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--fLine);
+    background: var(--fTint);
+}
+tbody td{
+    padding: 10px 10px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--fLine);
+    vertical-align: top;
+}
+tbody tr:last-child td{
+    border-bottom: none;
+}
+.badge{
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--fLine);
+    background: var(--fSurface);
+    font-weight: 900;
+    font-size: 11px;
+    white-space: nowrap;
+}
+.muted{
+    color: var(--fMuted);
+    font-weight: 800;
+}
+</style>
+</head>
+<body>
+<div id='top'>
+    <div>
+        <div id='ttl'>Test Sonuçları</div>
+        <div id='meta'></div>
+    </div>
+    <div id='actions'>
+        <button id='btnRefresh' class='btn' type='button'>Yenile</button>
+        <button id='btnClose' class='btn btnPrimary' type='button'>Kapat</button>
+    </div>
+</div>
+
+<div id='main'>
+    <div class='card'>
+        <div class='cardHead'>
+            <div class='cardTitle'>Test Sonuçları</div>
+            <div id='sub' class='cardSub'></div>
+        </div>
+        <div class='cardBody'>
+            <table>
+                <thead><tr><th>Tarih/Saat</th><th>Panel</th><th>Durum</th><th>Not</th></tr></thead>
+                <tbody id='tbody'></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+var __ctx = {
+    drId: 0,
+    hastaId: 0,
+    hizmetId: 0
+};
+
+var __themeId = '';
+var __suspended = 0;
+var __lastNow = Date.now();
+var __rows = [];
+
+function __qs(id){
+    return document.getElementById(id);
+}
+
+function __pad2(n){
+    var s = String(Math.floor(Number(n) || 0));
+    if(s.length < 2) { return '0' + s; }
+    return s;
+}
+
+function __fmtDt(ts){
+    var d = new Date(Number(ts) || Date.now());
+    return __pad2(d.getDate()) + '.' + __pad2(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' + __pad2(d.getHours()) + ':' + __pad2(d.getMinutes());
+}
+
+function __hashInt(x){
+    var t = String(Number(x) || 0);
+    var h = 2166136261;
+    for(var i = 0; i < t.length; i += 1){
+        h ^= t.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+    h = h >>> 0;
+    return h;
+}
+
+function __rand01(seed, salt){
+    var h = __hashInt(seed) ^ __hashInt(salt);
+    h = (h ^ (h >>> 16)) >>> 0;
+    return (h % 10000) / 10000;
+}
+
+function __pick(arr, r){
+    var idx = Math.floor(r * arr.length);
+    if(idx < 0) { idx = 0; }
+    if(idx >= arr.length) { idx = arr.length - 1; }
+    return arr[idx];
+}
+
+function __makeRows(kind, hastaId, nowMs){
+    var seed = __hashInt(hastaId) ^ __hashInt(Math.floor(nowMs / 60000));
+    var out = [];
+    if(kind === 'rad'){
+        var mods = ['Direkt Grafi', 'BT', 'MR', 'USG', 'EKO'];
+        var parts = ['Akciğer', 'Karın', 'Beyin', 'Kalça', 'Diz', 'Servikal', 'Lomber'];
+        var statuses = ['Raporlandı', 'Beklemede', 'İnceleniyor'];
+        for(var i = 0; i < 12; i += 1){
+            var r1 = __rand01(seed, i + 11);
+            var r2 = __rand01(seed, i + 71);
+            var r3 = __rand01(seed, i + 131);
+            var dt = nowMs - Math.floor((r2 * 120 + 2) * 3600 * 1000);
+            out.push({
+                dt: __fmtDt(dt),
+                name: __pick(mods, r1) + ' - ' + __pick(parts, r2),
+                badge: __pick(statuses, r3),
+                desc: (r3 < 0.55) ? 'Ön değerlendirme hazır. Rapor onayı bekleniyor.' : 'Rapor tamamlandı. Klinik korelasyon önerilir.',
+            });
+        }
+        return out;
+    }
+    if(kind === 'tani'){
+        var codes = ['I10', 'E11.9', 'J06.9', 'K21.9', 'M54.5', 'R07.9', 'N39.0'];
+        var names = ['Esansiyel hipertansiyon', 'Tip 2 DM', 'ÜSYE', 'Reflü', 'Bel ağrısı', 'Göğüs ağrısı', 'İYE'];
+        var states = ['Aktif', 'Geçmiş', 'Şüpheli'];
+        for(var j = 0; j < 14; j += 1){
+            var rr = __rand01(seed, j + 21);
+            var idx = Math.floor(__rand01(seed, j + 221) * codes.length);
+            if(idx < 0) { idx = 0; }
+            if(idx >= codes.length) { idx = codes.length - 1; }
+            var dt2 = nowMs - Math.floor((rr * 120 + 1) * 24 * 3600 * 1000);
+            out.push({
+                dt: __fmtDt(dt2),
+                name: codes[idx] + ' - ' + names[idx],
+                badge: __pick(states, rr),
+                desc: (rr < 0.5) ? 'Klinik bulgularla uyumlu. Takip önerilir.' : 'Tanı doğrulama/izlem planı değerlendirilir.',
+            });
+        }
+        return out;
+    }
+    var panels = ['Kan Gazı', 'Trombosit', 'CRP', 'D-Dimer', 'TSH', 'B12', 'Folat', 'HbA1c', 'Troponin', 'Sedimantasyon'];
+    var states2 = ['Sonuçlandı', 'Beklemede'];
+    for(var k = 0; k < 12; k += 1){
+        var rx = __rand01(seed, k + 31);
+        var ry = __rand01(seed, k + 331);
+        var dt3 = nowMs - Math.floor((ry * 60 + 1) * 3600 * 1000);
+        out.push({
+            dt: __fmtDt(dt3),
+            name: __pick(panels, rx),
+            badge: __pick(states2, rx),
+            desc: (rx < 0.45) ? 'Kontrol/teyit amaçlı istenmiştir.' : 'Klinik izlem için değerlendiriniz.',
+        });
+    }
+    return out;
+}
+
+function __render(){
+    var meta = '';
+    if(__ctx.hastaId > 0) {
+        meta = 'Hasta: ' + String(__ctx.hastaId);
+    } else {
+        meta = 'Hasta: -';
+    }
+    __qs('meta').textContent = meta;
+    __qs('sub').textContent = 'Son güncelleme: ' + __fmtDt(__lastNow);
+
+    var tb = __qs('tbody');
+    while(tb.firstChild) {
+        tb.removeChild(tb.firstChild);
+    }
+
+    for(var i = 0; i < __rows.length; i += 1){
+        var r = __rows[i];
+        var tr = document.createElement('tr');
+
+        var td1 = document.createElement('td');
+        td1.textContent = r.dt;
+
+        var td2 = document.createElement('td');
+        td2.textContent = r.name;
+
+        var td3 = document.createElement('td');
+        var b = document.createElement('span');
+        b.className = 'badge';
+        b.textContent = r.badge;
+        td3.appendChild(b);
+
+        var td4 = document.createElement('td');
+        var d = document.createElement('div');
+        d.className = 'muted';
+        d.textContent = r.desc;
+        td4.appendChild(d);
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+
+        tb.appendChild(tr);
+    }
+}
+
+function __refresh(){
+    __lastNow = Date.now();
+    __rows = __makeRows('test', __ctx.hastaId, __lastNow);
+    __render();
+}
+
+function __post(type, payload){
+    try {
+        window.parent.postMessage({ type: type, payload: payload || {} }, '*');
+    } catch(e) {
+        console.error('FULL_POST_FAIL', e);
+    }
+}
+
+function __applyTheme(){
+    try {
+        if(typeof BilmedThema === 'function') {
+            BilmedThema(__ctx.drId || 0, document, false);
+        }
+    } catch(e) {
+        console.error('FULL_THEME_APPLY_FAIL', e);
+    }
+}
+
+function __onMessage(ev){
+    var msg = ev && ev.data ? ev.data : null;
+    if(!msg || typeof msg.type !== 'string') { return; }
+    var t = msg.type;
+    var p = msg.payload || {};
+
+    if(t === 'CTX_SET') {
+        __ctx.drId = Math.floor(Number(p.drId) || 0);
+        __ctx.hastaId = Math.floor(Number(p.hastaId) || 0);
+        __ctx.hizmetId = Math.floor(Number(p.hizmetId) || 0);
+        __applyTheme();
+        __refresh();
+        return;
+    }
+
+    if(t === 'THEME_SET') {
+        __themeId = String(p.themeId || '');
+        __applyTheme();
+        return;
+    }
+
+    if(t === 'SUSPEND') {
+        __suspended = 1;
+        return;
+    }
+
+    if(t === 'RESUME') {
+        __suspended = 0;
+        return;
+    }
+}
+
+function __bind(){
+    __qs('btnRefresh').addEventListener('click', function(){
+        if(__suspended) { return; }
+        __refresh();
+        __post('ACTION', {
+            action: 'refresh',
+            source: 'TestFull',
+            data: { hastaId: __ctx.hastaId }
+        });
+    });
+
+    __qs('btnClose').addEventListener('click', function(){
+        __post('ACTION', {
+            action: 'closeFull',
+            source: 'TestFull',
+            data: { pageId: 'testFull' }
+        });
+    });
+}
+
+function __init(){
+    window.addEventListener('message', __onMessage);
+    __bind();
+    __refresh();
+    __post('READY', { host: 'Full', pageId: 'testFull', version: 'V02' });
+}
+
+__init();
+</script>
+</body>
+</html>
