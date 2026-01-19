@@ -648,7 +648,7 @@ cursor:pointer;
 
 
 .gpPoolCard, .gpGridCard{ touch-action: none; }
-#gpGridScroll{ touch-action: none; }
+#gpGridScroll{ touch-action: pan-x pan-y; }
 </style>
 </head>
 
@@ -1515,7 +1515,6 @@ function gpTouchOnPointerDown(ev){
     try{
         if(!GP.touch.enabled) { return; }
         if(!ev || ev.pointerType !== 'touch') { return; }
-        try{ ev.preventDefault(); }catch(e){}
         if(GP.drag && GP.drag.active) { return; }
 
         var el = ev.target;
@@ -1581,8 +1580,9 @@ function gpTouchOnPointerMove(ev){
     try{
         if(!GP.touch.enabled) { return; }
         if(!ev || ev.pointerType !== 'touch') { return; }
+        if(GP.drag && GP.drag.active){ try{ ev.preventDefault(); }catch(e){} gpTouchDragMove(ev); return; }
+        if(!GP.touch.downFrom){ return; }
         try{ ev.preventDefault(); }catch(e){}
-        if(GP.drag && GP.drag.active){ gpTouchDragMove(ev); return; }
 
         var sx = Number(GP.touch.downX || 0);
         var sy = Number(GP.touch.downY || 0);
@@ -1610,13 +1610,14 @@ function gpTouchOnPointerUp(ev){
     try{
         if(!GP.touch.enabled) { return; }
         if(!ev || ev.pointerType !== 'touch') { return; }
-        try{ ev.preventDefault(); }catch(e){}
-
-        if(GP.drag && GP.drag.active){
+        if(GP.drag && GP.drag.active){ try{ ev.preventDefault(); }catch(e){} 
             gpTouchLpClear();
             gpTouchDragEnd(ev);
             return;
         }
+
+        if(!GP.touch.downFrom){ gpTouchLpClear(); return; }
+        try{ ev.preventDefault(); }catch(e){}
 
         var from = String(GP.touch.downFrom || '');
         var id = gpIdNorm(GP.touch.downId);
