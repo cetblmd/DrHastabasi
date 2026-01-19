@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menü Ayarları - Kullanıcı Rehberi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+      --background: hsl(210, 30%, 98%);
+      --foreground: hsl(210, 40%, 10%);
+      --card: hsl(0, 0%, 100%);
+      --card-foreground: hsl(210, 40%, 10%);
+      --primary: hsl(199, 89%, 48%);
+      --primary-foreground: hsl(0, 0%, 100%);
+      --secondary: hsl(168, 76%, 42%);
+      --secondary-foreground: hsl(0, 0%, 100%);
+      --muted: hsl(210, 20%, 96%);
+      --muted-foreground: hsl(210, 15%, 45%);
+      --accent: hsl(199, 70%, 94%);
+      --accent-foreground: hsl(199, 89%, 30%);
+      --border: hsl(210, 25%, 90%);
+      --gradient-primary: linear-gradient(135deg, hsl(199, 89%, 48%) 0%, hsl(168, 76%, 42%) 100%);
+      --gradient-hero: linear-gradient(160deg, hsl(210, 30%, 98%) 0%, hsl(199, 70%, 94%) 50%, hsl(168, 60%, 94%) 100%);
+      --shadow-soft: 0 4px 20px -4px hsla(199, 60%, 50%, 0.15);
+      --shadow-glow: 0 8px 32px -8px hsla(199, 89%, 48%, 0.25);
+      --radius: 0.75rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gradient-hero);
+      color: var(--foreground);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Section */
+    header {
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-primary);
+      opacity: 0.05;
+    }
+
+    .hero-content {
+      position: relative;
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      color: var(--accent-foreground);
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 9999px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .gradient-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1.125rem;
+      color: var(--muted-foreground);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-glow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--gradient-primary);
+      color: var(--primary-foreground);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-icon {
+      transform: scale(1.1);
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .card-content {
+      color: var(--muted-foreground);
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    /* Sections */
+    section {
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: var(--foreground);
+    }
+
+    /* Flow Steps */
+    .flow-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .flow-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .flow-number {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      color: var(--primary-foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      transition: transform 0.3s ease;
+    }
+
+    .flow-step:hover .flow-number {
+      transform: scale(1.1);
+    }
+
+    .flow-content {
+      padding-top: 0.25rem;
+    }
+
+    .flow-title {
+      font-weight: 600;
+      color: var(--foreground);
+      margin-bottom: 0.25rem;
+    }
+
+    .flow-description {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+    }
+
+    /* Feature Items */
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+    }
+
+    .feature-icon {
+      color: var(--primary);
+      width: 18px;
+      height: 18px;
+    }
+
+    .feature-text {
+      color: var(--foreground);
+      font-size: 0.9375rem;
+    }
+
+    /* Sub Cards */
+    .sub-card {
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: var(--accent);
+      border: 1px solid var(--border);
+      margin-bottom: 0.75rem;
+    }
+
+    .sub-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .sub-card-title {
+      font-weight: 500;
+      font-size: 0.875rem;
+      color: var(--foreground);
+      margin-bottom: 0.25rem;
+    }
+
+    .sub-card-text {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding-bottom: 3rem;
+    }
+
+    .note-card {
+      display: inline-block;
+      padding: 1.5rem;
+      background: hsla(199, 70%, 94%, 0.5);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+    }
+
+    .note-text {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      line-height: 1.8;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: fadeInUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+
+    /* SVG Icons */
+    .icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .icon-sm {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      .flow-step{
+        align-items: flex-start;
+        min-width: 0;
+      }
+      .flow-content{
+        min-width: 0;
+        max-width: 100%;
+        flex: 1 1 auto;
+      }
+      .flow-title,
+      .flow-description{
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .flow-container{
+        padding: 1.25rem;
+      }
+      .flow-container .grid.grid-2{
+        grid-template-columns: 1fr;
+      }
+      .flow-container .grid.grid-2 > div{
+        min-width: 0;
+      }
+      .card-header,
+      .feature-item{
+        min-width: 0;
+      }
+      .hero-description,
+      .card-content,
+      .flow-description,
+      .feature-text,
+      .sub-card-text{
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .hero-content {
+        padding: 2.5rem 1rem 2rem;
+      }
+      
+      .hero-description {
+        font-size: 1rem;
+      }
+
+      .grid {
+        gap: 1rem;
+      }
+
+      .card {
+        padding: 1.25rem;
+      }
+    }
+  
+/* fix4: spacing adjustments */
+main.container{ padding-top: 24px; }
+.section-spacer{ height: 28px; }
+
+
+        .frameShell{
+            position: relative;
+            width: 100%;
+            height: min(72vh, 720px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--card);
+            box-shadow: var(--shadow-soft);
+        }
+        .hbDemoFrame{
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: transparent;
+        }
+        .hbParentOverlaySvg{
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+
+/* V17: iframe alanı %10 daha geniş, %25 daha yüksek */
+.help-iframe,
+iframe{
+  width: 100%;
+  max-width: 110%;
+  min-height: 87.5vh;
+}
+</style>
+
+<style>
+.hbHelpTip{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.9);
+  border:1px solid var(--border);
+  border-radius:9999px;
+  padding:6px 14px;
+  font-size:12px;
+  font-weight:600;
+  z-index:20;
+  pointer-events:none;
+}
+.hbRing{
+  position:fixed;
+  border:3px solid var(--primary);
+  border-radius:999px;
+  pointer-events:none;
+  z-index:2147483647;
+  transform:translate(-50%,-50%);
+}
+</style>
+
+</head>
+<body>
+  <header>
+    <div class="hero-content">
+      <h1>
+        <span class="gradient-text">Menü Ayarları</span>
+      </h1>
+      <p class="hero-description">
+        Sol Menü, 2. Satır ve Sağ Menü yerleşimini kendi isteğinize göre düzenleyin.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <div class="section-spacer"></div>
+      <h2 class="section-title">Bu Ekran Ne İşe Yarar?</h2>
+
+      <div class="grid grid-3">
+        <div class="card animate-in delay-1">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg class="icon" viewBox="0 0 24 24">
+                <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Yerleştirme</h3>
+          </div>
+          <p class="card-content">Programları Sol Menü, 2. Satır ve Sağ Menü alanlarına isteğinize göre yerleştirebilirsiniz.</p>
+        </div>
+
+        <div class="card animate-in delay-2">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg class="icon" viewBox="0 0 24 24">
+                <polyline points="12 5 19 12 12 19"/><line x1="5" x2="19" y1="12" y2="12"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Sıralama</h3>
+          </div>
+          <p class="card-content">Menüler içindeki programların sırasını değiştirebilirsiniz.</p>
+        </div>
+
+        <div class="card animate-in delay-3">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg class="icon" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Program Havuzu</h3>
+          </div>
+          <p class="card-content">
+            Kullanabileceğiniz tüm programların tutulduğu alandır.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">İşleyiş</h2>
+      <div class="flow-container animate-in delay-2">
+        <div class="grid grid-2">
+          <div>
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <div class="flow-content">
+                <div class="flow-title">Menüler arası taşıma yapabilirsiniz</div>
+                <div class="flow-description">Sol Menü ↔ 2. Satır ↔ Sağ Menü arasında programları dilediğiniz gibi taşıyabilirsiniz.</div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <div class="flow-content">
+                <div class="flow-title">Bir program tek yerde bulunur</div>
+                <div class="flow-description">Bir program aynı anda yalnızca bir menüde yer alır.</div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="flow-number">3</div>
+              <div class="flow-content">
+                <div class="flow-title">Program Havuzu istisnası</div>
+                <div class="flow-description">Bir program Program Havuzu’na bırakılırsa, o program menüden kaldırılır, silinmez.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flow-step">
+              <div class="flow-number">4</div>
+              <div class="flow-content">
+                <div class="flow-title">Havuzdan tekrar ekleme</div>
+                <div class="flow-description">Program Havuzu’ndan alınan bir program, istenen menüye tekrar eklenebilir.</div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="flow-number">5</div>
+              <div class="flow-content">
+                <div class="flow-title">Seçili Program ile Taşıma / Değiştirme</div>
+                <div class="flow-description">Sol Menü, Sağ Menü veya 2. Satırda seçili bir Program varsa;<br>Herhangi bir yere tıklandığında <b>ilk bulunan Program</b> ile işlem yapılır.<br>Hedef boşsa program taşınır, hedef doluysa <b>swap (yer değiştirir)</b>.<br>PC’de sürükle/bırakla da işlem yapabilirsiniz.</div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="flow-number">6</div>
+              <div class="flow-content">
+                <div class="flow-title">Kaydet ve Çık</div>
+                <div class="flow-description"><b>Kaydet</b> ile değişiklikler geçerli olur. <b>Çık</b> ile ekrandan çıkılır.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+<section>
+  <h2 class="section-title">İpuçları</h2>
+  <div class="card animate-in">
+    <div class="card-content">
+<div class="features">
+    <div class="feature-item">
+      <svg class="icon icon-sm feature-icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+      </svg>
+      <span class="feature-text">Program Havuzu’na bırakmak, programı menüden kaldırır (silmez).</span>
+    </div>
+    <div class="feature-item">
+      <svg class="icon icon-sm feature-icon" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/>
+      </svg>
+      <span class="feature-text">Tablet ve Mobile cihazlarda 2. Satırdaki bir Programa <b>uzun basarak</b> seçim yapılır.</span>
+    </div>
+    <div class="feature-item">
+      <svg class="icon icon-sm feature-icon" viewBox="0 0 24 24">
+        <path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v9h-9"/>
+      </svg>
+      <span class="feature-text"><b>Program Havuzu’na tıklandığında</b>, menülerde seçili olan Programlar havuza geri alınır.</span>
+    </div>
+    <div class="feature-item">
+      <svg class="icon icon-sm feature-icon" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/>
+      </svg>
+      <span class="feature-text">Sağ menüye program eklemek için, sağ menüyü öncelikle açın.</span>
+    </div>
+    <div class="feature-item">
+      <svg class="icon icon-sm feature-icon" viewBox="0 0 24 24">
+        <path d="M3 12h18"/><path d="M12 3v18"/>
+      </svg>
+      <span class="feature-text">Havuzdan menüye sürükleyerek tekrar ekleyebilirsiniz.</span>
+    </div>
+    <div class="feature-item">
+      <svg class="icon icon-sm feature-icon" viewBox="0 0 24 24">
+        <path d="M5 12l5 5L20 7"/>
+      </svg>
+      <span class="feature-text">İstediğiniz düzene ulaştığınızda <b>Kaydet</b>’e basmayı unutmayın.</span>
+    </div>
+  </div>
+    </div>
+  </div>
+</section>
+
+  
+    <section>
+      <h2 class="section-title">Uygulamalı Görünüm</h2>
+      <div class="card animate-in delay-4" style="padding: 1rem;">
+        <div class="frameShell" id='hbFrameShell' id="hbFrameShell">
+          <div id="hbHelpTip" class="hbHelpTip">Lütfen <b>Menü Ayarları</b> butonuna basınız</div>
+          <svg id="hbParentOverlaySvg" class="hbParentOverlaySvg" aria-hidden="true"></svg>
+          <iframe id="hbDemoFrame" class="hbDemoFrame" src="../DrHastaBasi.html" loading="eager"></iframe>
+                <div id='hbOverlay' aria-hidden='true'></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="note-card">
+        <div class="note-text">
+          Bu sayfa, Menü Ayarları ekranının kavramsal anlatımı içindir.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+<script>
+(function(){
+  'use strict';
+
+  var fr = document.getElementById('hbDemoFrame');
+  var shell = document.getElementById('hbFrameShell');
+  var tip = document.getElementById('hbHelpTip');
+  var svg = document.getElementById('hbParentOverlaySvg');
+
+  if(!fr || !shell || !tip || !svg){ return; }
+
+  var __hb_iframeMaxContentW = 0;
+
+  function __hb_fitIframeNoHScroll(){
+    try{
+      var d = fr.contentDocument;
+      if(!d){ return; }
+
+      var htmlEl = d.documentElement;
+      var body = d.body;
+      if(!htmlEl || !body){ return; }
+
+      try{ htmlEl.style.overflowX = 'hidden'; }catch(e){}
+      try{ body.style.overflowX = 'hidden'; }catch(e){}
+
+      var frameW = fr.clientWidth || 1;
+      var contentW = Math.max(htmlEl.scrollWidth || 0, body.scrollWidth || 0, 1);
+
+      if(contentW > __hb_iframeMaxContentW){
+        __hb_iframeMaxContentW = contentW;
+      }
+
+      var basisW = __hb_iframeMaxContentW || contentW;
+
+      var s = frameW / basisW;
+      if(s > 1){ s = 1; }
+      if(s < 0.5){ s = 0.5; }
+
+      body.style.transformOrigin = '0 0';
+      body.style.transform = 'scale(' + s.toFixed(4) + ')';
+      body.style.width = (100 / s).toFixed(4) + '%';
+    }catch(e){
+      console.warn('HB_IFRAME_FIT_FAIL', e);
+    }
+  }
+
+  function __hb_fitStabilize(){
+    var n = 0;
+    var t = setInterval(function(){
+      n++;
+      __hb_fitIframeNoHScroll();
+      __hb_draw();
+      if(n >= 16){ clearInterval(t); }
+    }, 100);
+  }
+
+  function __hb_injectRing(){
+    try{
+      var d = fr.contentDocument;
+      if(!d || !d.body){ return; }
+
+      var btn = d.getElementById('hbOzMenuAyar');
+      if(!btn){ return; }
+
+      var host = d.getElementById('__hb_help_overlay_root');
+      if(!host){
+        host = d.createElement('div');
+        host.id = '__hb_help_overlay_root';
+        host.style.position = 'fixed';
+        host.style.inset = '0';
+        host.style.zIndex = '2147483647';
+        host.style.pointerEvents = 'none';
+        d.body.appendChild(host);
+      }
+
+      var ring = d.getElementById('__hb_menu_btn_ring');
+      if(!ring){
+        ring = d.createElement('div');
+        ring.id = '__hb_menu_btn_ring';
+        ring.style.position = 'fixed';
+        ring.style.border = '3px solid var(--secondary)';
+        ring.style.borderRadius = '999px';
+        ring.style.pointerEvents = 'none';
+        ring.style.transform = 'translate(-50%,-50%)';
+        host.appendChild(ring);
+      }
+
+      function place(){
+        var b = d.getElementById('hbOzMenuAyar');
+        if(!b){ ring.style.display='none'; return; }
+        var r = b.getBoundingClientRect();
+        var pad = 10;
+        var s = Math.max(r.width, r.height) + pad*2;
+        ring.style.left = (r.left + r.width/2) + 'px';
+        ring.style.top  = (r.top  + r.height/2) + 'px';
+        ring.style.width  = s + 'px';
+        ring.style.height = s + 'px';
+        ring.style.display = 'block';
+      }
+
+      place();
+      setTimeout(place, 200);
+      setTimeout(place, 600);
+
+      btn.addEventListener('click', function(){
+        try{
+          var r2 = d.getElementById('__hb_menu_btn_ring');
+          if(r2 && r2.parentNode){ r2.parentNode.removeChild(r2); }
+        }catch(e){}
+        try{ if(svg) svg.innerHTML=''; }catch(e){}
+        try{ if(tip) tip.style.display='none'; }catch(e){}
+      }, { once: true });
+
+    }catch(e){
+      console.warn('HB_RING_INJECT_FAIL', e);
+    }
+  }
+
+  function __hb_getBtnCenterInParent(){
+    try{
+      var d = fr.contentDocument;
+      if(!d){ return null; }
+
+      var btn = d.getElementById('hbOzMenuAyar');
+      if(!btn){ return null; }
+
+      var r = btn.getBoundingClientRect();
+      var frRect = fr.getBoundingClientRect();
+      var shellRect = shell.getBoundingClientRect();
+
+      var x = (frRect.left - shellRect.left) + (r.left + r.width/2);
+      var y = (frRect.top  - shellRect.top ) + (r.top  + r.height/2);
+
+      return { x:x, y:y };
+    }catch(e){
+      return null;
+    }
+  }
+
+  function __hb_draw(){
+    try{
+      if(!svg){ return; }
+      svg.setAttribute('viewBox', '0 0 ' + shell.clientWidth + ' ' + shell.clientHeight);
+      svg.setAttribute('preserveAspectRatio', 'none');
+
+      var tipRect = tip.getBoundingClientRect();
+      var shellRect = shell.getBoundingClientRect();
+
+      var x1 = (tipRect.left - shellRect.left) + tipRect.width/2;
+      var y1 = (tipRect.top  - shellRect.top ) + tipRect.height;
+
+      var c = __hb_getBtnCenterInParent();
+      if(!c){
+        svg.innerHTML = '';
+        return;
+      }
+
+      var x2 = c.x;
+      var y2 = c.y;
+
+      svg.innerHTML =
+        '<line class="hbLine" x1="' + x1.toFixed(2) + '" y1="' + y1.toFixed(2) +
+        '" x2="' + x2.toFixed(2) + '" y2="' + y2.toFixed(2) + '"></line>' +
+        '<circle class="hbDot" cx="' + x2.toFixed(2) + '" cy="' + y2.toFixed(2) + '" r="5"></circle>';
+    }catch(e){
+      console.warn('HB_DRAW_FAIL', e);
+    }
+  }
+
+  function __hb_onLoad(){
+    __hb_fitIframeNoHScroll();
+    __hb_fitStabilize();
+    __hb_injectRing();
+    setTimeout(__hb_draw, 200);
+    setTimeout(__hb_draw, 600);
+  }
+
+  fr.addEventListener('load', __hb_onLoad);
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(__hb_onLoad, 300); });
+  }else{
+    setTimeout(__hb_onLoad, 300);
+  }
+
+  window.addEventListener('resize', function(){
+    __hb_fitIframeNoHScroll();
+    __hb_draw();
+  });
+
+})();
+</script>
+
+
+<script>
+'use strict';
+
+var __hb_baseFrameH = 0;
+
+function __hb_parentOverlayEnsure(){
+    var ov = document.getElementById('hbOverlay');
+    if(!ov){ return null; }
+    ov.style.pointerEvents = 'none';
+
+    var svg = ov.querySelector('svg#hbParentOverlaySvg');
+    if(svg){ return svg; }
+
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('id', 'hbParentOverlaySvg');
+    svg.style.position = 'absolute';
+    svg.style.inset = '0';
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    svg.style.pointerEvents = 'none';
+    ov.appendChild(svg);
+    return svg;
+}
+
+function __hb_parentOverlayClear(){
+    var svg = __hb_parentOverlayEnsure();
+    if(!svg){ return; }
+    while(svg.firstChild){ svg.removeChild(svg.firstChild); }
+}
+
+function __hb_parentOverlayDrawLine(x1, y1, x2, y2){
+    var svg = __hb_parentOverlayEnsure();
+    if(!svg){ return; }
+
+    var w = svg.clientWidth || svg.parentNode.clientWidth || 1;
+    var h = svg.clientHeight || svg.parentNode.clientHeight || 1;
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+    var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', 'M ' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' L ' + x2.toFixed(1) + ' ' + y2.toFixed(1));
+    p.setAttribute('fill', 'none');
+    p.setAttribute('stroke', 'rgba(34,197,94,0.92)');
+    p.setAttribute('stroke-width', '3.2');
+    p.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(p);
+}
+
+function __hb_parentOverlayDrawEndRing(cx, cy){
+    var svg = __hb_parentOverlayEnsure();
+    if(!svg){ return; }
+
+    var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', String(cx.toFixed(1)));
+    c.setAttribute('cy', String(cy.toFixed(1)));
+    c.setAttribute('r', '10');
+    c.setAttribute('fill', 'none');
+    c.setAttribute('stroke', 'rgba(34,197,94,0.92)');
+    c.setAttribute('stroke-width', '3');
+    svg.appendChild(c);
+}
+
+function __hb_injectDoctorGearRing(fr){
+    var doc;
+    try{ doc = fr.contentDocument; }catch(e){ return false; }
+    if(!doc || !doc.body){ return false; }
+
+    var host = doc.getElementById('__hb_help_overlay_root');
+    if(!host){
+        host = doc.createElement('div');
+        host.id = '__hb_help_overlay_root';
+        host.style.position = 'fixed';
+        host.style.inset = '0';
+        host.style.zIndex = '2147483647';
+        host.style.pointerEvents = 'none';
+        doc.body.appendChild(host);
+    }
+
+    var ring = doc.getElementById('__hb_doctorGear_ring');
+    if(!ring){
+        ring = doc.createElement('div');
+        ring.id = '__hb_doctorGear_ring';
+        ring.style.position = 'fixed';
+        ring.style.border = '3px solid var(--bilmed-primary-bg, #22c55e)';
+        ring.style.borderRadius = '999px';
+        ring.style.boxSizing = 'border-box';
+        ring.style.pointerEvents = 'none';
+        ring.style.transform = 'translate(-50%,-50%)';
+        host.appendChild(ring);
+    }
+
+    function place(){
+        var gear = doc.getElementById('doctorGear');
+        if(!gear){
+            ring.style.display = 'none';
+            return;
+        }
+
+        var r = gear.getBoundingClientRect();
+        var pad = 10;
+        var s = Math.max(r.width, r.height) + pad * 2;
+
+        ring.style.left = (r.left + r.width / 2) + 'px';
+        ring.style.top  = (r.top  + r.height / 2) + 'px';
+        ring.style.width  = s + 'px';
+        ring.style.height = s + 'px';
+        ring.style.display = 'block';
+    }
+
+    place();
+    setTimeout(place, 200);
+    setTimeout(place, 600);
+    setTimeout(place, 1200);
+
+    try{
+        doc.defaultView.addEventListener('resize', place, { passive: true });
+        doc.defaultView.addEventListener('scroll', place, { passive: true });
+    }catch(e){}
+
+    return true;
+}
+
+function __hb_fitFrameHeightFromDr(fr){
+    try{
+        var shell = document.getElementById('hbFrameShell') || document.querySelector('.frameShell');
+        if(!shell){ return; }
+
+        var d = fr.contentWindow && fr.contentWindow.document ? fr.contentWindow.document : null;
+        if(!d){ return; }
+
+        var h = Math.max(d.documentElement ? d.documentElement.scrollHeight : 0, d.body ? d.body.scrollHeight : 0, 0);
+        if(!(h > 50)){ return; }
+
+        if(!(__hb_baseFrameH > 0)){
+            __hb_baseFrameH = h;
+        }
+        shell.style.height = String(__hb_baseFrameH) + 'px';
+    }catch(e){}
+}
+
+function __hb_linkCircleToMenuButton(fr){
+    if(!fr || !fr.contentWindow || !fr.contentWindow.document){ return false; }
+
+    var d = fr.contentWindow.document;
+
+    var btn = d.getElementById('hbOzMenuAyar');
+    if(!btn){ return false; }
+
+    btn.addEventListener('click', function(){
+        if(typeof __hb_parentOverlayClear === 'function'){
+            __hb_parentOverlayClear();
+        }
+    }, { once: true });
+
+    var ring = d.getElementById('__hb_doctorGear_ring');
+    if(!ring){ return false; }
+
+    var ringRect = ring.getBoundingClientRect();
+    var btnRect = btn.getBoundingClientRect();
+
+    if(!(ringRect.width > 2 && ringRect.height > 2 && btnRect.width > 2 && btnRect.height > 2)){
+        return false;
+    }
+
+    var frRect = fr.getBoundingClientRect();
+
+    var cx = frRect.left + ringRect.left + ringRect.width / 2;
+    var cy = frRect.top + ringRect.top + ringRect.height / 2;
+    var r  = ringRect.width / 2;
+
+    var tx = frRect.left + btnRect.left + btnRect.width / 2;
+    var ty = frRect.top + btnRect.top + btnRect.height / 2;
+
+    var dx = tx - cx;
+    var dy = ty - cy;
+    var len = Math.sqrt(dx*dx + dy*dy);
+    if(!len || !isFinite(len)){ return false; }
+
+    var ux = dx / len;
+    var uy = dy / len;
+
+    var sx = cx + ux * r;
+    var sy = cy + uy * r;
+
+    var ov = document.getElementById('hbOverlay');
+    if(ov){
+        var ovRect = ov.getBoundingClientRect();
+        sx = sx - ovRect.left;
+        sy = sy - ovRect.top;
+        tx = tx - ovRect.left;
+        ty = ty - ovRect.top;
+    }
+
+    __hb_parentOverlayClear();
+    __hb_parentOverlayDrawLine(sx, sy, tx, ty);
+    __hb_parentOverlayDrawEndRing(tx, ty);
+
+    return true;
+}
+
+function __hb_init(){
+    var fr = document.getElementById('hbDemoFrame');
+    if(!fr){ return; }
+
+    // aynı pattern: DrHastaBasi özelleştir ekranı açık gelsin
+    var url = '../DrHastaBasi.html?hbStart=ozellestir&hbMode=customize&hbOpen=ozellestir&openCustomize=1';
+    fr.src = url;
+
+    fr.addEventListener('load', function(){
+        try{
+            __hb_fitFrameHeightFromDr(fr);
+        }catch(e){}
+
+        try{
+            __hb_injectDoctorGearRing(fr);
+        }catch(e){}
+
+        function __hb_tryOpen(){
+            try{
+                if(fr.contentWindow && fr.contentWindow.document){
+                    var d = fr.contentWindow.document;
+                    var el = d.getElementById('doctorGear');
+                    if(el && typeof el.click === 'function'){
+                        el.click();
+                        return true;
+                    }
+                }
+            }catch(e){}
+            return false;
+        }
+
+        var ok = __hb_tryOpen();
+        if(ok){
+            var tries = 0;
+            var t = setInterval(function(){
+                tries++;
+                try{ __hb_fitFrameHeightFromDr(fr); }catch(e){}
+                try{
+                    var done = __hb_linkCircleToMenuButton(fr);
+                    if(done){
+                        clearInterval(t);
+                    }
+                }catch(e){}
+                if(tries >= 20){
+                    clearInterval(t);
+                }
+            }, 120);
+            return;
+        }
+    });
+}
+
+if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', __hb_init);
+}else{
+    __hb_init();
+}
+</script>
+
+</body>
+</html>

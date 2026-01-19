@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DrHastaBasiDashboard</title>
+<title>DrHastaBasiDashboard_V10</title>
 <style>
 html, body{
     margin:0;
@@ -28,14 +28,16 @@ html, body{
     display:grid;
     grid-template-columns: repeat(var(--hbDashCols, 2), minmax(0, 1fr));
     grid-auto-rows: var(--hbDashCellH, 160px);
-    gap: var(--hbDashGapPx, 16px);
+    gap: calc(var(--hbDashGapPx, 16px) + 4px);
     align-content:start;
     box-sizing:border-box;
     padding: var(--hbDashGapPx, 16px);
 }
 .dashTile{
     position:relative;
-    border: 1px solid var(--bilmed-surface-border);
+    border: 1px solid rgba(0,0,0,0.18);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+box-shadow: 0 3px 8px rgba(0,0,0,0.16);
     border-radius: 14px;
     overflow:hidden;
     background: var(--bilmed-tint-bg);
@@ -70,6 +72,40 @@ html, body{
     opacity: 0.78;
     white-space: nowrap;
 }
+
+.dashExpandBtn{
+    appearance:none;
+    border:0;
+    margin:0;
+    padding:0;
+    width:28px;
+    height:26px;
+    border-radius: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: transparent;
+    color: var(--bilmed-surface-text);
+    cursor:pointer;
+}
+.dashExpandBtn:hover{
+    background: rgba(0,0,0,0.10);
+}
+.dashExpandBtn:active{
+    background: rgba(0,0,0,0.14);
+}
+.hbSrOnly{
+    position:absolute;
+    width:1px;
+    height:1px;
+    padding:0;
+    margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
+}
+
 .dashFrameWrap{
     position:absolute;
     inset: 34px 0 0 0;
@@ -131,7 +167,7 @@ html, body{
 
     function whGetDrId(){
         try{
-            var s = String(URLParametreOku('drid') || '').trim();
+            var s = String(URLParametreOku('DrID') || '').trim();
             var n = Math.floor(Number(s) || 0);
             if(n > 0) { return n; }
         }catch(e){}
@@ -175,9 +211,20 @@ html, body{
             if(!it || !it.hasWidget) { rej.push({ i:i, id:id, reason: (!it ? 'not_in_catalog' : 'hasWidget_false') }); continue; }
             var c = Math.floor(Number(g.c) || 0);
             var r = Math.floor(Number(g.r) || 0);
+            var w = Math.floor(Number(g.w) || 0);
+            var h = Math.floor(Number(g.h) || 0);
             if(c < 0) { c = 0; }
             if(r < 0) { r = 0; }
-            out.push({ id:id, c:c, r:r }); acc.push({ i:i, id:id, c:c, r:r, title: String((it && it.title) || '') });
+            if(w < 1 || h < 1){
+                var sp = whSpanGetFromCatalog(id);
+                if(w < 1) { w = sp.w; }
+                if(h < 1) { h = sp.h; }
+            }
+            if(w < 1) { w = 1; }
+            if(h < 1) { h = 1; }
+            if(w > 12) { w = 12; }
+            if(h > 12) { h = 12; }
+            out.push({ id:id, c:c, r:r, w:w, h:h }); acc.push({ i:i, id:id, c:c, r:r, w:w, h:h, title: String((it && it.title) || '') });
             seen[id] = 1;
         }
 
@@ -199,7 +246,10 @@ html, body{
             for(var j = 0; j < fallback.length; j += 1){
                 var fid = fallback[j];
                 var fit = hbItemGetById(fid);
-                if(fit && fit.hasWidget){ out.push({ id: fid, c: (j%2)*2, r: Math.floor(j/2)*2 }); }
+                if(fit && fit.hasWidget){
+                    var sp = whSpanGetFromCatalog(fid);
+                    out.push({ id: fid, c: (j%2)*2, r: Math.floor(j/2)*2, w: sp.w, h: sp.h });
+                }
             }
         }
         try{
@@ -214,7 +264,7 @@ html, body{
         return out;
     }
 
-    function whSpanGet(id){
+    function whSpanGetFromCatalog(id){
         var it = hbItemGetById(id);
         var w = 1, h = 1;
         if(it){
@@ -223,9 +273,28 @@ html, body{
         }
         if(w < 1) { w = 1; }
         if(h < 1) { h = 1; }
-        if(w > 6) { w = 6; }
-        if(h > 6) { h = 6; }
+        if(w > 12) { w = 12; }
+        if(h > 12) { h = 12; }
         return { w:w, h:h };
+    }
+
+    function whSpanGet(id){
+        id = String(id || '').trim();
+        if(id && WH && Array.isArray(WH.grid)){
+            for(var i = 0; i < WH.grid.length; i += 1){
+                var g = WH.grid[i];
+                if(!g || typeof g !== 'object') { continue; }
+                if(String(g.id || '') !== id) { continue; }
+                var w = Math.floor(Number(g.w) || 1);
+                var h = Math.floor(Number(g.h) || 1);
+                if(w < 1) { w = 1; }
+                if(h < 1) { h = 1; }
+                if(w > 12) { w = 12; }
+                if(h > 12) { h = 12; }
+                return { w:w, h:h };
+            }
+        }
+        return whSpanGetFromCatalog(id);
     }
 
     function whModeGet(){
@@ -330,13 +399,23 @@ html, body{
             var spacer = document.createElement('div');
             spacer.className = 'dashSpacer';
 
-            var badge = document.createElement('div');
-            badge.className = 'dashBadge';
-            badge.textContent = 'Widget';
+            var exp = document.createElement('button');
+            exp.className = 'dashExpandBtn';
+            exp.type = 'button';
+            exp.setAttribute('title', 'Genişlet');
+            exp.setAttribute('aria-label', 'Genişlet');
+            exp.setAttribute('data-item-id', id);
+            exp.innerHTML = '<svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\" focusable=\"false\"><path fill=\"currentColor\" d=\"M7 3H3v4h2V5h2V3zm14 0h-4v2h2v2h2V3zM5 17H3v4h4v-2H5v-2zm16 0h-2v2h-2v2h4v-4z\"></path></svg><span class="hbSrOnly">Genişlet</span>';
+            exp.addEventListener('click', function(ev){
+                try{ ev.preventDefault(); ev.stopPropagation(); }catch(e){ console.error(e); }
+                var _id = String(this.getAttribute('data-item-id') || '').trim();
+                if(!_id){ console.error('HB_DASH_FULL_ID_MISSING'); return; }
+                whPostTo(window.parent, { type:'OPEN_FULL', payload:{ id:_id } });
+            }, true);
 
             head.appendChild(title);
             head.appendChild(spacer);
-            head.appendChild(badge);
+            head.appendChild(exp);
 
             var wrap = document.createElement('div');
             wrap.className = 'dashFrameWrap';
@@ -410,6 +489,7 @@ html, body{
     });
 
     whRender();
+
 })();
 </script>
 </body>

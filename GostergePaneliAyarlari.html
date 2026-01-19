@@ -3,7 +3,7 @@
 <head>
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>GostergePaneliAyarlari_V28</title>
+<title>Gosterge Paneli Ayarlari</title>
 
 <script src='BilmedUiLib.js'></script>
 <script src='HB_ItemCatalog.js'></script>
@@ -125,6 +125,11 @@ user-select: none;
         cursor: grab;
     }
 
+    .gpPoolCard.isPicked{
+        border-color: var(--bilmed-primary-bg, var(--gpPrimaryBg));
+        box-shadow: 0 0 0 2px rgba(59,130,246,0.25);
+    }
+
     .gpPoolIcon{
         margin-right: 8px;
         width: 34px;
@@ -183,12 +188,63 @@ overflow: hidden;
         overflow: auto;
         padding: var(--gpPad);
         box-sizing: border-box;
+        position: relative;
         background-image:
           repeating-linear-gradient(to right, rgba(0,0,0,0.07) 0 1px, transparent 1px calc(var(--gpUnitPx) + var(--gpGap))),
           repeating-linear-gradient(to bottom, rgba(0,0,0,0.07) 0 1px, transparent 1px calc(var(--gpUnitPx) + var(--gpGap)));
         background-size: calc(var(--gpUnitPx) + var(--gpGap)) calc(var(--gpUnitPx) + var(--gpGap));
         background-origin: content-box;
         background-clip: content-box;
+    }
+
+    #gpSizeBox{
+        position: sticky;
+        bottom: 12px;
+        margin-left: auto;
+        width: max-content;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: var(--gpSurfaceBg);
+        border: 1px solid var(--gpSurfaceBorder);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+        z-index: 5;
+        user-select: none;
+    }
+    #gpSizeTitle{
+        font-weight: 900;
+        font-size: 12px;
+        opacity: 0.9;
+        max-width: 240px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .gpSizeField{
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        opacity: 0.9;
+    }
+    .gpSizeField input{
+        width: 56px;
+        height: 30px;
+        border-radius: 10px;
+        border: 1px solid var(--gpSurfaceBorder);
+        background: var(--gpTintBg);
+        padding: 0 10px;
+        font-weight: 900;
+        outline: none;
+    }
+    #gpSizeBox.isDisabled{
+        opacity: 0.55;
+        filter: grayscale(0.2);
+    }
+    #gpSizeBox.isDisabled input{
+        pointer-events: none;
     }
 
     #gpGrid{
@@ -282,6 +338,80 @@ box-sizing: border-box;
         border-color: rgba(0,180,0,0.90);}
     .gpDropHint.invalid{
         border-color: rgba(200,0,0,0.92);}
+
+    #gpSizeBox{
+        position: sticky;
+        right: 10px;
+        bottom: 10px;
+        margin-top: 10px;
+        margin-left: auto;
+        width: 240px;
+        border-radius: 16px;
+        background: var(--gpSurfaceBg);
+        border: 1px solid var(--gpSurfaceBorder);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        padding: 10px 10px;
+        box-sizing: border-box;
+        backdrop-filter: blur(2px);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 50;
+    }
+    #gpSizeTitle{
+        font-size: 12px;
+        font-weight: 900;
+        line-height: 1.1;
+        opacity: 0.92;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .gpSizeRow{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .gpSizeRow label{
+        font-size: 12px;
+        font-weight: 800;
+        opacity: 0.85;
+        width: 22px;
+    }
+    .gpSizeRow input{
+        flex: 1;
+        height: 34px;
+        border-radius: 12px;
+        border: 1px solid var(--gpSurfaceBorder);
+        background: var(--gpTintBg);
+        padding: 0 10px;
+        box-sizing: border-box;
+        font-size: 13px;
+        font-weight: 800;
+        outline: none;
+    }
+    .gpSizeBtn{
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        border: 1px solid var(--gpSurfaceBorder);
+        background: var(--gpTintBg);
+        color: var(--gpSurfaceText);
+        font-weight: 900;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        user-select: none;
+    }
+    .gpSizeBtn:active{
+        background: var(--bilmed-primary-bg, var(--gpPrimaryBg));
+        color: #fff;
+        border-color: var(--bilmed-primary-bg, var(--gpPrimaryBg));
+    }
+    .gpSizeRow input:disabled{
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
 
 
         .gpDragGhost{
@@ -452,10 +582,12 @@ cursor:pointer;
         cursor: pointer;
         transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
     }
-    .gpPoolCard:hover{
-        border-color: var(--bilmed-primary-bg, var(--gpPrimaryBg));
-        box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-        background: var(--gpTintBg);
+    @media (hover:hover) and (pointer:fine){
+        .gpPoolCard:hover{
+            border-color: var(--bilmed-primary-bg, var(--gpPrimaryBg));
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            background: var(--gpTintBg);
+        }
     }
 
     /* 2026UI: Button active (pressed) state */
@@ -514,6 +646,9 @@ cursor:pointer;
         }
     }
 
+
+.gpPoolCard, .gpGridCard{ touch-action: none; }
+#gpGridScroll{ touch-action: none; }
 </style>
 </head>
 
@@ -544,6 +679,21 @@ cursor:pointer;
                 <div id='gpGrid'>
                     <div id='gpDropHint' class='gpDropHint'></div>
                 </div>
+                <div id='gpSizeBox'>
+                    <div id='gpSizeTitle'>Boyut</div>
+                    <div class='gpSizeRow'>
+                        <label for='gpSizeW'>W</label>
+                        <input id='gpSizeW' type='number' min='1' max='12' step='1' inputmode='numeric'>
+                        <button type='button' class='gpSizeBtn' data-size-btn='wMinus' aria-label='W azalt'>−</button>
+                        <button type='button' class='gpSizeBtn' data-size-btn='wPlus' aria-label='W artır'>+</button>
+                    </div>
+                    <div class='gpSizeRow'>
+                        <label for='gpSizeH'>H</label>
+                        <input id='gpSizeH' type='number' min='1' max='12' step='1' inputmode='numeric'>
+                        <button type='button' class='gpSizeBtn' data-size-btn='hMinus' aria-label='H azalt'>−</button>
+                        <button type='button' class='gpSizeBtn' data-size-btn='hPlus' aria-label='H artır'>+</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -561,12 +711,32 @@ var GP = {
     selId: '',
     dom: {},
     drag: { active: 0, id: '', from: '' },
+    touch: {
+        enabled: 0,
+        lpTimer: 0,
+        downId: '',
+        downFrom: '',
+        downX: 0,
+        downY: 0,
+        didLongPress: 0,
+        dragPointerId: -1,
+        pickId: '',
+        blockClickUntil: 0
+    },
 };
 
 
 function gpIdNorm(v){ return String(v == null ? '' : v).trim(); }
 
 function gpEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+function gpClampSpan(v, d){
+    var n = Math.floor(Number(v));
+    if(!isFinite(n)) { n = d; }
+    if(n < 1) { n = 1; }
+    if(n > 12) { n = 12; }
+    return n;
+}
 function gpDomCache(){
     GP.dom.poolWrap = document.getElementById('gpPoolWrap');
     GP.dom.poolList = document.getElementById('gpPoolList');
@@ -579,6 +749,10 @@ GP.dom.dropHint = document.getElementById('gpDropHint');
     GP.dom.dragGhost = document.getElementById('gpDragGhost');
 GP.dom.btnSave = document.getElementById('gpBtnSave');
     GP.dom.btnExit = document.getElementById('gpBtnExit');
+    GP.dom.sizeBox = document.getElementById('gpSizeBox');
+    GP.dom.sizeTitle = document.getElementById('gpSizeTitle');
+    GP.dom.sizeW = document.getElementById('gpSizeW');
+    GP.dom.sizeH = document.getElementById('gpSizeH');
 }
 
 function gpCfgKey(){
@@ -599,7 +773,7 @@ function gpGridSnapStr(){
         for(var i = 0; i < GP.grid.length; i += 1){
             var g = GP.grid[i];
             if(!g) { continue; }
-            out.push({ id: g.id, c: g.c, r: g.r });
+            out.push({ id: g.id, c: g.c, r: g.r, w: g.w, h: g.h });
         }
         return JSON.stringify(out);
     }catch(e){
@@ -709,7 +883,10 @@ function gpGridLoadFromCfg(){
         var r = Math.floor(Number(g.r) || 0);
         if(c < 0) { c = 0; }
         if(r < 0) { r = 0; }
-        out.push({ id: id, c: c, r: r });
+        var sp = gpSpanGetFromCatalog(id);
+        var w = gpClampSpan((g.w != null ? g.w : sp.w), sp.w);
+        var h = gpClampSpan((g.h != null ? g.h : sp.h), sp.h);
+        out.push({ id: id, c: c, r: r, w: w, h: h });
         seen[id] = 1;
     }
     GP.grid = out;
@@ -770,19 +947,33 @@ function gpPoolOrderAppend(id){
 }
 
 
-function gpSpanGet(id){
+function gpSpanGetFromCatalog(id){
     var it = gpCatalogGet(id);
     var w = 1;
     var h = 1;
     if(it){
-        w = Math.floor(Number(it.dashSpanW) || 1);
-        h = Math.floor(Number(it.dashSpanH) || 1);
+        w = gpClampSpan(it.dashSpanW, 1);
+        h = gpClampSpan(it.dashSpanH, 1);
     }
-    if(w < 1) { w = 1; }
-    if(h < 1) { h = 1; }
-    if(w > 6) { w = 6; }
-    if(h > 6) { h = 6; }
+    w = gpClampSpan(w, 1);
+    h = gpClampSpan(h, 1);
     return { w: w, h: h };
+}
+
+function gpSpanGet(id){
+    id = gpIdNorm(id);
+    if(id){
+        for(var i = 0; i < GP.grid.length; i += 1){
+            var g = GP.grid[i];
+            if(!g) { continue; }
+            if(g.id === id){
+                var w = gpClampSpan(g.w, 1);
+                var h = gpClampSpan(g.h, 1);
+                return { w:w, h:h };
+            }
+        }
+    }
+    return gpSpanGetFromCatalog(id);
 }
 
 function gpIconSvgGet(id){
@@ -911,19 +1102,24 @@ function gpGeomGet(){
     if(cols < 1) { cols = 1; }
     var unit = (availW - (gap * (cols - 1))) / cols;
     if(!isFinite(unit) || unit <= 1) { unit = 1; }
+    var _u = (GP && GP._unit != null) ? Number(GP._unit) : NaN;
+    if(isFinite(_u) && _u >= 1) { unit = _u; }
     var step = unit + gap;
-    var rect = GP.dom.grid.getBoundingClientRect();
+    var rect = GP.dom.gridScroll.getBoundingClientRect();
     return { mode: mode, gap: gap, pad: pad, availW: availW, cols: cols, unit: unit, step: step, rect: rect };
 }
 
 function gpGridLayoutApply(){
     var g = gpGeomGet();
-    document.documentElement.style.setProperty('--gpUnitPx', String(g.unit) + 'px');
+    var unit = Math.round(Number(g.unit) || 0);
+    if(!isFinite(unit) || unit < 1){ unit = 1; }
+    document.documentElement.style.setProperty('--gpUnitPx', String(unit) + 'px');
     document.documentElement.style.setProperty('--gpGap', String(g.gap) + 'px');
-    GP.dom.grid.style.gridTemplateColumns = 'repeat(' + String(g.cols) + ', 1fr)';
-    GP.dom.grid.style.gridAutoRows = String(g.unit) + 'px';
+    GP.dom.grid.style.gridTemplateColumns = 'repeat(' + String(g.cols) + ', ' + String(unit) + 'px)';
+    GP.dom.grid.style.gridAutoRows = String(unit) + 'px';
+    GP.dom.grid.style.width = String((g.cols * unit) + (g.gap * (g.cols - 1))) + 'px';
     GP._cols = g.cols;
-    GP._unit = g.unit;
+    GP._unit = unit;
     GP._gap = g.gap;
 }
 
@@ -938,9 +1134,6 @@ function gpGridRender(){
         if(!g) { continue; }
         GP.dom.grid.appendChild(gpGridCardEl(g.id, g.c, g.r));
     }
-GP.dom.gridScroll.addEventListener('dragover', gpOnGridDragOver);
-    GP.dom.gridScroll.addEventListener('drop', gpOnGridDrop);
-    GP.dom.gridScroll.addEventListener('dragleave', gpOnGridDragLeave);
 }
 
 function gpGridCardEl(id, c, r){
@@ -998,6 +1191,19 @@ function gpGridCardEl(id, c, r){
 
 function gpGridSelect(id){
     id = gpIdNorm(id);
+    if(id && GP.touch){
+        GP.touch.pickId = '';
+        try{
+            var pcards = GP.dom && GP.dom.poolList ? GP.dom.poolList.querySelectorAll('.gpPoolCard') : null;
+            if(pcards){
+                for(var pi = 0; pi < pcards.length; pi += 1){
+                    var pe = pcards[pi];
+                    if(!pe || !pe.classList) { continue; }
+                    pe.classList.remove('isPicked');
+                }
+            }
+        }catch(e){ console.error(e); }
+    }
     GP.selId = id;
     var kids = GP.dom.grid.children;
     for(var i = 0; i < kids.length; i += 1){
@@ -1006,6 +1212,98 @@ function gpGridSelect(id){
         if(!el.classList.contains('gpGridCard')) { continue; }
         el.classList.toggle('isSelected', gpIdNorm(el.dataset.id) === id);
     }
+    gpSizeUiSync();
+}
+
+function gpSelObjGet(){
+    var id = gpIdNorm(GP.selId);
+    if(!id) { return null; }
+    var idx = gpGridFindIndex(id);
+    if(idx < 0) { return null; }
+    return GP.grid[idx] || null;
+}
+
+function gpSizeUiSync(){
+    if(!GP.dom || !GP.dom.sizeBox || !GP.dom.sizeW || !GP.dom.sizeH || !GP.dom.sizeTitle){ return; }
+    var g = gpSelObjGet();
+    if(!g){
+        GP.dom.sizeBox.classList.add('isDisabled');
+        GP.dom.sizeTitle.textContent = 'Boyut';
+        GP.dom.sizeW.value = '';
+        GP.dom.sizeH.value = '';
+        GP.dom.sizeW.disabled = true;
+        GP.dom.sizeH.disabled = true;
+        return;
+    }
+    var it = gpCatalogGet(g.id) || {};
+    GP.dom.sizeBox.classList.remove('isDisabled');
+    GP.dom.sizeTitle.textContent = String(it.title || g.id);
+    GP.dom.sizeW.disabled = false;
+    GP.dom.sizeH.disabled = false;
+    GP.dom.sizeW.value = String(Math.floor(Number(g.w) || 1));
+    GP.dom.sizeH.value = String(Math.floor(Number(g.h) || 1));
+}
+
+function gpSizeClamp(v){
+    var n = Math.floor(Number(v) || 0);
+    if(n < 1) { n = 1; }
+    if(n > 12) { n = 12; }
+    return n;
+}
+
+function gpOnSizeInputChange(){
+    var g = gpSelObjGet();
+    if(!g){ gpSizeUiSync(); return; }
+    var w = gpSizeClamp(GP.dom.sizeW.value);
+    var h = gpSizeClamp(GP.dom.sizeH.value);
+    var oldW = Math.floor(Number(g.w) || 1);
+    var oldH = Math.floor(Number(g.h) || 1);
+    if(w === oldW && h === oldH){ gpSizeUiSync(); return; }
+    g.w = w;
+    g.h = h;
+    if(!gpGridCanPlaceAt(g.id, g.c, g.r)){
+        g.w = oldW;
+        g.h = oldH;
+        gpSizeUiSync();
+        return;
+    }
+    gpCfgSyncGridMem();
+    gpRenderAll();
+    gpGridSelect(g.id);
+}
+
+function gpOnSizeBtnClick(e){
+    try{
+        if(e && e.preventDefault){ e.preventDefault(); }
+        var btn = e && e.currentTarget ? e.currentTarget : null;
+        if(!btn || !btn.getAttribute) { return; }
+        var k = String(btn.getAttribute('data-size-btn') || '');
+        if(!k) { return; }
+        var g = gpSelObjGet();
+        if(!g){ gpSizeUiSync(); return; }
+        var w = Math.floor(Number(g.w) || 1);
+        var h = Math.floor(Number(g.h) || 1);
+        if(k === 'wMinus') { w -= 1; }
+        if(k === 'wPlus') { w += 1; }
+        if(k === 'hMinus') { h -= 1; }
+        if(k === 'hPlus') { h += 1; }
+        w = gpSizeClamp(w);
+        h = gpSizeClamp(h);
+        var oldW = Math.floor(Number(g.w) || 1);
+        var oldH = Math.floor(Number(g.h) || 1);
+        if(w === oldW && h === oldH){ gpSizeUiSync(); return; }
+        g.w = w;
+        g.h = h;
+        if(!gpGridCanPlaceAt(g.id, g.c, g.r)){
+            g.w = oldW;
+            g.h = oldH;
+            gpSizeUiSync();
+            return;
+        }
+        gpCfgSyncGridMem();
+        gpRenderAll();
+        gpGridSelect(g.id);
+    }catch(err){ console.error(err); }
 }
 
 function gpOnGridCardClick(e){
@@ -1018,10 +1316,16 @@ function gpOnGridCardClick(e){
 function gpOnGridCardDeleteClick(e){
     e.preventDefault();
     e.stopPropagation();
+    try{
+        if(GP && GP._blockDeleteUntil && Date.now() < GP._blockDeleteUntil){
+            return;
+        }
+    }catch(_e){ }
     var id = gpIdNorm(e.currentTarget && e.currentTarget.dataset ? e.currentTarget.dataset.id : '');
     if(!id) { return; }
     gpGridRemove(id);
     gpPoolOrderAppend(id);
+    gpCfgSyncGridMem();
     if(GP.selId === id){ GP.selId = ''; }
     gpRenderAll();
 }
@@ -1073,6 +1377,285 @@ function gpOnDragEnd(){
     gpDropHintHide();
 }
 
+function gpTouchLpClear(){
+    if(GP.touch && GP.touch.lpTimer){
+        try{ clearTimeout(GP.touch.lpTimer); }catch(e){}
+    }
+    GP.touch.lpTimer = 0;
+    GP.touch.downId = '';
+    GP.touch.downFrom = '';
+    GP.touch.downX = 0;
+    GP.touch.downY = 0;
+    GP.touch.didLongPress = 0;
+}
+
+function gpTouchIsActive(){
+    try{
+        if(window.matchMedia && window.matchMedia('(pointer:coarse)').matches){ return 1; }
+    }catch(e){}
+    return ('ontouchstart' in window) ? 1 : 0;
+}
+
+function gpTouchPickSet(id){
+    if(id && GP.selId){
+        GP.selId = '';
+        try{
+            var gkids = GP.dom && GP.dom.grid ? GP.dom.grid.children : null;
+            if(gkids){
+                for(var gi = 0; gi < gkids.length; gi += 1){
+                    var ge = gkids[gi];
+                    if(!ge || !ge.classList || !ge.classList.contains('gpGridCard')) { continue; }
+                    ge.classList.remove('isSelected');
+                }
+            }
+        }catch(e){ console.error(e); }
+        gpSizeUiSync();
+    }
+    GP.touch.pickId = gpIdNorm(id);
+    try{
+        var cards = GP.dom && GP.dom.poolList ? GP.dom.poolList.querySelectorAll('.gpPoolCard') : null;
+        if(cards){
+            for(var i = 0; i < cards.length; i += 1){
+                var c = cards[i];
+                if(!c || !c.classList || !c.dataset) { continue; }
+                c.classList.toggle('isPicked', gpIdNorm(c.dataset.id) === GP.touch.pickId);
+            }
+        }
+    }catch(e){ console.error(e); }
+}
+
+function gpTouchDragStart(ev, id, from){
+    id = gpIdNorm(id);
+    if(!id) { return; }
+    GP.drag.active = 1;
+    GP.drag.id = id;
+    GP.drag.fromIndex = gpGridFindIndex(id);
+    GP.drag.from = from || (GP.drag.fromIndex >= 0 ? 'grid' : 'pool');
+    try{
+        GP.dom && GP.dom.grid && GP.dom.grid.classList ? GP.dom.grid.classList.add('isTouchDragging') : 0;
+    }catch(e){}
+
+    try{
+        var rr = ev.currentTarget && ev.currentTarget.getBoundingClientRect ? ev.currentTarget.getBoundingClientRect() : null;
+        if(rr){
+            GP.drag.grabDx = ev.clientX - rr.left;
+            GP.drag.grabDy = ev.clientY - rr.top;
+        }else{
+            GP.drag.grabDx = 0;
+            GP.drag.grabDy = 0;
+        }
+        var gg = gpGeomGet();
+        var sp = gpSpanGet(id);
+        GP.drag.pxW = (sp.w * gg.unit) + ((sp.w - 1) * gg.gap);
+        GP.drag.pxH = (sp.h * gg.unit) + ((sp.h - 1) * gg.gap);
+    }catch(_e){
+        GP.drag.grabDx = 0; GP.drag.grabDy = 0; GP.drag.pxW = 0; GP.drag.pxH = 0;
+    }
+
+    gpDragGhostShow(id);
+    gpDragGhostMove(ev.clientX, ev.clientY);
+}
+
+function gpTouchDragMove(ev){
+    if(!GP.drag.active) { return; }
+    gpDragGhostMove(ev.clientX, ev.clientY);
+    var id = gpIdNorm(GP.drag.id);
+    if(!id) { return; }
+    var p = gpGridCellFromEvent({ clientX: ev.clientX, clientY: ev.clientY }, id);
+    if(p.c < 0 || p.r < 0) {
+        gpDropHintHide();
+        return;
+    }
+    var ok = gpGridCanPlaceAt(id, p.c, p.r);
+    gpDropHintShow(id, p.c, p.r, ok);
+}
+
+function gpTouchDragEnd(ev){
+    if(!GP.drag.active) { return; }
+    var id = gpIdNorm(GP.drag.id);
+    if(!id) { gpOnDocDragEnd(ev); return; }
+
+    var p = gpGridCellFromEvent({ clientX: ev.clientX, clientY: ev.clientY }, id);
+    if(p.c >= 0 && p.r >= 0 && gpGridCanPlaceAt(id, p.c, p.r)){
+        if(GP.drag.from === 'pool'){ gpPoolOrderRemove(id); }
+        gpGridUpsert(id, p.c, p.r);
+        gpCfgSyncGridMem();
+        gpRenderAll();
+        gpGridSelect(id);
+        gpTouchPickSet('');
+        gpOnDocDragEnd(ev);
+        return;
+    }
+
+    if(GP.drag.from === 'grid'){
+        var overPool = 0;
+        try{
+            var t = document.elementFromPoint(ev.clientX, ev.clientY);
+            while(t){
+                if(t === GP.dom.poolWrap){ overPool = 1; break; }
+                t = t.parentNode;
+            }
+        }catch(e){}
+        if(overPool){
+            gpGridRemove(id);
+            gpPoolOrderAppend(id);
+            gpCfgSyncGridMem();
+            if(GP.selId === id){ GP.selId = ''; }
+            gpRenderAll();
+            gpTouchPickSet('');
+            gpOnDocDragEnd(ev);
+            return;
+        }
+    }
+
+    gpOnDocDragEnd(ev);
+}
+
+function gpTouchOnPointerDown(ev){
+    try{
+        if(!GP.touch.enabled) { return; }
+        if(!ev || ev.pointerType !== 'touch') { return; }
+        try{ ev.preventDefault(); }catch(e){}
+        if(GP.drag && GP.drag.active) { return; }
+
+        var el = ev.target;
+        var from = '';
+        while(el){
+            if(el.classList && el.classList.contains('gpPoolCard')) { from = 'pool'; break; }
+            if(el.classList && el.classList.contains('gpGridCard')) { from = 'grid'; break; }
+            if(el === GP.dom.poolWrap || el === GP.dom.gridScroll || el === document.body) { break; }
+            el = el.parentNode;
+        }
+        if(!from || !el || !el.dataset) { return; }
+        var id = gpIdNorm(el.dataset.id);
+        if(!id) { return; }
+
+        try{ if(el && el.setPointerCapture){ el.setPointerCapture(ev.pointerId); } }catch(e){}
+        try{ ev.preventDefault(); }catch(e){}
+
+        if(from === 'pool'){
+            var prevPick = gpIdNorm(GP.touch.pickId);
+            if(prevPick && prevPick !== id){
+                gpTouchPickSet('');
+            }
+        }
+        gpTouchLpClear();
+        GP.touch.downId = id;
+        GP.touch.downFrom = from;
+        GP.touch.downX = Number(ev.clientX || 0);
+        GP.touch.downY = Number(ev.clientY || 0);
+        GP.touch.didLongPress = 0;
+        GP.touch.dragArmed = 0;
+        if(from === 'pool'){
+            gpTouchPickSet(id);
+            gpGridSelect('');
+            GP.touch.dragArmed = 1;
+        }else if(from === 'grid'){
+            gpGridSelect(id);
+            gpTouchPickSet('');
+            GP.touch.dragArmed = 1;
+        }
+
+        GP.touch.lpTimer = setTimeout(function(){
+            GP.touch.lpTimer = 0;
+            var did = gpIdNorm(GP.touch.downId);
+            var dfrom = String(GP.touch.downFrom || '');
+            if(!did || !dfrom) { return; }
+            if(dfrom === 'grid'){
+                gpGridSelect(did);
+                gpTouchPickSet('');
+            }else if(dfrom === 'pool'){
+                gpTouchPickSet(did);
+                gpGridSelect('');
+            }
+            GP.touch.didLongPress = 1;
+            GP.touch.blockClickUntil = Date.now() + 700;
+            GP.touch.dragPointerId = ev.pointerId;
+            try{ if(ev.target && ev.target.setPointerCapture){ ev.target.setPointerCapture(ev.pointerId); } }catch(e){}
+            gpTouchDragStart(ev, did, dfrom);
+        }, 450);
+    }catch(e){ console.error(e); }
+}
+
+function gpTouchOnPointerMove(ev){
+    try{
+        if(!GP.touch.enabled) { return; }
+        if(!ev || ev.pointerType !== 'touch') { return; }
+        try{ ev.preventDefault(); }catch(e){}
+        if(GP.drag && GP.drag.active){ gpTouchDragMove(ev); return; }
+
+        var sx = Number(GP.touch.downX || 0);
+        var sy = Number(GP.touch.downY || 0);
+        var dx = Number(ev.clientX || 0) - sx;
+        var dy = Number(ev.clientY || 0) - sy;
+        if((dx*dx + dy*dy) > 120){
+            var did = gpIdNorm(GP.touch.downId);
+            var dfrom = String(GP.touch.downFrom || '');
+            if(GP.touch.dragArmed && did && dfrom){
+                gpTouchLpClear();
+                GP.touch.blockClickUntil = Date.now() + 700;
+                GP.touch.dragPointerId = ev.pointerId;
+                try{ if(ev.target && ev.target.setPointerCapture){ ev.target.setPointerCapture(ev.pointerId); } }catch(e){}
+                gpTouchDragStart(ev, did, dfrom);
+                return;
+            }
+            if(GP.touch.lpTimer){
+                gpTouchLpClear();
+            }
+        }
+    }catch(e){ console.error(e); }
+}
+
+function gpTouchOnPointerUp(ev){
+    try{
+        if(!GP.touch.enabled) { return; }
+        if(!ev || ev.pointerType !== 'touch') { return; }
+        try{ ev.preventDefault(); }catch(e){}
+
+        if(GP.drag && GP.drag.active){
+            gpTouchLpClear();
+            gpTouchDragEnd(ev);
+            return;
+        }
+
+        var from = String(GP.touch.downFrom || '');
+        var id = gpIdNorm(GP.touch.downId);
+        var hadTimer = !!GP.touch.lpTimer;
+        gpTouchLpClear();
+        if(!hadTimer || !id || !from){ return; }
+
+        if(from === 'pool'){
+            gpTouchPickSet(id);
+            return;
+        }
+        if(from === 'grid'){
+            gpGridSelect(id);
+            return;
+        }
+    }catch(e){ console.error(e); }
+}
+
+function gpTouchOnGridTap(ev){
+    try{
+        if(!GP.touch.enabled) { return; }
+        if(!ev || ev.pointerType !== 'touch') { return; }
+        try{ ev.preventDefault(); }catch(e){}
+        if(GP.drag && GP.drag.active) { return; }
+        var pickId = gpIdNorm(GP.touch.pickId);
+        if(!pickId) { return; }
+        var p = gpGridCellFromEvent({ clientX: ev.clientX, clientY: ev.clientY }, pickId);
+        if(p.c < 0 || p.r < 0) { return; }
+        if(!gpGridCanPlaceAt(pickId, p.c, p.r)) { return; }
+        gpPoolOrderRemove(pickId);
+        gpGridUpsert(pickId, p.c, p.r);
+        gpCfgSyncGridMem();
+        try{ GP._blockDeleteUntil = Date.now() + 600; }catch(_e){ }
+        gpRenderAll();
+        gpGridSelect(pickId);
+        gpTouchPickSet('');
+    }catch(e){ console.error(e); }
+}
+
 function gpOnPoolDragOver(e){
     if(!GP.drag.active) { return; }
     if(GP.drag.from !== 'grid') { return; }
@@ -1088,6 +1671,7 @@ function gpOnPoolDrop(e){
     e.preventDefault();
     gpGridRemove(id);
     gpPoolOrderAppend(id);
+    gpCfgSyncGridMem();
     if(GP.selId === id){ GP.selId = ''; }
     gpRenderAll();
     gpOnDocDragEnd(e);
@@ -1134,8 +1718,19 @@ if(!GP.drag.active) { return; }
     e.preventDefault();
     if(GP.drag.from === 'pool'){ gpPoolOrderRemove(id); }
     gpGridUpsert(id, p.c, p.r);
+    gpCfgSyncGridMem();
     gpRenderAll();
     gpOnDocDragEnd(e);
+}
+
+
+function gpGridNormalizeAll(){
+    for(var i=0;i<GP.grid.length;i+=1){
+        var g=GP.grid[i];
+        if(!g) { continue; }
+        g.w = gpClampSpan(g.w, 1);
+        g.h = gpClampSpan(g.h, 1);
+    }
 }
 
 function gpGridFindIndex(id){
@@ -1156,11 +1751,21 @@ function gpGridRemove(id){
 function gpGridUpsert(id, c, r){
     id = gpIdNorm(id);
     var idx = gpGridFindIndex(id);
-    var g = { id: id, c: c, r: r };
+    var sp = gpSpanGetFromCatalog(id);
+    var g = { id: id, c: c, r: r, w: sp.w, h: sp.h };
     if(idx >= 0){
+        var prev = GP.grid[idx];
+        if(prev && typeof prev === 'object'){
+            g.w = gpClampSpan(prev.w, g.w);
+            g.h = gpClampSpan(prev.h, g.h);
+        }
+        g.w = gpClampSpan(g.w, 1);
+        g.h = gpClampSpan(g.h, 1);
         GP.grid[idx] = g;
         return;
     }
+    g.w = gpClampSpan(g.w, 1);
+        g.h = gpClampSpan(g.h, 1);
     GP.grid.push(g);
 }
 
@@ -1207,24 +1812,16 @@ function gpGridCellFromEvent(e, id){
     var ax = e.clientX;
     var ay = e.clientY;
 
-    if(GP.drag && GP.drag.active && GP.dom && GP.dom.dragGhost){
-        var gr = GP.dom.dragGhost.getBoundingClientRect();
-        if(gr && gr.width && gr.height){
-            ax = gr.left;
-            ay = gr.top;
-        }
-    }
-
-    var x = ax - g.rect.left - g.pad.l;
-    var y = ay - g.rect.top - g.pad.t;
+    var x = ax - g.rect.left - g.pad.l + GP.dom.gridScroll.scrollLeft;
+    var y = ay - g.rect.top - g.pad.t + GP.dom.gridScroll.scrollTop;
 
     if(x < 0 || y < 0) { return { c: -1, r: -1 }; }
 
     var step = g.step;
     if(!isFinite(step) || step <= 0) { step = 1; }
 
-    var c0 = Math.floor(x / step);
-    var r0 = Math.floor(y / step);
+    var c0 = Math.floor((x + (g.unit * 0.5)) / step);
+    var r0 = Math.floor((y + (g.unit * 0.5)) / step);
 
     var sp = gpSpanGet(id);
 
@@ -1246,8 +1843,8 @@ function gpGridCellFromEvent(e, id){
         if(cc >= g.cols) { continue; }
         if(cc + sp.w > g.cols) { continue; }
 
-        var cx = cc * step;
-        var cy = rr * step;
+        var cx = (cc * step) + (g.unit * 0.5);
+        var cy = (rr * step) + (g.unit * 0.5);
 
         var dx = x - cx;
         var dy = y - cy;
@@ -1327,12 +1924,26 @@ function gpRenderAll(){
     gpPoolRender();
 }
 
+function gpCfgSyncGridMem(){
+    try{
+        if(!GP.cfg) { return; }
+        if(!GP.cfg.dash) { GP.cfg.dash = {}; }
+        var out = [];
+        for(var i = 0; i < GP.grid.length; i += 1){
+            var g = GP.grid[i];
+            if(!g) { continue; }
+            out.push({ id: g.id, c: g.c, r: g.r, w: g.w, h: g.h });
+        }
+        GP.cfg.dash.grid = out;
+    }catch(e){ console.error(e); }
+}
+
 function gpSave(){
     var out = [];
     for(var i = 0; i < GP.grid.length; i += 1){
         var g = GP.grid[i];
         if(!g) { continue; }
-        out.push({ id: g.id, c: g.c, r: g.r });
+        out.push({ id: g.id, c: g.c, r: g.r, w: g.w, h: g.h });
     }
     GP.cfg.dash.grid = out;
     gpCfgSave();
@@ -1408,7 +2019,7 @@ function gpNumOrZero(v){
 }
 
 function gpThemeApply(){
-    var drid = gpNumOrZero(gpParamGet('drid'));
+    var drid = gpNumOrZero(gpParamGet('DrID'));
     GP.drid = drid;
 
     if(typeof BilmedThema === 'function'){
@@ -1438,12 +2049,52 @@ function gpInit(){
     GP.dom = GP.dom || {};
     gpDomCache();
 
-    
+    try{
+        if(GP.dom.sizeW){
+            GP.dom.sizeW.addEventListener('input', gpOnSizeInputChange);
+            GP.dom.sizeW.addEventListener('change', gpOnSizeInputChange);
+        }
+        if(GP.dom.sizeH){
+            GP.dom.sizeH.addEventListener('input', gpOnSizeInputChange);
+            GP.dom.sizeH.addEventListener('change', gpOnSizeInputChange);
+        }
+        try{
+            var bs = document.querySelectorAll('.gpSizeBtn');
+            for(var i = 0; i < bs.length; i += 1){
+                bs[i].addEventListener('click', gpOnSizeBtnClick);
+            }
+        }catch(e){ console.error(e); }
+        gpSizeUiSync();
+    }catch(e){ console.error(e); }
+
     document.addEventListener('dragover', gpOnDocDragOver);
     document.addEventListener('dragend', gpOnDocDragEnd);
     document.addEventListener('drop', gpOnDocDragEnd);
     GP.dom.poolWrap.addEventListener('dragover', gpOnPoolDragOver);
     GP.dom.poolWrap.addEventListener('drop', gpOnPoolDrop);
+
+    try{
+        GP.touch.enabled = gpTouchIsActive();
+        if(GP.touch.enabled){
+            document.addEventListener('pointerdown', gpTouchOnPointerDown, { passive: false });
+            document.addEventListener('pointermove', gpTouchOnPointerMove, { passive: false });
+            document.addEventListener('pointerup', gpTouchOnPointerUp, { passive: false });
+            document.addEventListener('pointercancel', gpTouchOnPointerUp, { passive: false });
+            document.addEventListener('click', function(ev){
+                try{
+                    if(!GP.touch.enabled) { return; }
+                    if(Date.now() < Number(GP.touch.blockClickUntil || 0)){
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        if(ev.stopImmediatePropagation){ ev.stopImmediatePropagation(); }
+                    }
+                }catch(e){}
+            }, true);
+            if(GP.dom && GP.dom.gridScroll){
+                GP.dom.gridScroll.addEventListener('pointerup', gpTouchOnGridTap, { passive: true });
+            }
+        }
+    }catch(e){ console.error(e); }
 try{
         gpCfgLoad();
     }catch(e){}
@@ -1461,6 +2112,7 @@ try{
     gpGridRender();
     gpPoolRender();
     gpCfgBaselineSet();
+    gpSizeUiSync();
 GP.dom.btnSave.addEventListener('click', function(){
         gpSave();
     });
@@ -1499,6 +2151,10 @@ window.addEventListener('beforeunload', function(e){
         gpGridRender();
         gpPoolRender();
     });
+    GP.dom.gridScroll.addEventListener('dragover', gpOnGridDragOver);
+    GP.dom.gridScroll.addEventListener('drop', gpOnGridDrop);
+    GP.dom.gridScroll.addEventListener('dragleave', gpOnGridDragLeave);
+
 }
 
 

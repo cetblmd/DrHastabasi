@@ -183,10 +183,11 @@ var __BILMED_THEME_ID = null;
 
     BilmedTheme.list = function(){
         return [
+            { id: "kurumsal", name: "Bilmed Kurumsal", meta: "Bilmed kurumsal mavi" },
             { id: "rahat", name: "Rahat", meta: "Günlük uzun kullanım" },
             { id: "sakin", name: "Sakin", meta: "Gece / düşük uyarım" },
             { id: "canli", name: "Canlı", meta: "Hızlı algı / vurgu" },
-            { id: "kurumsal", name: "Bilmed Kurumsal", meta: "Bilmed kurumsal mavi" },
+            { id: "doga", name: "Doğa", meta: "Yumuşak doğa tonları" },
             { id: "kontrast", name: "Kontrast", meta: "Erişilebilir" }
         ];
     };
@@ -248,6 +249,64 @@ var __BILMED_THEME_ID = null;
                 surfaceText: "#0F172A",
                 mutedText: "rgba(15,23,42,0.7)"
             },
+            doga: {
+                id: "doga",
+                headerBg: "#18B8A7",
+                headerFg: "#000000",
+                headerBorder: "rgba(0,0,0,0.10)",
+                header2Bg: "#10A8D7",
+                pageBg: "#F4F9FC",
+                railBg: "#D9EFF8",
+                miniBg: "#DAF1F2",
+                railItemBg: "#10A8D7",
+                railItemBorder: "rgba(16,168,215,0.42)",
+                miniRowIdleBg: "rgba(24,184,167,0.18)",
+                miniRowHoverBg: "rgba(24,184,167,0.26)",
+                miniRowSelectedBg: "rgba(16,168,215,0.28)",
+                miniRowBorder: "rgba(16,168,215,0.26)",
+                miniCtrlBg: "rgba(16,168,215,0.22)",
+                miniCtrlBorder: "rgba(16,168,215,0.38)",
+                miniCtrlFg: "#000000",
+                avatarBg: "#FFFFFF",
+                avatarFg: "#000000",
+                avatarBorder: "rgba(0,0,0,0.10)",
+                gearBg: "#FFFFFF",
+                gearFg: "#000000",
+                gearBorder: "rgba(0,0,0,0.10)",
+                surfaceBg: "#FFFFFF",
+                surfaceBorder: "rgba(0,0,0,0.10)",
+                surfaceText: "#000000",
+                mutedText: "rgba(0,0,0,0.70)"
+            },
+            doga1: {
+                id: "doga1",
+                headerBg: "#18B8A7",
+                headerFg: "#000000",
+                headerBorder: "rgba(0,0,0,0.10)",
+                header2Bg: "#10A8D7",
+                pageBg: "#F4F9FC",
+                railBg: "#D9EFF8",
+                miniBg: "#DAF1F2",
+                railItemBg: "rgba(16,168,215,0.26)",
+                railItemBorder: "rgba(16,168,215,0.42)",
+                miniRowIdleBg: "rgba(24,184,167,0.18)",
+                miniRowHoverBg: "rgba(24,184,167,0.26)",
+                miniRowSelectedBg: "rgba(16,168,215,0.28)",
+                miniRowBorder: "rgba(16,168,215,0.26)",
+                miniCtrlBg: "rgba(16,168,215,0.22)",
+                miniCtrlBorder: "rgba(16,168,215,0.38)",
+                miniCtrlFg: "#000000",
+                avatarBg: "#FFFFFF",
+                avatarFg: "#000000",
+                avatarBorder: "rgba(0,0,0,0.10)",
+                gearBg: "#FFFFFF",
+                gearFg: "#000000",
+                gearBorder: "rgba(0,0,0,0.10)",
+                surfaceBg: "#FFFFFF",
+                surfaceBorder: "rgba(0,0,0,0.10)",
+                surfaceText: "#000000",
+                mutedText: "rgba(0,0,0,0.70)"
+            },
             kurumsal: {
                 id: "kurumsal",
                 headerBg: "#0A3A6A",
@@ -295,6 +354,24 @@ var __BILMED_THEME_ID = null;
 
         ui.miniBg = base.surfaceBg;
         ui.miniBorder = base.surfaceBorder;
+
+        if(base.railBg) { ui.railBg = base.railBg; }
+        if(base.miniBg) { ui.miniBg = base.miniBg; }
+        if(base.miniBorder) { ui.miniBorder = base.miniBorder; }
+
+        if(base.railItemBg) { ui.railItemBg = base.railItemBg; }
+        if(base.railItemBorder) { ui.railItemBorder = base.railItemBorder; }
+        if(base.railItemHoverBg) { ui.railItemHoverBg = base.railItemHoverBg; }
+        if(base.railItemActiveBg) { ui.railItemActiveBg = base.railItemActiveBg; }
+        if(base.railItemSelectedBg) { ui.railItemSelectedBg = base.railItemSelectedBg; }
+
+        if(base.miniRowIdleBg) { ui.miniRowIdleBg = base.miniRowIdleBg; }
+        if(base.miniRowHoverBg) { ui.miniRowHoverBg = base.miniRowHoverBg; }
+        if(base.miniRowSelectedBg) { ui.miniRowSelectedBg = base.miniRowSelectedBg; }
+        if(base.miniRowBorder) { ui.miniRowBorder = base.miniRowBorder; }
+        if(base.miniCtrlBg) { ui.miniCtrlBg = base.miniCtrlBg; }
+        if(base.miniCtrlBorder) { ui.miniCtrlBorder = base.miniCtrlBorder; }
+        if(base.miniCtrlFg) { ui.miniCtrlFg = base.miniCtrlFg; }
 
         var __bgc = __bilmed_parseColor(base.surfaceBg) || { r: 255, g: 255, b: 255, a: 1 };
         var __fgc = __bilmed_parseColor(base.surfaceText) || { r: 15, g: 23, b: 42, a: 1 };
@@ -367,6 +444,32 @@ var __BILMED_THEME_ID = null;
         base.ui = ui;
         return base;
     };
+
+
+    function __bilmed_fontList(){
+        return [
+            { id: 'system', name: 'Sistem', css: "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" },
+            { id: 'arial', name: 'Arial', css: "Arial, Helvetica, sans-serif" },
+            { id: 'segoe', name: 'Segoe UI', css: "'Segoe UI', Tahoma, Arial, sans-serif" },
+            { id: 'roboto', name: 'Roboto', css: "Roboto, 'Segoe UI', Arial, sans-serif" },
+            { id: 'times', name: 'Times New Roman', css: "'Times New Roman', Times, serif" },
+            { id: 'georgia', name: 'Georgia', css: "Georgia, 'Times New Roman', serif" }
+        ];
+    }
+
+    function __bilmed_fontCss(fontId){
+        var id = String(fontId || 'system');
+        var list = __bilmed_fontList();
+        for(var i = 0; i < list.length; i += 1){
+            if(list[i].id === id) { return list[i].css; }
+        }
+        return list[0].css;
+    }
+
+    BilmedTheme.fontList = function(){
+        return __bilmed_fontList().slice(0);
+    };
+
     BilmedTheme.apply = function(doc, cfg){
         var d = doc || document;
         var c = cfg || {};
@@ -384,7 +487,7 @@ var __BILMED_THEME_ID = null;
         root.style.setProperty('--bilmed-header-fg', t.headerFg);
         root.style.setProperty('--bilmed-header-border', t.headerBorder);
 
-        var __bilmed_header2Bg = __bilmed_header2BgFromHeader(t.headerBg);
+        var __bilmed_header2Bg = (t && t.header2Bg) ? t.header2Bg : __bilmed_header2BgFromHeader(t.headerBg);
 
         root.style.setProperty('--bilmed-header2-bg', __bilmed_header2Bg);
         root.style.setProperty('--bilmed-header2-fg', t.headerFg);
@@ -407,13 +510,39 @@ var __BILMED_THEME_ID = null;
         root.style.setProperty('--bilmed-surface-text', t.surfaceText);
         root.style.setProperty('--bilmed-muted-text', t.mutedText);
 
+        var typo = (c && c.typography) ? c.typography : c;
+        var row1FontId = (typo && typo.row1FontId) ? String(typo.row1FontId) : 'system';
+        var descFontId = (typo && typo.descFontId) ? String(typo.descFontId) : 'system';
+        var row1Px = (typo && typo.row1Px != null) ? Number(typo.row1Px) : NaN;
+        var descPx = (typo && typo.descPx != null) ? Number(typo.descPx) : NaN;
+
+        root.style.setProperty('--bilmed-row1-font-family', __bilmed_fontCss(row1FontId));
+        root.style.setProperty('--bilmed-desc-font-family', __bilmed_fontCss(descFontId));
+        root.style.setProperty('--bilmed-row1-px', isFinite(row1Px) ? String(row1Px) : '');
+        root.style.setProperty('--bilmed-desc-px', isFinite(descPx) ? String(descPx) : '');
+
         __bilmed_applyMiniUiColors(d, t, themeId);
     };
 
     if(!global.__bilmed_mini_rows_ready_hook) {
         global.__bilmed_mini_rows_ready_hook = 1;
         document.addEventListener('HB_MINI_ROWS_READY', function(){
-            BilmedTheme.apply(document);
+            var __pid = 0;
+            try{ if(typeof DrID !== 'undefined'){ __pid = Math.floor(Number(DrID)) || 0; } }catch(e0){ console.error('BILMED_CFG_DRID_READ_FAIL', e0); __pid = 0; }
+            var __cfg = {};
+            try{ if(typeof BilmedConfig !== 'undefined' && BilmedConfig && typeof BilmedConfig.load === 'function'){ __cfg = BilmedConfig.load(__pid) || {}; } }catch(e1){ console.error('BILMED_CFG_LOAD_FAIL', e1); __cfg = {}; }
+            BilmedTheme.apply(document, __cfg);
+        });
+    }
+
+    if(!global.__bilmed_dom_ready_hook) {
+        global.__bilmed_dom_ready_hook = 1;
+        document.addEventListener('DOMContentLoaded', function(){
+            var __pid = 0;
+            try{ if(typeof DrID !== 'undefined'){ __pid = Math.floor(Number(DrID)) || 0; } }catch(e0){ console.error('BILMED_CFG_DRID_READ_FAIL', e0); __pid = 0; }
+            var __cfg = {};
+            try{ if(typeof BilmedConfig !== 'undefined' && BilmedConfig && typeof BilmedConfig.load === 'function'){ __cfg = BilmedConfig.load(__pid) || {}; } }catch(e1){ console.error('BILMED_CFG_LOAD_FAIL', e1); __cfg = {}; }
+            BilmedTheme.apply(document, __cfg);
         });
     }
 
@@ -695,16 +824,68 @@ function __bilmed_patchHbMiniSelection(doc, t){
     };
 
     BilmedConfig.load = function(pid){
+        try{
+            if(typeof HB_Cfg !== 'undefined' && HB_Cfg && typeof HB_Cfg.getBlob === 'function'){
+                var b = HB_Cfg.getBlob(pid) || {};
+                if(!b.theme) { b.theme = {}; }
+                var out = b.theme || {};
+                try{
+                    if(!out || typeof out !== 'object') { out = {}; }
+                    if(!out.typography) { out.typography = {}; }
+                    if(b.layout && b.layout.typography && typeof b.layout.typography === 'object') {
+                        var lt = b.layout.typography;
+                        if(lt.row1 && typeof lt.row1 === 'object') {
+                            if(lt.row1.fontId) { out.typography.row1FontId = String(lt.row1.fontId); }
+                            if(lt.row1.px != null) { out.typography.row1Px = Number(lt.row1.px); }
+                        }
+                        if(lt.desc && typeof lt.desc === 'object') {
+                            if(lt.desc.fontId) { out.typography.descFontId = String(lt.desc.fontId); }
+                            if(lt.desc.px != null) { out.typography.descPx = Number(lt.desc.px); }
+                        }
+                    }
+                }catch(e){
+                    console.error('BILMED_CFG_TYPO_MERGE_FAIL', e);
+                }
+                return out;
+            }
+        }catch(e){
+            console.error('BILMED_CFG_BLOB_LOAD_FAIL', e);
+        }
+
         var raw = localStorage.getItem(BilmedConfig._k(pid));
         if(!raw) {
             return {};
         }
 
-            return JSON.parse(raw) || {};
+        return JSON.parse(raw) || {};
 
     };
 
     BilmedConfig.save = function(pid, cfg){
+        try{
+            if(typeof HB_Cfg !== 'undefined' && HB_Cfg && typeof HB_Cfg.getBlob === 'function' && typeof HB_Cfg.saveBlob === 'function'){
+                var b = HB_Cfg.getBlob(pid) || {};
+                b.theme = cfg || {};
+                try{
+                    if(!b.layout || typeof b.layout !== 'object') { b.layout = {}; }
+                    if(!b.layout.typography || typeof b.layout.typography !== 'object') { b.layout.typography = {}; }
+                    var t = (cfg && cfg.typography && typeof cfg.typography === 'object') ? cfg.typography : {};
+                    if(!b.layout.typography.row1 || typeof b.layout.typography.row1 !== 'object') { b.layout.typography.row1 = {}; }
+                    if(!b.layout.typography.desc || typeof b.layout.typography.desc !== 'object') { b.layout.typography.desc = {}; }
+                    b.layout.typography.row1.fontId = String(t.row1FontId || 'system');
+                    b.layout.typography.desc.fontId = String(t.descFontId || 'system');
+                    if(t.row1Px != null && isFinite(Number(t.row1Px))) { b.layout.typography.row1.px = Number(t.row1Px); }
+                    if(t.descPx != null && isFinite(Number(t.descPx))) { b.layout.typography.desc.px = Number(t.descPx); }
+                }catch(e){
+                    console.error('BILMED_CFG_TYPO_SAVE_FAIL', e);
+                }
+                HB_Cfg.saveBlob(pid, b);
+                return;
+            }
+        }catch(e){
+            console.error('BILMED_CFG_BLOB_SAVE_FAIL', e);
+        }
+
         localStorage.setItem(BilmedConfig._k(pid), JSON.stringify(cfg || {}));
     };
 
@@ -740,7 +921,7 @@ function __bilmed_patchHbMiniSelection(doc, t){
             ".bilmedPvAvatar{width:28px;height:28px;border-radius:50%;border:1px solid rgba(0,0,0,0.18);background:#fff;color:#0f172a;display:grid;place-items:center;font-weight:900;font-size:0.6875rem;flex:0 0 auto}" +
             ".bilmedPvText{font-size:0.75rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}" +
             ".bilmedPvBody{display:flex;gap:10px;padding:10px;box-sizing:border-box}.bilmedPvRail{width:44px;border-radius:12px;border:1px solid rgba(0,0,0,0.10);overflow:hidden;display:flex;flex-direction:column}.bilmedPvMini{flex:1;border-radius:12px;border:1px solid rgba(0,0,0,0.10);overflow:hidden;display:flex;flex-direction:column;min-width:0}.bilmedPvCtlRow{height:22px;display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:0 8px;box-sizing:border-box}.bilmedPvCtl{width:22px;height:14px;border-radius:7px;border:1px solid rgba(0,0,0,0.12);background:rgba(255,255,255,0.70)}.bilmedPvRailList{padding:8px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}.bilmedPvDot{width:18px;height:18px;border-radius:8px;border:1px solid rgba(0,0,0,0.10);background:rgba(255,255,255,0.70)}.bilmedPvMiniList{padding:8px 10px 10px 10px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}.bilmedPvRow{height:16px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;gap:8px;padding:0 8px;box-sizing:border-box}.bilmedPvRowIcon{width:14px;height:14px;border-radius:6px;border:1px solid rgba(0,0,0,0.10);background:rgba(255,255,255,0.70);flex:0 0 auto}.bilmedPvRowText{height:8px;border-radius:6px;flex:1;opacity:0.85}" +
-            ".bilmedMeta{margin-top:8px;font-size:0.75rem;color:rgba(15,23,42,0.7)}.bilmedPvFrame{display:flex;min-height:78px;background:var(--bilmed-page-bg)}.bilmedPvLeft{width:25%;min-width:0;border-right:1px solid rgba(0,0,0,0.06);display:flex;flex-direction:column}.bilmedPvLeftHead{height:30px;display:flex;align-items:center;gap:6px;padding:0 8px;box-sizing:border-box;border-bottom:1px solid rgba(0,0,0,0.06)}.bilmedPvLeftBtn{height:18px;width:18px;border-radius:7px;border:1px solid rgba(0,0,0,0.10);background:rgba(255,255,255,0.65)}.bilmedPvRail{width:26px;flex:0 0 auto;border-right:1px solid rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:6px;padding:8px 6px;box-sizing:border-box}.bilmedPvRailI{height:14px;width:14px;border-radius:5px;background:rgba(15,23,42,0.12)}.bilmedPvMini{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box}.bilmedPvRow{height:12px;border-radius:6px;background:rgba(15,23,42,0.10)}.bilmedPvMain{flex:1;min-width:0;display:flex;flex-direction:column}.bilmedPvMainBody{display:none}";
+            ".bilmedMeta{margin-top:8px;font-size:0.75rem;color:rgba(15,23,42,0.7)}.bilmedPvFrame{display:flex;min-height:78px;background:var(--bilmed-page-bg)}.bilmedPvLeft{width:25%;min-width:0;border-right:1px solid rgba(0,0,0,0.06);display:flex;flex-direction:column}.bilmedPvLeftHead{height:30px;display:flex;align-items:center;gap:6px;padding:0 8px;box-sizing:border-box;border-bottom:1px solid rgba(0,0,0,0.06)}.bilmedPvLeftBtn{height:18px;width:18px;border-radius:7px;border:1px solid rgba(0,0,0,0.10);background:rgba(255,255,255,0.65)}.bilmedPvRail{width:26px;flex:0 0 auto;border-right:1px solid rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:6px;padding:8px 6px;box-sizing:border-box}.bilmedPvRailI{height:14px;width:14px;border-radius:5px;background:rgba(15,23,42,0.12)}.bilmedPvMini{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box}.bilmedPvRow{height:12px;border-radius:6px;background:rgba(15,23,42,0.10)}.bilmedPvMain{flex:1;min-width:0;display:flex;flex-direction:column}.bilmedPvMainBody{display:none}#bilmedTypo{border:1px solid var(--bilmed-surface-border);border-radius:14px;padding:12px;margin-bottom:12px;background:var(--bilmed-tint-bg)}#bilmedTypoGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media (max-width:640px){#bilmedTypoGrid{grid-template-columns:1fr}}.bilmedTypoBox{background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.06);border-radius:12px;padding:10px}.bilmedTypoTitle{font-weight:900;font-size:0.8rem;margin-bottom:8px;color:#0f172a}.bilmedField{display:flex;align-items:center;gap:8px;margin-top:8px}.bilmedLabel{width:64px;font-weight:800;font-size:0.72rem;color:rgba(15,23,42,0.72)}.bilmedSelect,.bilmedNumber{flex:1;min-width:0;border:1px solid rgba(0,0,0,0.18);border-radius:10px;padding:7px 10px;font-weight:800;font-size:0.78rem;background:#fff;color:#0f172a;box-sizing:border-box}.bilmedNumber{max-width:120px}";
 
         d.head.appendChild(st);
 
@@ -781,13 +962,118 @@ function __bilmed_patchHbMiniSelection(doc, t){
         var grid = d.createElement("div");
         grid.id = "bilmedThemeGrid";
 
+        var typo = d.createElement('div');
+        typo.id = 'bilmedTypo';
+
+        var typoGrid = d.createElement('div');
+        typoGrid.id = 'bilmedTypoGrid';
+
+        function makeBox(titleText, fontId, pxId){
+            var box = d.createElement('div');
+            box.className = 'bilmedTypoBox';
+
+            var title = d.createElement('div');
+            title.className = 'bilmedTypoTitle';
+            title.textContent = titleText;
+            box.appendChild(title);
+
+            var r1 = d.createElement('div');
+            r1.className = 'bilmedField';
+            var l1 = d.createElement('div');
+            l1.className = 'bilmedLabel';
+            l1.textContent = 'Font';
+            var s1 = d.createElement('select');
+            s1.className = 'bilmedSelect';
+            s1.id = fontId;
+            r1.appendChild(l1);
+            r1.appendChild(s1);
+            box.appendChild(r1);
+
+            var r2 = d.createElement('div');
+            r2.className = 'bilmedField';
+            var l2 = d.createElement('div');
+            l2.className = 'bilmedLabel';
+            l2.textContent = 'Size';
+            var n = d.createElement('input');
+            n.className = 'bilmedNumber';
+            n.type = 'number';
+            n.min = '8';
+            n.max = '24';
+            n.step = '1';
+            n.id = pxId;
+            r2.appendChild(l2);
+            r2.appendChild(n);
+            box.appendChild(r2);
+
+            return box;
+        }
+
+        typoGrid.appendChild(makeBox('En Üst Satır', 'bilmedRow1Font', 'bilmedRow1Px'));
+        typoGrid.appendChild(makeBox('Buton Açıklamaları', 'bilmedDescFont', 'bilmedDescPx'));
+
+        typo.appendChild(typoGrid);
+
+        body.appendChild(typo);
         body.appendChild(grid);
 
         modal.appendChild(header);
         modal.appendChild(body);
         backdrop.appendChild(modal);
         d.body.appendChild(backdrop);
-    }
+        // === V11: Görünüm Ayarları dialogu header'dan sürüklenebilir ===
+        (function(){
+            var modalEl = modal;
+            var headerEl = header;
+            if(!modalEl || !headerEl) { return; }
+
+            var dragging = false;
+            var sx = 0, sy = 0, sl = 0, st = 0;
+
+            headerEl.style.cursor = 'move';
+
+            function isInteractiveTarget(t){
+                if(!t) { return 0; }
+                if(t === headerEl) { return 0; }
+                if(t.closest && t.closest('#bilmedThemeSave, #bilmedThemeClose')) { return 1; }
+                if(t.tagName && String(t.tagName).toLowerCase() === 'button') { return 1; }
+                if(t.closest && t.closest('button, a, input, select, textarea, label')) { return 1; }
+                return 0;
+            }
+
+            headerEl.addEventListener('pointerdown', function(e){
+                if(isInteractiveTarget(e.target)) { return; }
+
+                dragging = true;
+                sx = e.clientX;
+                sy = e.clientY;
+
+                var r = modalEl.getBoundingClientRect();
+                sl = r.left;
+                st = r.top;
+
+                modalEl.style.position = 'fixed';
+                modalEl.style.left = sl + 'px';
+                modalEl.style.top  = st + 'px';
+
+                headerEl.setPointerCapture(e.pointerId);
+                e.preventDefault();
+            });
+
+            headerEl.addEventListener('pointermove', function(e){
+                if(!dragging) { return; }
+                modalEl.style.left = (sl + (e.clientX - sx)) + 'px';
+                modalEl.style.top  = (st + (e.clientY - sy)) + 'px';
+            });
+
+            function endDrag(e){
+                if(!dragging) { return; }
+                dragging = false;
+                try{ headerEl.releasePointerCapture(e.pointerId); }catch(_){}
+            }
+
+            headerEl.addEventListener('pointerup', endDrag);
+            headerEl.addEventListener('pointercancel', endDrag);
+        })();}
 
     function __uiOpen(doc, state){
         var d = doc || document;
@@ -799,6 +1085,11 @@ function __bilmed_patchHbMiniSelection(doc, t){
         var grid = d.getElementById("bilmedThemeGrid");
         var btnSave = d.getElementById("bilmedThemeSave");
         var btnClose = d.getElementById("bilmedThemeClose");
+
+        var inRow1Font = d.getElementById("bilmedRow1Font");
+        var inRow1Px = d.getElementById("bilmedRow1Px");
+        var inDescFont = d.getElementById("bilmedDescFont");
+        var inDescPx = d.getElementById("bilmedDescPx");
 
         function freezeModalVars(){
             if(!modal) { return; }
@@ -842,19 +1133,110 @@ function __bilmed_patchHbMiniSelection(doc, t){
 
         var workingCfg = JSON.parse(JSON.stringify(startCfg));
 
+        if(!workingCfg.typography) { workingCfg.typography = {}; }
+
+        function fillFonts(sel){
+            if(!sel) { return; }
+            sel.innerHTML = '';
+            var list = BilmedTheme.fontList ? BilmedTheme.fontList() : [];
+            for(var i = 0; i < list.length; i += 1){
+                var opt = d.createElement('option');
+                opt.value = list[i].id;
+                opt.textContent = list[i].name;
+                sel.appendChild(opt);
+            }
+        }
+
+        function applyTypoPreview(){
+            BilmedTheme.apply(d, workingCfg);
+            try {
+                if(d.defaultView && typeof d.defaultView.__hb_applyTopScale === 'function') {
+                    d.defaultView.__hb_applyTopScale();
+                }
+            } catch(e) {
+                console.error('BILMED_TYPO_APPLY_FAIL', e);
+            }
+        }
+
+        fillFonts(inRow1Font);
+        fillFonts(inDescFont);
+
+        var tcfg = workingCfg.typography;
+        if(!tcfg.row1FontId) { tcfg.row1FontId = 'system'; }
+        if(!tcfg.descFontId) { tcfg.descFontId = 'system'; }
+        if(tcfg.row1Px == null || !isFinite(Number(tcfg.row1Px))) { tcfg.row1Px = 14; }
+        if(tcfg.descPx == null || !isFinite(Number(tcfg.descPx))) { tcfg.descPx = 12; }
+
+        if(inRow1Font) { inRow1Font.value = String(tcfg.row1FontId); }
+        if(inDescFont) { inDescFont.value = String(tcfg.descFontId); }
+        if(inRow1Px) { inRow1Px.value = String(Number(tcfg.row1Px)); }
+        if(inDescPx) { inDescPx.value = String(Number(tcfg.descPx)); }
+
+        function bind(){
+            if(inRow1Font) {
+                inRow1Font.onchange = function(){
+                    workingCfg.typography.row1FontId = String(inRow1Font.value || 'system');
+                    applyTypoPreview();
+                };
+            }
+            if(inDescFont) {
+                inDescFont.onchange = function(){
+                    workingCfg.typography.descFontId = String(inDescFont.value || 'system');
+                    applyTypoPreview();
+                };
+            }
+            if(inRow1Px) {
+                inRow1Px.oninput = function(){
+                    workingCfg.typography.row1Px = Math.max(8, Math.min(40, Number(inRow1Px.value)));
+                    applyTypoPreview();
+                };
+            }
+            if(inDescPx) {
+                inDescPx.oninput = function(){
+                    workingCfg.typography.descPx = Math.max(8, Math.min(40, Number(inDescPx.value)));
+                    applyTypoPreview();
+                };
+            }
+        }
+
+        bind();
+
         freezeModalVars();
 
         __BILMED_ENTRY_THEME_ID = __BILMED_THEME_ID;
         __BILMED_ENTRY_T = __BILMED_T;
 
         function closeWithoutSave(){
-            __bilmed_setCurrentThemeId(__BILMED_ENTRY_THEME_ID);
-            BilmedTheme.apply(d);
+            try {
+                if(startCfg && startCfg.themeId) {
+                    __bilmed_setCurrentThemeId(startCfg.themeId);
+                } else {
+                    __bilmed_setCurrentThemeId(__BILMED_ENTRY_THEME_ID);
+                }
+            } catch(e) {
+                console.error('BILMED_THEME_RESTORE_ID_FAIL', e);
+            }
+            BilmedTheme.apply(d, startCfg);
+            try {
+                if(d.defaultView && typeof d.defaultView.__hb_applyTopScale === 'function') {
+                    d.defaultView.__hb_applyTopScale();
+                }
+            } catch(e) {
+                console.error('BILMED_TYPO_APPLY_FAIL', e);
+            }
             backdrop.style.display = "none";
         }
 
         function saveAndClose(){
             BilmedConfig.save(state.personelId, workingCfg);
+            BilmedTheme.apply(d, workingCfg);
+            try {
+                if(d.defaultView && typeof d.defaultView.__hb_applyTopScale === 'function') {
+                    d.defaultView.__hb_applyTopScale();
+                }
+            } catch(e) {
+                console.error('BILMED_TYPO_APPLY_FAIL', e);
+            }
             backdrop.style.display = "none";
         }
 
@@ -1042,7 +1424,7 @@ function __bilmed_patchHbMiniSelection(doc, t){
                     pvMain.className = "bilmedPvMain";
                     var pvTop2 = d.createElement("div");
                     pvTop2.className = "bilmedPvTop2";
-                    pvTop2.style.background = __bilmed_header2BgFromHeader(t.headerBg);
+                    pvTop2.style.background = (t && t.header2Bg) ? t.header2Bg : __bilmed_header2BgFromHeader(t.headerBg);
                     pvTop2.style.color = t.headerFg;
                     pvTop2.style.borderBottom = "1px solid " + __bilmed_borderSoft(t.headerBorder);
 

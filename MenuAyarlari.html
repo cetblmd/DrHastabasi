@@ -3,7 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Menu Ayarlari V184</title>
+<title>Menu Ayarlari</title>
 
 <script src='BilmedUiLib.js'></script>
 
@@ -15,7 +15,7 @@ html,body{background:var(--bilmed-page-bg) !important}
 #topRow2{background:var(--bilmed-header2-bg) !important;border-color:var(--bilmed-header2-border) !important;color:var(--bilmed-header2-fg) !important}
 .panel{background:var(--bilmed-surface-bg) !important;border-color:var(--bilmed-surface-border) !important;color:var(--bilmed-surface-text) !important}
 .panelHeader{border-bottom-color:var(--bilmed-surface-border) !important}
-.poolBox{border-color:var(--bilmed-surface-border) !important;background:var(--bilmed-surface-bg) !important;color:var(--bilmed-surface-text) !important}
+.poolBox{border-color:var(--bilmed-surface-border) !important;background:var(--bilmed-surface-bg) !important;color:var(--bilmed-surface-text) !important;flex:1;min-height:0;overflow:auto}
 .item{border-color:var(--bilmed-surface-border) !important;background:transparent;color:var(--bilmed-surface-text) !important}
 .slot{border-color:var(--bilmed-surface-border) !important;color:var(--bilmed-surface-text) !important}
 
@@ -28,6 +28,9 @@ html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f7fb}
 #topUserSlots{display:flex;align-items:center;gap:10px}
 .topSlot{width:28px;height:28px;border-radius:9px;border:1px dashed var(--bilmed-surface-border);background:var(--bilmed-surface-bg);display:grid;place-items:center;box-sizing:border-box;color:var(--bilmed-surface-text) !important}
 .topSlot[data-filled='1']{border-style:solid}
+.topSlot.hbRow2Sel{outline:2px solid rgba(16,168,215,0.95); outline-offset:2px;}
+#topRow2, #topRow2 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+#topRow2 .topSlot{touch-action:manipulation;}
 .topSlot svg{width:18px;height:18px;display:block}
 .topIcon{height:28px;padding:0 6px;border-radius:9px;border:none;background:transparent;display:flex;align-items:center;justify-content:center}
 .topIcon img{height:20px;max-height:20px;width:auto;object-fit:contain;display:block}
@@ -103,10 +106,7 @@ html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f7fb}
 
 
 
-#hbPoolOverlay{
-    position:fixed;
-    z-index:50;
-}
+#hbPoolOverlay{position:relative;z-index:50;height:100%;display:flex;flex-direction:column;min-height:0}
 #hbPoolActions{
     position:absolute;
     top:-48px;
@@ -179,26 +179,16 @@ html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f7fb}
 #miniSlots .hbMiniIconBox{position:absolute;left:20px;top:0;width:26px;height:26px;border-radius:10px;border:1px solid #d6e4ef;display:grid;place-items:center;box-sizing:border-box}
 #miniSlots .hbMiniIconBox svg{width:18px;height:18px;display:block}
 #miniSlots .hbMiniDel{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:10px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-surface-bg);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
-#miniSlots .hbMiniMove{position:absolute;right:38px;bottom:6px;width:26px;height:26px;border-radius:10px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-surface-bg);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
-#miniSlots .hbMiniMove svg{width:16px;height:16px;display:block}
-#miniSlots .hbMiniMove.is-active{background:var(--bilmed-primary-bg);color:#fff;border-color:var(--bilmed-primary-bg)}
-#miniSlots .hbMiniMove.is-active svg{stroke:#fff}
 #miniSlots .hbMiniDel svg{width:16px;height:16px;display:block}
 #miniSlots .hbMiniPick{display:block}
 #miniSlots .slot[data-mini-selected='1'] .hbMiniDel, #miniSlots .miniSlot[data-mini-selected='1'] .hbMiniDel{display:flex}
-#miniSlots .slot[data-mini-selected='1'] .hbMiniMove, #miniSlots .miniSlot[data-mini-selected='1'] .hbMiniMove{display:flex}
 #menuPanel .menuItem{position:relative}
 #menuPanel .menuItem .hbMiniIconWrap{position:relative;width:44px;height:26px;flex:0 0 44px}
 #menuPanel .menuItem .hbMiniIconBox{position:absolute;left:20px;top:0;width:26px;height:26px;border-radius:10px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-surface-bg);display:grid;place-items:center;box-sizing:border-box}
 #menuPanel .menuItem .hbMiniIconBox svg{width:18px;height:18px;display:block}
 #menuPanel .menuItem .hbMiniPick{position:absolute;left:0;top:4px;width:18px;height:18px;display:block;margin:0;z-index:2}
 #menuPanel .menuItem .hbMiniDel{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:10px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-surface-bg);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
-#menuPanel .menuItem .hbMiniMove{position:absolute;right:38px;bottom:6px;width:26px;height:26px;border-radius:10px;border:1px solid var(--bilmed-surface-border);background:var(--bilmed-surface-bg);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
-#menuPanel .menuItem .hbMiniMove svg{width:16px;height:16px;display:block}
-#menuPanel .menuItem .hbMiniMove.is-active{background:var(--bilmed-primary-bg);color:#fff;border-color:var(--bilmed-primary-bg)}
-#menuPanel .menuItem .hbMiniMove.is-active svg{stroke:#fff}
 #menuPanel .menuItem[data-mini-selected='1'] .hbMiniDel{display:flex}
-#menuPanel .menuItem[data-mini-selected='1'] .hbMiniMove{display:flex}
 
 
 /* pool pick */
@@ -290,7 +280,6 @@ html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f7fb}
     gap:8px;
 }
 #menuPanel .menuItem .hbMiniDel,
-#menuPanel .menuItem .hbMiniMove{
     margin-left:6px;
 }
 
@@ -300,6 +289,70 @@ html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f7fb}
 #page[data-view='mobile'] #layout[data-menu-open='1'] #panelMini{pointer-events:none}
 #page[data-view='mobile'] #layout[data-menu-open='1'] #panelMenu{pointer-events:auto}
 #page[data-view='mobile'] #layout[data-menu-open='1'] #menuPanel{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain}
+
+
+/* V006 pool overflow fix */
+#panelPool{overflow:hidden !important}
+#panelPool .panelBody{overflow:hidden !important;display:flex !important;flex-direction:column !important;min-height:0 !important}
+#hbPoolOverlay{position:relative !important;display:flex !important;flex-direction:column !important;flex:1 !important;min-height:0 !important}
+#hbPoolActions{position:relative !important;top:0 !important;right:0 !important;margin:0 0 8px 0 !important}
+#itemPool.poolBox,.poolBox#itemPool{flex:1 !important;min-height:0 !important;overflow:auto !important}
+
+
+#panelPool .panelHeader{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#panelPool #hbPoolActions{position:static;top:auto;right:auto}
+#panelPool .phTitle{display:block}
+
+/* Row2 filled icon hover tooltip (hit) */
+#topUserSlots .topSlot[data-filled='1']{position:relative}
+#topUserSlots .topSlot[data-filled='1']::after{
+    content:attr(data-hb-tip);
+    position:absolute;
+    left:50%;
+    top:calc(100% + 8px);
+    transform:translateX(-50%);
+    max-width:240px;
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid rgba(15,23,42,0.18);
+    background:var(--bilmed-surface-bg);
+    color:var(--bilmed-surface-text);
+    font-weight:700;
+    font-size:12px;
+    line-height:1.2;
+    box-shadow:0 10px 26px rgba(15,23,42,0.18);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    z-index:2000;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+#topUserSlots .topSlot[data-filled='1']:hover::after{
+    opacity:1;
+    visibility:visible;
+}
+
+/* Drag cursor (filled items only) */
+#miniSlots .slot[data-filled='1'],
+#miniSlots .miniSlot[data-filled='1'],
+#topUserSlots .topSlot[data-filled='1']{
+    cursor:grab;
+}
+#miniSlots .slot[data-filled='1']:active,
+#miniSlots .miniSlot[data-filled='1']:active,
+#topUserSlots .topSlot[data-filled='1']:active{
+    cursor:grabbing;
+}
+
+
+
+/* V193 mobile left scroll fix (Sol Menü) */
+#page[data-view='mobile'] #layout{display:flex !important;flex-direction:column !important;flex:1 1 auto !important;min-height:0 !important;}
+#page[data-view='mobile'] #panelMini{flex:1 1 auto !important;min-height:0 !important;height:auto !important;}
+#page[data-view='mobile'] #panelMini .panelBody{flex:1 1 auto !important;min-height:0 !important;overflow:auto !important;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;}
+#page[data-view='mobile'] #miniSlots{overflow:auto !important;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;}
 
 </style>
 </head>
@@ -329,9 +382,9 @@ html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f7fb}
     </div>
 
     <div class='panel' id='panelPool' aria-label='program havuzu'>
-      <div class='panelHeader'>Program Havuzu</div>
+      <div class='panelHeader'><div class='phTitle'>Program Havuzu</div><div id='hbPoolActions'><button class='hbPoolBtn' id='hbSaveBtn'>Kaydet</button><button class='hbPoolBtn' id='hbExitBtn'>Çık</button></div></div>
       <div class='panelBody'>
-        <div id='hbPoolOverlay' style='position:relative'><div id='hbPoolActions'><button class='hbPoolBtn' id='hbSaveBtn'>Kaydet</button><button class='hbPoolBtn' id='hbExitBtn'>Çık</button></div><div class='poolBox' id='itemPool'></div></div>
+        <div id='hbPoolOverlay' style='position:relative'><div class='poolBox' id='itemPool'></div></div>
       </div>
     </div>
 
@@ -404,6 +457,65 @@ var mini = document.getElementById('miniSlots');
         slotEl.removeAttribute('data-filled');
         slotEl.removeAttribute('draggable');
     }
+
+    function hbGetSlotsOrdered(container, selector){
+        if(!container) { return []; }
+        var nodes = container.querySelectorAll(selector);
+        var arr = [];
+        for(var i = 0; i < nodes.length; i += 1){
+            arr.push(nodes[i]);
+        }
+        arr.sort(function(a, b){
+            var ai = Number(a.getAttribute('data-slot-idx') || 0);
+            var bi = Number(b.getAttribute('data-slot-idx') || 0);
+            return ai - bi;
+        });
+        return arr;
+    }
+
+    function hbShiftInsertSlots(slots, startIdx1, newIt, setFn, clearFn, warnCode){
+        var start = Number(startIdx1 || 0) - 1;
+        if(!Array.isArray(slots) || start < 0 || start >= slots.length) { return false; }
+        var empty = -1;
+        for(var i = start; i < slots.length; i += 1){
+            var ex = String((slots[i] && slots[i].getAttribute('data-item-id')) || '');
+            if(!ex) { empty = i; break; }
+        }
+        if(empty < 0){
+            console.warn(warnCode || 'HB_MENU_SLOTS_FULL', startIdx1);
+            return false;
+        }
+        for(var j = empty; j > start; j -= 1){
+            var prev = slots[j-1];
+            var pid = String((prev && prev.getAttribute('data-item-id')) || '');
+            if(pid){
+                var pit = catalogFind(pid);
+                if(pit){ setFn(slots[j], pit); }
+                else { clearFn(slots[j]); }
+            }else{
+                clearFn(slots[j]);
+            }
+        }
+        setFn(slots[start], newIt);
+        return true;
+    }
+
+    function hbShiftInsertMini(targetSlotEl, it){
+        if(!targetSlotEl || !mini || !it) { return false; }
+        var idx = Number(targetSlotEl.getAttribute('data-slot-idx') || 0);
+        if(!idx) { return false; }
+        var slots = hbGetSlotsOrdered(mini, '.slot');
+        return hbShiftInsertSlots(slots, idx, it, miniSetItem, miniClearSlot, 'HB_MENU_MINI_FULL');
+    }
+
+    function hbShiftInsertRow2(targetSlotEl, it){
+        if(!targetSlotEl || !row2Slots || !it) { return false; }
+        var idx = Number(targetSlotEl.getAttribute('data-slot-idx') || 0);
+        if(!idx) { return false; }
+        var slots = hbGetSlotsOrdered(row2Slots, '.topSlot');
+        return hbShiftInsertSlots(slots, idx, it, row2SetItem, row2ClearSlot, 'HB_MENU_ROW2_FULL');
+    }
+
 
     function rightRemoveItem(id){
         if(!rightMenu) { return; }
@@ -553,12 +665,6 @@ attachDragStart(d);
         del.setAttribute('aria-label','Sil');
         del.innerHTML = "<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M6 7h12M9 7V5h6v2M9 10v8M15 10v8M7 7l1 14h8l1-14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>";
         slotEl.appendChild(del);
-        var mv = document.createElement('button');
-        mv.type = 'button';
-        mv.className = 'hbMiniMove';
-        mv.setAttribute('aria-label','Taşı');
-        mv.innerHTML = "<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 7h10v10H7z' fill='none' stroke='currentColor' stroke-width='2' stroke-linejoin='round'/><path d='M7 12h10' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><path d='M12 7v10' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/></svg>";
-        slotEl.appendChild(mv);
         slotEl.setAttribute('data-item-id', String(it.id || ''));
         slotEl.setAttribute('data-filled', '1');
         slotEl.setAttribute('draggable', 'true');
@@ -566,13 +672,23 @@ attachDragStart(d);
     }
 
     function row2SetItem(slotEl, it){
-        if(!slotEl || !it) { return; }
+if(!slotEl || !it) { return; }
         var svg = (window.__hb_svgIcons && it.iconKey) ? window.__hb_svgIcons[it.iconKey] : '';
         slotEl.innerHTML = svg || '';
         slotEl.setAttribute('data-item-id', String(it.id || ''));
         slotEl.setAttribute('data-filled', '1');
         slotEl.setAttribute('draggable', 'true');
-        attachDragStart(slotEl);
+        
+        var tip = '';
+        try{
+            var t1 = String(it.title || it.id || '');
+            var d1 = String(it.desc || it.description || '');
+            tip = d1 ? (t1 ? (t1 + ' - ' + d1) : d1) : t1;
+        }catch(e){ console.error(e); tip = ''; }
+        if(tip){ slotEl.setAttribute('data-hb-tip', tip); slotEl.setAttribute('title', tip); }
+        else { slotEl.removeAttribute('data-hb-tip'); slotEl.removeAttribute('title'); }
+
+attachDragStart(slotEl);
     }
 
     function rightCreateItem(it){
@@ -612,31 +728,26 @@ attachDragStart(d);
         txt.appendChild(t);
         if(desc.textContent){ txt.appendChild(desc); }
 
+        d.appendChild(iconWrap);
+        d.appendChild(txt);
+
         var del = document.createElement('button');
         del.type = 'button';
         del.className = 'hbMiniDel hbRightDel';
         del.setAttribute('aria-label', 'Sil');
         del.innerHTML = "<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M6 7h12M9 7V5h6v2M9 10v8M15 10v8M7 7l1 14h8l1-14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>";
-
-        var mv = document.createElement('button');
-        mv.type = 'button';
-        mv.className = 'hbMiniMove hbRightMove';
-        mv.setAttribute('aria-label', 'Taşı');
-        mv.innerHTML = "<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 7h10v10H7z' fill='none' stroke='currentColor' stroke-width='2' stroke-linejoin='round'/><path d='M7 12h10' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><path d='M12 7v10' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/></svg>";
-
-        d.appendChild(iconWrap);
-        d.appendChild(txt);
-        d.appendChild(mv);
         d.appendChild(del);
 
         attachDragStart(d);
 
         d.addEventListener('dragover', function(ev){
             ev.preventDefault();
+            ev.stopPropagation();
         });
 
         d.addEventListener('drop', function(ev){
             ev.preventDefault();
+            ev.stopPropagation();
             var id = dataGetId(ev);
             if(!id) { return; }
             var it2 = catalogFind(id);
@@ -658,9 +769,12 @@ attachDragStart(d);
 
     function onMiniClickPlace(ev){
     try{
+        var __hb_slotEl = ev.currentTarget;
+        if(hbTryMoveOneSelectedToTarget({ area: 'mini', slotEl: __hb_slotEl })) { hbRefreshSaveBtn(); return; }
+
         var id = String((window.__hb_menuState && window.__hb_menuState.selectedItemId) || '');
         if(!id) { return; }
-        var slotEl = ev.currentTarget;
+        var slotEl = __hb_slotEl;
         var existing = String(slotEl.getAttribute('data-item-id') || '');
         if(existing && existing !== id) {
             console.warn('HB_MENU_SLOT_OCCUPIED', existing, id);
@@ -685,15 +799,21 @@ function onMiniDrop(ev){
         if(!id) { return; }
 
         var slotEl = ev.currentTarget;
-        var existing = String(slotEl.getAttribute('data-item-id') || '');
-        if(existing && existing !== id) {
-            console.warn('HB_MENU_SLOT_OCCUPIED', existing, id);
-            return;
-        }
-
         var it = catalogFind(id);
         if(!it) { return; }
         removeItemEverywhere(id);
+
+        var existing = String(slotEl.getAttribute('data-item-id') || '');
+        if(existing && existing !== id) {
+            var ok = hbShiftInsertMini(slotEl, it);
+            if(!ok) {
+                poolEnsureItem(id);
+                return;
+            }
+            hbUpdateDirtyUI();
+            return;
+        }
+
         miniSetItem(slotEl, it);
         hbUpdateDirtyUI();
     }
@@ -704,9 +824,29 @@ function onMiniDrop(ev){
 
     function onRow2ClickPlace(ev){
     try{
+        var slotEl = ev.currentTarget;
+
+        if(window.__hbRow2LP_did){
+            window.__hbRow2LP_did = 0;
+            return;
+        }
+
+        var filled = String(slotEl.getAttribute('data-filled') || '');
+        if(filled === '1' && ev && ev.ctrlKey){
+            hbRow2ToggleSelection(slotEl);
+            return;
+        }
+
+        if(hbTryMoveOneSelectedToTarget({ area: 'row2', slotEl: slotEl })) { hbRefreshSaveBtn(); return; }
+
+        if(filled === '1'){
+            if(HB_MENU_STATE && (HB_MENU_STATE.view === 'tablet' || HB_MENU_STATE.view === 'mobile')){
+                hbClearAllSelections();
+                return;
+            }
+        }
         var id = String((window.__hb_menuState && window.__hb_menuState.selectedItemId) || '');
         if(!id) { return; }
-        var slotEl = ev.currentTarget;
         var existing = String(slotEl.getAttribute('data-item-id') || '');
         if(existing && existing !== id) {
             console.warn('HB_MENU_TOP_OCCUPIED', existing, id);
@@ -723,23 +863,27 @@ function onMiniDrop(ev){
     }catch(e){ console.error(e); }
     hbRefreshSaveBtn();
 }
-
-
 function onRow2Drop(ev){
         ev.preventDefault();
         var id = dataGetId(ev);
         if(!id) { return; }
 
         var slotEl = ev.currentTarget;
-        var existing = String(slotEl.getAttribute('data-item-id') || '');
-        if(existing && existing !== id) {
-            console.warn('HB_MENU_TOP_OCCUPIED', existing, id);
-            return;
-        }
-
         var it = catalogFind(id);
         if(!it) { return; }
         removeItemEverywhere(id);
+
+        var existing = String(slotEl.getAttribute('data-item-id') || '');
+        if(existing && existing !== id) {
+            var ok = hbShiftInsertRow2(slotEl, it);
+            if(!ok) {
+                poolEnsureItem(id);
+                return;
+            }
+            hbUpdateDirtyUI();
+            return;
+        }
+
         row2SetItem(slotEl, it);
         hbUpdateDirtyUI();
     }
@@ -750,6 +894,16 @@ function onRow2Drop(ev){
 
     function hbRightClickPlace(ev){
     try{
+        var __hb_beforeEl = null;
+        try{
+            var t = ev && ev.target ? ev.target : null;
+            while(t && t !== rightMenu){
+                if(t.classList && t.classList.contains('menuItem') && t.getAttribute && t.getAttribute('data-item-id')){ __hb_beforeEl = t; break; }
+                t = t.parentNode;
+            }
+        }catch(e){}
+        if(hbTryMoveOneSelectedToTarget({ area: 'right', beforeEl: __hb_beforeEl })) { hbRefreshSaveBtn(); return; }
+
         var id = String((window.__hb_menuState && window.__hb_menuState.selectedItemId) || '');
         if(!id) { return; }
         var it = catalogFind(id);
@@ -793,7 +947,62 @@ function onRightMenuDrop(ev){
         }
     }
 
-    function initRow2Slots(){
+    
+    function hbRow2LP_Clear(){
+        if(window.__hbRow2LP_timer){
+            try{ clearTimeout(window.__hbRow2LP_timer); }catch(e){}
+        }
+        window.__hbRow2LP_timer = 0;
+        window.__hbRow2LP_slot = null;
+        window.__hbRow2LP_downX = 0;
+        window.__hbRow2LP_downY = 0;
+    }
+
+
+    function hbRow2PreventContextMenu(ev){
+        try{
+            if(ev && ev.preventDefault){ ev.preventDefault(); }
+            if(ev && ev.stopPropagation){ ev.stopPropagation(); }
+            return false;
+        }catch(e){}
+    }
+
+    function hbRow2LP_PointerDown(ev){
+        try{
+            if(!ev || ev.pointerType !== 'touch') { return; }
+            var slotEl = ev && ev.currentTarget ? ev.currentTarget : null;
+            if(!slotEl) { return; }
+            if(String(slotEl.getAttribute('data-filled') || '') !== '1') { return; }
+            if(ev && ev.preventDefault){ ev.preventDefault(); }
+            if(slotEl && slotEl.setPointerCapture && ev && ev.pointerId != null){ try{ slotEl.setPointerCapture(ev.pointerId); }catch(e){} }
+            hbRow2LP_Clear();
+            window.__hbRow2LP_slot = slotEl;
+            window.__hbRow2LP_downX = ev && ev.clientX != null ? ev.clientX : 0;
+            window.__hbRow2LP_downY = ev && ev.clientY != null ? ev.clientY : 0;
+            window.__hbRow2LP_did = 0;
+            window.__hbRow2LP_timer = setTimeout(function(){
+                window.__hbRow2LP_timer = 0;
+                var s = window.__hbRow2LP_slot;
+                if(!s) { return; }
+                hbRow2ToggleSelection(s);
+                window.__hbRow2LP_did = 1;
+            }, 450);
+        }catch(e){}
+    }
+
+    function hbRow2LP_PointerMove(ev){
+        if(!window.__hbRow2LP_timer) { return; }
+        var sx = Number(window.__hbRow2LP_downX || 0);
+        var sy = Number(window.__hbRow2LP_downY || 0);
+        var cx = Number(ev && ev.clientX != null ? ev.clientX : 0);
+        var cy = Number(ev && ev.clientY != null ? ev.clientY : 0);
+        var dx = cx - sx;
+        var dy = cy - sy;
+        if((dx*dx + dy*dy) > 100){
+            hbRow2LP_Clear();
+        }
+    }
+function initRow2Slots(){
         if(!row2Slots) { return; }
         var max = __hb_row2MaxSlotsFromConst();
         for(var i = 1; i <= max; i += 1){
@@ -803,6 +1012,11 @@ function onRightMenuDrop(ev){
             s.addEventListener('dragover', onRow2DragOver);
             s.addEventListener('drop', onRow2Drop);
             s.addEventListener('click', onRow2ClickPlace);
+            s.addEventListener('pointerdown', hbRow2LP_PointerDown);
+            s.addEventListener('contextmenu', hbRow2PreventContextMenu, { passive: false });
+            s.addEventListener('pointerup', hbRow2LP_Clear);
+            s.addEventListener('pointercancel', hbRow2LP_Clear);
+            s.addEventListener('pointermove', hbRow2LP_PointerMove);
             row2Slots.appendChild(s);
         }
     }
@@ -952,7 +1166,232 @@ var hbSaveBtn = document.getElementById('hbSaveBtn');
         hbSetViewAttrs();
     }
 
-    function hbSetSelected(id){
+    
+    function hbRow2ClearSelection(){
+        if(!row2Slots) { return; }
+        var sels = row2Slots.querySelectorAll('.topSlot.hbRow2Sel');
+        for(var i = 0; i < sels.length; i += 1){
+            sels[i].classList.remove('hbRow2Sel');
+        }
+    }
+
+    function hbClearAllSelections(){
+        try{
+            var cbs = document.querySelectorAll('input.hbMiniPick, input.hbRightPick');
+            for(var i = 0; i < cbs.length; i += 1){
+                cbs[i].checked = false;
+            }
+        }catch(e){}
+        hbRow2ClearSelection();
+        hbSetSelected('');
+        try{ hbSetViewAttrs(); }catch(e){}
+    }
+
+    function hbRow2ToggleSelection(slotEl){
+        if(!slotEl) { return; }
+        var id = String(slotEl.getAttribute('data-item-id') || '');
+        if(!id) { return; }
+        if(slotEl.classList.contains('hbRow2Sel')){
+            slotEl.classList.remove('hbRow2Sel');
+        }else{
+            slotEl.classList.add('hbRow2Sel');
+        }
+    }
+
+    function hbGetAllSelectedIds(){
+        var used = {};
+        try{
+            var cbs = document.querySelectorAll('input.hbMiniPick:checked, input.hbRightPick:checked');
+            for(var i = 0; i < cbs.length; i += 1){
+                var el = cbs[i];
+                var item = el;
+                while(item && item !== document.body && !(item.getAttribute && item.getAttribute('data-item-id'))){
+                    item = item.parentNode;
+                }
+                if(item){
+                    var id = String(item.getAttribute('data-item-id') || '');
+                    if(id) { used[id] = 1; }
+                }
+            }
+        }catch(e){}
+        try{
+            if(row2Slots){
+                var r = row2Slots.querySelectorAll('.topSlot.hbRow2Sel[data-item-id]');
+                for(var j = 0; j < r.length; j += 1){
+                    var id2 = String(r[j].getAttribute('data-item-id') || '');
+                    if(id2) { used[id2] = 1; }
+                }
+            }
+        }catch(e){}
+        var arr = [];
+        for(var k in used){
+            if(Object.prototype.hasOwnProperty.call(used, k)){ arr.push(k); }
+        }
+        return arr;
+    }
+
+    function hbPickFirstSelectedPlacement(){
+        try{
+            if(mini){
+                var mcb = mini.querySelector('input.hbMiniPick:checked:not(.hbRightPick)');
+                if(mcb){
+                    var n = mcb;
+                    while(n && n !== mini && !(n.getAttribute && n.getAttribute('data-item-id'))){ n = n.parentNode; }
+                    if(n && n.getAttribute){
+                        var mid = String(n.getAttribute('data-item-id') || '');
+                        if(mid){ return { area: 'mini', id: mid, slotEl: n }; }
+                    }
+                }
+            }
+        }catch(e){}
+
+        try{
+            if(rightMenu){
+                var rcb = rightMenu.querySelector('input.hbRightPick:checked');
+                if(rcb){
+                    var n2 = rcb;
+                    while(n2 && n2 !== rightMenu && !(n2.getAttribute && n2.getAttribute('data-item-id'))){ n2 = n2.parentNode; }
+                    if(n2 && n2.getAttribute){
+                        var rid = String(n2.getAttribute('data-item-id') || '');
+                        if(rid){ return { area: 'right', id: rid, itemEl: n2 }; }
+                    }
+                }
+            }
+        }catch(e){}
+
+        try{
+            if(row2Slots){
+                var r2 = row2Slots.querySelector('.topSlot.hbRow2Sel[data-item-id]');
+                if(r2){
+                    var id2 = String(r2.getAttribute('data-item-id') || '');
+                    if(id2){ return { area: 'row2', id: id2, slotEl: r2 }; }
+                }
+            }
+        }catch(e){}
+
+        return null;
+    }
+
+    function hbRightInsertAt(id, beforeNode){
+        try{
+            if(!rightMenu) { return null; }
+            var it = catalogFind(id);
+            if(!it) { return null; }
+            var el = rightCreateItem(it);
+            if(beforeNode){ rightMenu.insertBefore(el, beforeNode); }
+            else { rightMenu.appendChild(el); }
+            return el;
+        }catch(e){ return null; }
+    }
+
+    function hbTryMoveOneSelectedToTarget(tgt){
+        var sel = hbPickFirstSelectedPlacement();
+        if(!sel || !sel.id) { return false; }
+
+        var selId = String(sel.id || '');
+        var existingId = '';
+        var tgtBefore = null;
+
+        if(tgt && tgt.area === 'mini' && tgt.slotEl){
+            existingId = String(tgt.slotEl.getAttribute('data-item-id') || '');
+            if(sel.area === 'mini' && sel.slotEl === tgt.slotEl){
+                hbClearAllSelections();
+                return true;
+            }
+        }
+        if(tgt && tgt.area === 'row2' && tgt.slotEl){
+            existingId = String(tgt.slotEl.getAttribute('data-item-id') || '');
+            if(sel.area === 'row2' && sel.slotEl === tgt.slotEl){
+                hbClearAllSelections();
+                return true;
+            }
+        }
+        if(tgt && tgt.area === 'right'){
+            if(tgt.beforeEl && tgt.beforeEl.getAttribute){
+                existingId = String(tgt.beforeEl.getAttribute('data-item-id') || '');
+                tgtBefore = tgt.beforeEl.nextSibling;
+                if(sel.area === 'right' && sel.itemEl === tgt.beforeEl){
+                    hbClearAllSelections();
+                    return true;
+                }
+            }
+        }
+
+        var srcRightBefore = null;
+        if(sel.area === 'right' && sel.itemEl){
+            srcRightBefore = sel.itemEl.nextSibling;
+        }
+
+        if(existingId && existingId === selId){
+            hbClearAllSelections();
+            return true;
+        }
+
+        try{ removeItemPlacements(selId); }catch(e){}
+        if(existingId){
+            try{ removeItemPlacements(existingId); }catch(e){}
+        }
+
+        try{
+            if(tgt && tgt.area === 'mini' && tgt.slotEl){
+                var itSel = catalogFind(selId);
+                if(itSel){ miniSetItem(tgt.slotEl, itSel); }
+            }else if(tgt && tgt.area === 'row2' && tgt.slotEl){
+                var itSel2 = catalogFind(selId);
+                if(itSel2){ row2SetItem(tgt.slotEl, itSel2); }
+            }else if(tgt && tgt.area === 'right'){
+                hbRightInsertAt(selId, tgtBefore);
+            }
+        }catch(e){}
+
+        if(existingId){
+            try{
+                if(sel.area === 'mini' && sel.slotEl){
+                    var itEx = catalogFind(existingId);
+                    if(itEx){ miniSetItem(sel.slotEl, itEx); }
+                }else if(sel.area === 'row2' && sel.slotEl){
+                    var itEx2 = catalogFind(existingId);
+                    if(itEx2){ row2SetItem(sel.slotEl, itEx2); }
+                }else if(sel.area === 'right'){
+                    hbRightInsertAt(existingId, srcRightBefore);
+                }
+            }catch(e){}
+        }
+
+        hbClearAllSelections();
+        try{ hbUpdateDirtyUI(); }catch(e){}
+        return true;
+    }
+
+    function hbBindPoolBackgroundClickToMoveSelected(){
+        if(!pool) { return; }
+        if(pool.__hb_bg_bind_done) { return; }
+        pool.__hb_bg_bind_done = 1;
+        pool.addEventListener('click', function(ev){
+            var t = ev && ev.target ? ev.target : null;
+            var inItem = false;
+            var el = t;
+            while(el && el !== pool){
+                if(el.classList && el.classList.contains('item')){ inItem = true; break; }
+                el = el.parentNode;
+            }
+            if(inItem) { return; }
+
+            var ids = hbGetAllSelectedIds();
+            if(!ids.length) { return; }
+
+            for(var i = 0; i < ids.length; i += 1){
+                var id = String(ids[i] || '');
+                if(!id) { continue; }
+                removeItemEverywhere(id);
+                poolEnsureItem(id);
+            }
+            hbClearAllSelections();
+            hbUpdateDirtyUI();
+        }, false);
+    }
+
+function hbSetSelected(id){
         HB_MENU_STATE.selectedItemId = String(id || '');
         hbSetViewAttrs();
     }
@@ -1014,7 +1453,7 @@ var hbSaveBtn = document.getElementById('hbSaveBtn');
             b2.id = 'hbPlaceBtn';
             b2.type = 'button';
             b2.className = 'hbPoolBtn';
-            b2.textContent = '← Yerleştir';
+            b2.textContent = '\u2B05';
             b2.addEventListener('click', function(ev){
                 ev.preventDefault();
                 if(!HB_MENU_STATE.selectedItemId){
@@ -1158,7 +1597,7 @@ function hbSyncMobileRow2IntoRightMenu(){
     function hbGetDrId(){
         var v = '';
         if(typeof URLParametreOku === 'function'){
-            v = String(URLParametreOku('drid') || '');
+            v = String(URLParametreOku('DrID') || '');
         }
         if(v){
             var n = Number(v);
@@ -1560,15 +1999,15 @@ function hbApplyCfg(blob){
             obs.observe(targets[i], { childList:true, subtree:true, attributes:true, attributeFilter:['data-item-id','data-filled'] });
         }
         window.__hb_menuObs = obs;
-        window.__hb_miniMove = window.__hb_miniMove || { armed:false, fromSlot:null };
-
     }catch(e){ console.error(e); }
 }
 
 function hbBindMiniPickDelete(){
     if(!mini) { return; }
-    mini.addEventListener('click', function(ev){        var t = ev.target;
+    mini.addEventListener('click', function(ev){
+        var t = ev.target;
         if(!t) { return; }
+
         if(t.classList && t.classList.contains('hbMiniPick')){
             var slot = t.closest('.slot,.miniSlot');
             if(!slot) { return; }
@@ -1576,20 +2015,8 @@ function hbBindMiniPickDelete(){
             else { slot.removeAttribute('data-mini-selected'); }
             ev.stopPropagation();
             return;
-        }        var mvBtn = (t && t.closest ? t.closest('.hbMiniMove') : null);
-        if(mvBtn){
-            var slotM = mvBtn.closest ? mvBtn.closest('.slot[data-item-id],.miniSlot[data-item-id]') : null;
-            if(!slotM) { return; }
-            window.__hb_miniMove = window.__hb_miniMove || { armed:false, fromSlot:null };
-            window.__hb_miniMove.armed = true;
-            window.__hb_miniMove.fromSlot = slotM;
-            mvBtn.classList.add('is-active');
-            var ss = mini.querySelectorAll('.slot,.miniSlot');
-            for(var i = 0; i < ss.length; i += 1){ ss[i].setAttribute('data-mini-move-target','1'); }
-            ev.preventDefault();
-            ev.stopImmediatePropagation();
-            return;
         }
+
         var delBtn = (t.closest ? t.closest('.hbMiniDel') : null);
         if(delBtn){
             var slot2 = delBtn.closest ? delBtn.closest('.slot[data-item-id],.miniSlot[data-item-id]') : null;
@@ -1606,48 +2033,6 @@ function hbBindMiniPickDelete(){
     }, true);
 }
 
-function hbBindMiniMoveTargets(){
-    if(!mini) { return; }
-    mini.addEventListener('click', function(ev){
-        var st = window.__hb_miniMove;
-        if(!st || !st.armed || !st.fromSlot) { return; }
-        var tg = ev.target;
-        if(tg && tg.closest){
-            if(tg.closest('.hbMiniMove') || tg.closest('.hbMiniDel') || tg.closest('.hbMiniPick')){ return; }
-        }
-        var target = ev.target && ev.target.closest ? ev.target.closest('.slot,.miniSlot') : null;
-        if(!target) { return; }
-        var from = st.fromSlot;
-        if(from === target) {
-            var btn = from.querySelector('.hbMiniMove'); if(btn){ btn.classList.remove('is-active'); }
-            var btn2 = from.querySelector('.hbMiniMove'); if(btn2){ btn2.classList.remove('is-active'); }
-        st.armed = false; st.fromSlot = null;
-            var ss2 = mini.querySelectorAll('.slot,.miniSlot');
-            for(var j = 0; j < ss2.length; j += 1){ ss2[j].removeAttribute('data-mini-move-target'); }
-            ev.preventDefault();
-            ev.stopPropagation();
-            return;
-        }
-        var a = String(from.getAttribute('data-item-id') || '');
-        if(!a) { return; }
-        var b = String(target.getAttribute('data-item-id') || '');
-        var itA = catalogFind(a);
-        var itB = b ? catalogFind(b) : null;
-        if(!itA) { return; }
-        miniClearSlot(from);
-        miniClearSlot(target);
-        miniSetItem(target, itA);
-        if(itB){ miniSetItem(from, itB); }
-        st.armed = false; st.fromSlot = null;
-        var ss2 = mini.querySelectorAll('.slot,.miniSlot');
-            for(var j = 0; j < ss2.length; j += 1){ ss2[j].removeAttribute('data-mini-move-target'); }
-        hbRefreshSaveBtn();
-        ev.preventDefault();
-        ev.stopPropagation();
-    }, true);
-}
-
-
 function hbRightClearSelection(){
     if(!rightMenu) { return; }
     var items = rightMenu.querySelectorAll('.menuItem[data-item-id]');
@@ -1655,10 +2040,7 @@ function hbRightClearSelection(){
         items[i].removeAttribute('data-mini-selected');
         var cb = items[i].querySelector('input.hbMiniPick');
         if(cb) { cb.checked = false; }
-        var mv = items[i].querySelector('.hbMiniMove');
-        if(mv) { mv.classList.remove('is-active'); }
     }
-    window.__hb_rightMove = { armed:false, fromItem:null };
 }
 
 function hbBindRightPickDelete(){
@@ -1673,23 +2055,6 @@ function hbBindRightPickDelete(){
             if(t.checked){ item.setAttribute('data-mini-selected','1'); }
             else { item.removeAttribute('data-mini-selected'); }
             ev.stopPropagation();
-            return;
-        }
-
-        var mvBtn = (t && t.closest ? t.closest('.hbMiniMove') : null);
-        if(mvBtn){
-            var itemM = mvBtn.closest ? mvBtn.closest('.menuItem[data-item-id]') : null;
-            if(!itemM) { return; }
-            window.__hb_rightMove = window.__hb_rightMove || { armed:false, fromItem:null };
-            hbRightClearSelection();
-            itemM.setAttribute('data-mini-selected','1');
-            var cb2 = itemM.querySelector('input.hbMiniPick');
-            if(cb2) { cb2.checked = true; }
-            window.__hb_rightMove.armed = true;
-            window.__hb_rightMove.fromItem = itemM;
-            mvBtn.classList.add('is-active');
-            ev.preventDefault();
-            ev.stopImmediatePropagation();
             return;
         }
 
@@ -1708,48 +2073,6 @@ function hbBindRightPickDelete(){
             ev.preventDefault();
             ev.stopPropagation();
             return;
-        }
-
-        var armed = window.__hb_rightMove && window.__hb_rightMove.armed && window.__hb_rightMove.fromItem;
-        if(armed){
-            var target = t.closest ? t.closest('.menuItem[data-item-id]') : null;
-            if(!target) { return; }
-            var from = window.__hb_rightMove.fromItem;
-            if(from === target){
-                hbRightClearSelection();
-                ev.preventDefault();
-                ev.stopPropagation();
-                return;
-            }
-            if(from.parentNode && target.parentNode && from.parentNode === target.parentNode){
-                var p = from.parentNode;
-                var ph = document.createElement('div');
-                p.insertBefore(ph, from);
-                p.insertBefore(from, target);
-                p.insertBefore(target, ph);
-                p.removeChild(ph);
-                if(from && String(from.getAttribute('data-row2') || '') === '1'){
-                    try{ hbSyncRow2FromRightMenu(); }catch(e){ console.error(e); }
-                }
-                hbUpdateDirtyUI();
-            }
-            hbRightClearSelection();
-            ev.preventDefault();
-            ev.stopPropagation();
-            return;
-        }
-
-        var item2 = t.closest && t.closest('.menuItem[data-item-id]');
-        if(item2){
-            var cb3 = item2.querySelector('input.hbMiniPick');
-            if(cb3){
-                cb3.checked = !cb3.checked;
-                if(cb3.checked){ item2.setAttribute('data-mini-selected','1'); }
-                else { item2.removeAttribute('data-mini-selected'); }
-                ev.preventDefault();
-                ev.stopPropagation();
-                return;
-            }
         }
     }, true);
 }
@@ -1776,9 +2099,9 @@ function hbBindButtons(){
         initRow2Slots();
     initRightMenu();
     initPool();
+    hbBindPoolBackgroundClickToMoveSelected();
     hbBindPoolPick();
     hbBindMiniPickDelete();
-    hbBindMiniMoveTargets();
     hbBindRightPickDelete();
     hbBindButtons();
     hbWatchDirty();

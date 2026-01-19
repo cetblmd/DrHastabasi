@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yüzer Özet Ekran – Uygulamalı Gösterim</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --fg:#111827;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --accent:#eaf4ff;
+      --accentBorder:#cfe6ff;
+      --shadow: 0 8px 28px -10px rgba(17,24,39,.22);
+      --radius: 14px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height:1.55;
+    }
+    .wrap{
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 40px 20px 56px;
+    }
+    h1{
+      margin: 0 0 10px;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .lead{
+      margin: 0 0 18px;
+      color: var(--muted);
+      max-width: 860px;
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .concept{
+      padding: 18px 18px 14px;
+      margin-bottom: 18px;
+    }
+    .conceptGrid{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .pill{
+      background: var(--accent);
+      border: 1px solid var(--accentBorder);
+      border-radius: 12px;
+      padding: 12px 12px;
+      min-height: 92px;
+    }
+    .pillTitle{
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .pillText{
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .demo{
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      box-shadow: var(--shadow);
+    }
+    .demoHead{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+    }
+    .demoTitle{
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .demoHint{
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 58%;
+    }
+    .demoBody{
+      position: relative;
+      aspect-ratio: 16 / 9;
+      min-height: 520px;
+    }
+    iframe{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      border:0;
+      background:#fff;
+    }
+    .overlay{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    .legend{
+      position:absolute;
+      right: 12px;
+      bottom: 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      padding: 10px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 20px -14px rgba(17,24,39,.35);
+      max-width: 340px;
+    }
+    .legendRow{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:99px;background:#2563eb;flex:0 0 auto;
+    }
+    .dot.g{ background:#16a34a; }
+    .dot.o{ background:#f59e0b; }
+
+    @media (max-width: 980px){
+      .conceptGrid{ grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+      .demoHint{ max-width: 52%; }
+    }
+    @media (max-width: 640px){
+
+      .demo,
+      .demoBody{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+      
+      .demoBody .mobileNotice{
+        color: #B91C1C;
+        background: rgba(185, 28, 28, 0.08);
+      }
+}
+      .wrap{ padding: 28px 14px 44px; 
+      .demoBody .mobileNotice{
+        color: #B91C1C;
+        background: rgba(185, 28, 28, 0.08);
+      }
+}
+      .conceptGrid{ grid-template-columns: 1fr; 
+      .demoBody .mobileNotice{
+        color: #B91C1C;
+        background: rgba(185, 28, 28, 0.08);
+      }
+}
+      .demoBody{ min-height: 420px; 
+      .demoBody .mobileNotice{
+        color: #B91C1C;
+        background: rgba(185, 28, 28, 0.08);
+      }
+}
+      .demoHint{ display:none; 
+      .demoBody .mobileNotice{
+        color: #B91C1C;
+        background: rgba(185, 28, 28, 0.08);
+      }
+}
+    
+      .demoBody .mobileNotice{
+        color: #B91C1C;
+        background: rgba(185, 28, 28, 0.08);
+      }
+}
+  
+    .mobileNotice{
+      display:none;
+      position:absolute;
+      inset:0;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+      width: 100%;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      line-height: 1.35;
+    }
+    .mobileNotice strong{
+      color: var(--fg);
+      font-weight: 600;
+      display: inline;
+    }
+
+    .mobileNotice > div{
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+    .mobileNotice strong{
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+
+    @media (max-width: 640px){
+      .demoBody iframe{ display:none; }
+      .demoBody .overlay{ display:none; }
+      .demoBody .legend{ display:none; }
+      .demoBody .mobileNotice{ display:flex; }
+    }
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Yüzer Özet Ekran</h1>
+    <p class="lead">
+      Amaç: Gösterge Panelindeki özet ekranı, ihtiyaç halinde ekranda bağımsız bir pencere gibi kullanabilmek.
+      Aşağıdaki örnekte, farklı kaynaklardan (Sol Menü / 2. Satır / Sağ Menü) açılan içeriklerin “Yüzer Özet Ekran”a
+      taşınması konsepti gösterilir.
+    </p>
+
+    <div class="card concept">
+      <div class="conceptGrid">
+        <div class="pill">
+          <div class="pillTitle">Amaç</div>
+          <div class="pillText">Özet ekranı bağımsızlaştır; muayene akışını bölmeden aynı anda görünür tut.</div>
+        </div>
+        <div class="pill">
+          <div class="pillTitle">Nasıl Açılır</div>
+          <div class="pillText"><strong>Özet ekran, hedef alana sürükle‑bırak yapılarak yüzer hale getirilir. Sürükleme başladığında yüzer ekran açılır.</strong></div>
+        </div>
+        <div class="pill">
+          <div class="pillTitle">Nasıl Kapanır</div>
+          <div class="pillText">Kapat (X) ile veya geri “Gösterge Paneli” alanına taşıyarak.</div>
+        </div>
+        <div class="pill">
+          <div class="pillTitle">Nasıl Resize</div>
+          <div class="pillText">Köşe/kenar tutamacı ile boyutlandır; minimum ölçü korunur.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demoHead">
+        <div class="demoTitle">Uygulamalı Görünüm</div>
+        <div class="demoHint">Not: Sağ menü kapalı gelirse, uygulama içinden sağ menüyü açıp tekrar deneyin.</div>
+      </div>
+      <div class="demoBody">
+        <div class="mobileNotice">
+          <div>
+            <strong>Bu özellik, Mobile modda ekran alanı kısıtlılığı nedeniyle kullanılmamaktadır.</strong>
+          </div>
+        </div>
+
+        <iframe src="../DrHastaBasi.html"></iframe>
+
+        <!-- Overlay arrows (schematic, over the embedded screen) -->
+        <svg class="overlay" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L10,3 L0,6 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="arrowGreen" markerWidth="10" markerHeight="6" refX="10" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M0,0 L10,3 L0,6 Z" fill="#16a34a"></path>
+            </marker>
+            <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L10,3 L0,6 Z" fill="#f59e0b"></path>
+            </marker>
+            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#111827" flood-opacity="0.18"/>
+            </filter>
+          </defs>
+
+          <!-- Target: floating summary zone (schematic position) -->
+          <rect id="hbFloatTarget" x="980" y="520" width="420" height="240" rx="16" ry="16"
+                fill="rgba(234,244,255,0.72)" stroke="rgba(37,99,235,0.55)" stroke-width="2"
+                filter="url(#softShadow)"></rect>
+
+          <!-- Arrow from LEFT MENU area -->
+          <path id="hbArrowBlue" d="" fill="none" stroke="#2563eb" stroke-width="6"
+                stroke-linecap="round"></path>
+          <circle id="hbBlueStartDot" cx="0" cy="0" r="7" fill="#2563eb" style="display:none"></circle>
+          <circle id="hbBlueEndRing" cx="0" cy="0" r="10" fill="none" stroke="#2563eb" stroke-width="3" style="display:none"></circle>
+
+          <!-- Arrow from ROW2 icon strip -->
+          <path id="hbArrowGreen" d="" fill="none" stroke="#16a34a" stroke-width="6"
+                stroke-linecap="round"></path>
+          <circle id="hbGreenStartDot" cx="0" cy="0" r="7" fill="#16a34a" style="display:none"></circle>
+          <circle id="hbGreenEndRing" cx="0" cy="0" r="10" fill="none" stroke="#16a34a" stroke-width="3" style="display:none"></circle>
+
+          <!-- Arrow from RIGHT MENU area -->
+          <path id="hbArrowOrange" d="" fill="none" stroke="#f59e0b" stroke-width="6"
+                stroke-linecap="round"></path>
+          <circle id="hbOrangeStartDot" cx="0" cy="0" r="7" fill="#f59e0b" style="display:none"></circle>
+          <circle id="hbOrangeEndRing" cx="0" cy="0" r="10" fill="none" stroke="#f59e0b" stroke-width="3" style="display:none"></circle>
+
+        </svg>
+
+        <div class="legend">
+          <div class="legendRow"><span class="dot"></span> Sol Menü → Yüzer Özet Ekran</div>
+          <div class="legendRow"><span class="dot g"></span> 2. Satır → Yüzer Özet Ekran</div>
+          <div class="legendRow"><span class="dot o"></span> Sağ Menü → Yüzer Özet Ekran</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  function _q(sel, root){ try{ return (root||document).querySelector(sel); }catch(e){ return null; } }
+  function _qa(sel, root){ try{ return (root||document).querySelectorAll(sel); }catch(e){ return []; } }
+  function _clamp(v,min,max){ return v<min?min:(v>max?max:v); }
+
+  function _isVisibleEl(el){
+    try{
+      if(!el) return false;
+      var r = el.getBoundingClientRect();
+      return (r.width > 2 && r.height > 2);
+    }catch(e){ return false; }
+  }
+  function _firstVisible(sel, doc){
+    try{
+      var list = _qa(sel, doc);
+      for(var i=0;i<list.length;i++){
+        if(_isVisibleEl(list[i])) return list[i];
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function _rectToSvgPoint(svg, pt){
+    var r = svg.getBoundingClientRect();
+    var vb = (svg && svg.viewBox && svg.viewBox.baseVal) ? svg.viewBox.baseVal : {width:1600, height:900};
+    var w = vb.width || 1600;
+    var h = vb.height || 900;
+    return {
+      x: (pt.x - r.left) * (w / r.width),
+      y: (pt.y - r.top)  * (h / r.height)
+    };
+  }
+
+  function _makeCurve(a,b,bend){
+    var c1 = { x: a.x + (b.x-a.x)*0.35, y: a.y + bend };
+    var c2 = { x: a.x + (b.x-a.x)*0.70, y: b.y - bend };
+    return "M"+a.x.toFixed(1)+" "+a.y.toFixed(1)+" C "+c1.x.toFixed(1)+" "+c1.y.toFixed(1)+", "+c2.x.toFixed(1)+" "+c2.y.toFixed(1)+", "+b.x.toFixed(1)+" "+b.y.toFixed(1);
+  }
+
+  function _setPathDots(pathEl, startEl, endEl, on, rStart, rEnd){
+    try{
+      if(!pathEl || !startEl || !endEl) return;
+      if(!on){
+        pathEl.style.strokeDasharray = '';
+        pathEl.style.strokeDashoffset = '';
+        startEl.style.display = 'none';
+        endEl.style.display = 'none';
+        return;
+      }
+      var total = (pathEl.getTotalLength && pathEl.getTotalLength()) ? pathEl.getTotalLength() : 0;
+      if(!total || !isFinite(total)){
+        startEl.style.display = 'none';
+        endEl.style.display = 'none';
+        return;
+      }
+      var p0 = pathEl.getPointAtLength(0);
+      var p1 = pathEl.getPointAtLength(total);
+
+      startEl.setAttribute('cx', p0.x.toFixed(1));
+      startEl.setAttribute('cy', p0.y.toFixed(1));
+      endEl.setAttribute('cx', p1.x.toFixed(1));
+      endEl.setAttribute('cy', p1.y.toFixed(1));
+
+      startEl.style.display = '';
+      endEl.style.display = '';
+
+      var vis = total - (rStart||0) - (rEnd||0);
+      if(vis < 0) vis = 0;
+      pathEl.style.strokeDasharray = vis.toFixed(2) + ' ' + total.toFixed(2);
+      pathEl.style.strokeDashoffset = (-(rStart||0)).toFixed(2);
+    }catch(e){
+      try{ startEl.style.display = 'none'; }catch(_e){}
+      try{ endEl.style.display = 'none'; }catch(_e){}
+    }
+  }
+
+  function _findRow2(doc){
+    return doc.getElementById('hbTopBar2') ||
+           doc.getElementById('hbRow2') ||
+           _firstVisible('#hbTopBar2, #hbRow2, .hbTopBar2, .hbRow2, [data-hb-row2], [data-row2]', doc);
+  }
+
+  function _findLeftAnchor(doc){
+    return _firstVisible(
+      '#hbLeftMenu .hbItem, #hbMenuLeft .hbItem, .hbLeftMenu .hbItem, .hbMenuLeft .hbItem,'+
+      '.hbLeftMenuItem, .hbMenuItem, .hbMenuItemBtn, .hbItemBtn, .hbMenuList .hbItem,'+
+      '#hbMiniPanel .hbItem, .hbMiniPanel .hbItem, #hbMiniPanel button, .hbMiniPanel button,'+
+      '#hbLeftMenu button, .hbLeftMenu button, [data-area="left"] button',
+      doc
+    ) || doc.getElementById('hbLeftMenu') || doc.getElementById('hbMenuLeft') || doc.getElementById('hbMiniPanel');
+  }
+
+  
+function _isElVisible(el){
+  if(!el) return false;
+  var r = el.getBoundingClientRect();
+  return (r.width > 2 && r.height > 2);
+}
+function _isRightPanelOpen(doc){
+  try{
+    var candidates = [
+      doc.getElementById('hbRightMenu'),
+      doc.getElementById('hbRightPanel'),
+      doc.getElementById('hbMenuRight'),
+      doc.querySelector('#hbRightMenu, .hbRightMenu, #hbRightPanel, .hbRightPanel, #hbMenuRight, .hbMenuRight, [data-area="right"]')
+    ];
+    for(var i=0;i<candidates.length;i++){
+      var el = candidates[i];
+      if(!el) continue;
+      var cs = doc.defaultView && doc.defaultView.getComputedStyle ? doc.defaultView.getComputedStyle(el) : null;
+      if(cs && cs.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0' && _isElVisible(el)) return true;
+    }
+    // common body classes
+    var b = doc.body;
+    if(b){
+      var cls = b.className || '';
+      if(cls.indexOf('rightOpen')>=0 || cls.indexOf('RightOpen')>=0 || cls.indexOf('hbRightOpen')>=0) return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+
+function _findRightAnchor(doc){
+  // Always anchor from the right-most visible button (best-effort), preferring known ids/classes first.
+  var el =
+    doc.getElementById('hbRightMenuBtn') ||
+    doc.getElementById('hbBtnRightMenu') ||
+    doc.getElementById('hbRightToggle') ||
+    _firstVisible(
+      '#hbRightMenuBtn, #hbBtnRightMenu, #hbRightToggle, .hbRightMenuBtn, .hbRightToggle,'+
+      '[data-hb-right-menu], [data-hb-right-toggle], button[aria-label*="Sağ"], button[title*="Sağ"],'+
+      'button[aria-label*="Right"], button[title*="Right"]',
+      doc
+    );
+  if(el) return el;
+
+  // Heuristic: choose the right-most visible button in the document (often the right menu icon sits at the far right in the top bar).
+  try{
+    var btns = doc.querySelectorAll('button');
+    var best = null, bestRight = -1;
+    for(var i=0;i<btns.length;i++){
+      var b = btns[i];
+      if(!b) continue;
+      var r = b.getBoundingClientRect();
+      if(r.width < 18 || r.height < 18) continue;
+      // skip offscreen
+      if(r.bottom < 0 || r.right < 0) continue;
+      // prefer buttons near the top (top bar)
+      var score = r.right - (r.top * 0.25);
+      if(score > bestRight){
+        bestRight = score;
+        best = b;
+      }
+    }
+    if(best) return best;
+  }catch(e){}
+  return null;
+}
+
+
+
+
+  function _updateArrows(){
+    var iframeEl = _q('iframe');
+    var svg = _q('svg.overlay');
+    if(!iframeEl || !svg) return;
+
+    try{
+      var sr = svg.getBoundingClientRect();
+      var ir = iframeEl.getBoundingClientRect();
+      if(!sr || sr.width < 2 || sr.height < 2) return;
+      if(!ir || ir.width < 2 || ir.height < 2) return;
+      var scs = (window.getComputedStyle ? window.getComputedStyle(svg) : null);
+      if(scs && (scs.display === 'none' || scs.visibility === 'hidden' || scs.opacity === '0')) return;
+      var ics = (window.getComputedStyle ? window.getComputedStyle(iframeEl) : null);
+      if(ics && (ics.display === 'none' || ics.visibility === 'hidden' || ics.opacity === '0')) return;
+    }catch(e){ return; }
+
+    var doc;
+    try{ doc = iframeEl.contentDocument; }catch(e){ return; }
+    if(!doc) return;
+
+    var vb = (svg && svg.viewBox && svg.viewBox.baseVal) ? svg.viewBox.baseVal : {width:1600, height:900};
+    var vbW = vb.width || 1600;
+    var vbH = vb.height || 900;
+
+    var target = _q('#hbFloatTarget');
+    var blue = _q('#hbArrowBlue');
+    var green = _q('#hbArrowGreen');
+    var orange = _q('#hbArrowOrange');
+
+    var blueSD = _q('#hbBlueStartDot');
+    var blueER = _q('#hbBlueEndRing');
+    var greenSD = _q('#hbGreenStartDot');
+    var greenER = _q('#hbGreenEndRing');
+    var orangeSD = _q('#hbOrangeStartDot');
+    var orangeER = _q('#hbOrangeEndRing');
+
+    if(!target || !blue || !green || !orange) return;
+
+    var tr = target.getBoundingClientRect();
+    var targetL = _rectToSvgPoint(svg, {x: tr.left + 10, y: tr.top + tr.height*0.55});
+    var targetT = _rectToSvgPoint(svg, {x: tr.left + tr.width*0.52, y: tr.top + 10});
+    var targetR = _rectToSvgPoint(svg, {x: tr.left + tr.width - 10, y: tr.top + tr.height*0.55});
+
+    var ifr = iframeEl.getBoundingClientRect();
+
+    // BLUE
+    var leftEl = _findLeftAnchor(doc);
+    if(leftEl){
+      var rL = leftEl.getBoundingClientRect();
+      var fromBlue = _rectToSvgPoint(svg, {x: ifr.left + rL.left + rL.width/2, y: ifr.top + rL.top + rL.height/2});
+      fromBlue.x = _clamp(fromBlue.x, 20, vbW-20);
+      fromBlue.y = _clamp(fromBlue.y, 20, vbH-20);
+      blue.setAttribute('d', _makeCurve(fromBlue, targetL, 10));
+      blue.style.display = '';
+      _setPathDots(blue, blueSD, blueER, true, 10, 14);
+    }else{
+      blue.style.display = 'none';
+      _setPathDots(blue, blueSD, blueER, false);
+    }
+
+    // GREEN
+    var row2El = _findRow2(doc);
+    if(row2El){
+      var rr2 = row2El.getBoundingClientRect();
+      var fromGreen = _rectToSvgPoint(svg, {x: ifr.left + rr2.left + rr2.width/2, y: ifr.top + rr2.top + rr2.height/2});
+      fromGreen.x = _clamp(fromGreen.x, 20, vbW-20);
+      fromGreen.y = _clamp(fromGreen.y, 20, vbH-20);
+      green.setAttribute('d', _makeCurve(fromGreen, targetT, 10));
+      green.style.display = '';
+      _setPathDots(green, greenSD, greenER, true, 10, 14);
+    }else{
+      green.style.display = 'none';
+      _setPathDots(green, greenSD, greenER, false);
+    }
+
+    // ORANGE
+    var rightEl = _findRightAnchor(doc);
+    if(rightEl){
+      var rR = rightEl.getBoundingClientRect();
+      var fromOrange = _rectToSvgPoint(svg, {x: ifr.left + rR.left + rR.width/2, y: ifr.top + rR.top + rR.height/2});
+      fromOrange.x = _clamp(fromOrange.x, 20, vbW-20);
+      fromOrange.y = _clamp(fromOrange.y, 20, vbH-20);
+      orange.setAttribute('d', _makeCurve(fromOrange, targetR, 10));
+      orange.style.display = '';
+      _setPathDots(orange, orangeSD, orangeER, true, 10, 14);
+    }else{
+      orange.style.display = 'none';
+      _setPathDots(orange, orangeSD, orangeER, false);
+    }
+  }
+
+  window.__hb_updateArrows = _updateArrows;
+
+  var _pending = false;
+  var _t = 0;
+  function _schedule(){
+    if(_pending) return;
+    _pending = true;
+    if(_t) clearTimeout(_t);
+    _t = setTimeout(function(){
+      _t = 0;
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          _pending = false;
+          _updateArrows();
+        });
+      });
+    }, 60);
+  }
+  var scheduleUpdate = _schedule;
+  var _scheduleUpdate = _schedule;
+  window.scheduleUpdate = _schedule;
+  window._scheduleUpdate = _schedule;
+
+
+  function _bind(){
+    var iframeEl = _q('iframe');
+    if(!iframeEl) return;
+
+    function ready(){
+      try{ if(!iframeEl.contentDocument || !iframeEl.contentDocument.body) return false; }catch(e){ return false; }
+      return true;
+    }
+
+    function go(){
+      if(!ready()) return;
+      // initial passes
+      _schedule();
+      setTimeout(_schedule, 180);
+      setTimeout(_schedule, 520);
+      setTimeout(_schedule, 1200);
+
+      window.addEventListener('resize', _schedule, {passive:true});
+      window.addEventListener('scroll', _schedule, {passive:true});
+      try{ iframeEl.contentWindow.addEventListener('scroll', _schedule, {passive:true}); }catch(e){}
+
+      try{
+        if('ResizeObserver' in window){
+          var ro = new ResizeObserver(function(){ _schedule(); });
+          ro.observe(iframeEl);
+          try{ ro.observe(document.querySelector('.demoBody')); }catch(e){}
+        }
+      }catch(e){}
+    }
+
+    iframeEl.addEventListener('load', function(){ go(); }, {once:true});
+    // already loaded
+    setTimeout(function(){ go(); }, 0);
+  }
+
+  _bind();
+})();
+</script>
+
+</body>
+</html>

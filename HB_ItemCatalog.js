@@ -30,7 +30,7 @@ var HB_ITEM_CATALOG = {
     'test9': { id: 'test9', title: 'test9', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 3, dashSpanH: 1, },
     'test10': { id: 'test10', title: 'test10', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 3, dashSpanH: 2, },
     'test11': { id: 'test11', title: 'test11', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 1, dashSpanH: 1, },
-    'test12': { id: 'test12', title: 'test12', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 2, dashSpanH: 1, },
+    'test12': { id: 'test12', title: 'test12', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 1, dashSpanH: 3, },
     'test13': { id: 'test13', title: 'test13', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 1, dashSpanH: 2, },
     'test14': { id: 'test14', title: 'test14', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 3, dashSpanH: 1, },
     'test15': { id: 'test15', title: 'test15', hasWidget: 1, WidgetHTML: 'Items/TestWidget.html', FullHTML: 'Items/TestFull.html', iconKey: 'test', dashSpanW: 1, dashSpanH: 3, },

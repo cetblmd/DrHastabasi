@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sağ Menü – İframe İçi İşaret</title>
+<style>
+  body{ margin:0; height:100vh; overflow:hidden; background:#000; font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  #hbFrame{ position:absolute; inset:0; width:100%; height:100%; border:0; background:#fff; }
+</style>
+</head>
+<body>
+
+<iframe id="hbFrame" src="../DrHastaBasi.html"></iframe>
+
+<script>
+(function(){
+  var iframeEl = document.getElementById('hbFrame');
+
+  function inject(){
+    var doc;
+    try{ doc = iframeEl.contentDocument; }catch(e){ return; }
+    if(!doc || !doc.body) return;
+
+    var btn = doc.getElementById('hbTopMenuBtn');
+    if(!btn) return;
+
+    // Ensure we have an overlay root inside iframe
+    var host = doc.getElementById('__hb_help_overlay_root');
+    if(!host){
+      host = doc.createElement('div');
+      host.id = '__hb_help_overlay_root';
+      host.style.position = 'fixed';
+      host.style.inset = '0';
+      host.style.zIndex = '2147483647';
+      host.style.pointerEvents = 'none';
+      doc.body.appendChild(host);
+
+      // Ring
+      var ring = doc.createElement('div');
+      ring.id = '__hb_help_ring';
+      ring.style.position = 'fixed';
+      ring.style.width = '92px';
+      ring.style.height = '92px';
+      ring.style.borderRadius = '999px';
+      ring.style.border = '4px solid #22c55e';
+      ring.style.boxShadow = '0 0 0 2px rgba(34,197,94,.22) inset';
+      ring.style.background = 'transparent';
+      ring.style.pointerEvents = 'none';
+      ring.style.transform = 'translate(-50%,-50%)';
+      host.appendChild(ring);
+
+      // Cut-out effect: use huge box-shadow on ring to override dim
+      // We'll emulate spotlight by re-layering: dim stays, ring adds its own huge shadow.
+      ring.style.boxShadow = '0 0 0 2px rgba(34,197,94,.22)';
+
+    }
+
+    function place(){
+      var ring = doc.getElementById('__hb_help_ring');
+      if(!ring) return;
+
+      var r = btn.getBoundingClientRect();
+      var cx = r.left + (r.width/2);
+      var cy = r.top + (r.height/2);
+
+      ring.style.left = cx + 'px';
+      ring.style.top  = cy + 'px';
+
+      var vw = doc.documentElement.clientWidth || 0;
+      var vh = doc.documentElement.clientHeight || 0;
+
+    }
+
+    // initial + keep in sync
+    place();
+    setTimeout(place, 180);
+    setTimeout(place, 520);
+    setTimeout(place, 1200);
+
+    try{
+      doc.defaultView.addEventListener('resize', place, {passive:true});
+      doc.defaultView.addEventListener('scroll', place, {passive:true});
+    }catch(e){}
+  }
+
+  iframeEl.addEventListener('load', function(){ inject(); });
+})();
+</script>
+
+</body>
+</html>

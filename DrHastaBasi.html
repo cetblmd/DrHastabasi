@@ -81,6 +81,7 @@ html, body{
 }
 
 #topBar{
+    font-family: var(--bilmed-row1-font-family, Arial, sans-serif);
     position: relative;
     display: flex;
     align-items: center;
@@ -108,7 +109,7 @@ html, body{
     align-items: center;
     gap: calc(10px * var(--hbTopScale));
     min-width: 0;
-    max-width: calc(50% - 40px);
+    max-width: calc(35% - 40px);
     padding: 4px 8px;
     border: 1px solid var(--bilmed-header-border);
     border-radius: 12px;
@@ -193,7 +194,6 @@ html, body{
     display: block;
 }
 
-/*CETCET*/
 #hbHospitalLogoTop{
     flex: 0 0 auto;
     margin-right: -6px;
@@ -389,7 +389,7 @@ html, body{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,0.04);
+    background: var(--bilmed-header2-bg, rgba(0,0,0,0.04));
 }
 #hbTopMenuPanel .hbTopMenuItemIcon svg{
     width: 18px;
@@ -399,7 +399,8 @@ html, body{
 #hbTopMenuPanel .hbTopMenuItemText{
     flex: 1;
     text-align: left;
-    font-size: 14px;
+    font-family: var(--bilmed-desc-font-family, inherit);
+    font-size: calc(var(--bilmed-desc-px, 12) * 1px);
     line-height: 18px;
     user-select: none;
 }
@@ -688,12 +689,19 @@ html, body{
     text-overflow: ellipsis;
 }
 .hbItemListDesc{
-    font-size: 12px;
+    font-family: var(--bilmed-desc-font-family, inherit);
+    font-size: calc(var(--bilmed-desc-px, 12) * 1px);
     opacity: 0.72;
     margin-top: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.hbItemListTitle,
+.hbItemListText{
+    font-family: var(--bilmed-desc-font-family, inherit);
+    font-size: calc(var(--bilmed-desc-px, 12) * 1px);
 }
 
 .hb-mobile-mode .hbItemListIcon{
@@ -816,19 +824,91 @@ html, body{
     width: min(320px, calc(100vw - 20px));
     border-radius: 12px;
     overflow: hidden;
-    background: rgba(255,255,255,0.96);
-    border: 1px solid rgba(0,0,0,0.10);
+    background: var(--bilmed-surface-bg, rgba(255,255,255,0.96));
+    border: 1px solid var(--bilmed-surface-border, rgba(0,0,0,0.10));
     box-shadow: 0 12px 34px rgba(0,0,0,0.20);
-    color: #0b2239;
+    color: var(--bilmed-surface-text, #0b2239);
     user-select: none;
+}
+#hbGuideBackdrop{
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(0,0,0,0.18);
+    z-index: 9998;
+}
+#hbGuidePanel{
+    width: min(360px, calc(100vw - 20px));
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bilmed-surface-bg, rgba(255,255,255,0.96));
+    border: 1px solid var(--bilmed-surface-border, rgba(0,0,0,0.10));
+    box-shadow: 0 12px 34px rgba(0,0,0,0.20);
+    color: var(--bilmed-surface-text, #0b2239);
+}
+#hbGuideHead{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bilmed-header2-bg, rgba(0,0,0,0.04));
+    border-bottom: 1px solid var(--bilmed-header2-border, rgba(0,0,0,0.08));
+}
+#hbGuideTitle{
+    font-weight: 700;
+    font-size: 14px;
+}
+#hbGuideClose{
+    margin-left: auto;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid var(--bilmed-surface-border, rgba(0,0,0,0.12));
+    background: var(--bilmed-tint-bg, rgba(255,255,255,0.90));
+    cursor: pointer;
+}
+#hbGuideClose:hover{
+    background: var(--bilmed-tint-bg, rgba(255,255,255,1));
+}
+#hbGuideBody{
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+}
+#hbGuideBtn{
+    width: 100%;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid var(--bilmed-surface-border, rgba(0,0,0,0.12));
+    background: var(--bilmed-tint-bg, rgba(255,255,255,0.90));
+    cursor: pointer;
+    font-weight: 700;
+}
+#hbGuideBtn:hover{
+    background: var(--bilmed-tint-bg, rgba(255,255,255,1));
+}
+#hbGuideDontWrap{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    font-size: 13px;
+    color: var(--bilmed-muted-text, rgba(0,0,0,0.65));
+}
+#hbGuideDontShow{
+    width: 16px;
+    height: 16px;
 }
 #hbOzHeader{
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
-    background: rgba(0,0,0,0.04);
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    background: var(--bilmed-header2-bg, rgba(0,0,0,0.04));
+    border-bottom: 1px solid var(--bilmed-header2-border, rgba(0,0,0,0.08));
 }
 #hbOzTitle{
     font-weight: 700;
@@ -841,12 +921,12 @@ html, body{
     height: 30px;
     padding: 0 10px;
     border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.12);
-    background: rgba(255,255,255,0.90);
+    border: 1px solid var(--bilmed-surface-border, rgba(0,0,0,0.12));
+    background: var(--bilmed-tint-bg, rgba(255,255,255,0.90));
     cursor: pointer;
 }
 #hbOzClose:hover{
-    background: rgba(255,255,255,1);
+    background: var(--bilmed-tint-bg, rgba(255,255,255,1));
 }
 #hbOzBody{
     padding: 8px;
@@ -872,7 +952,7 @@ html, body{
     display: grid;
     place-items: center;
     border-radius: 8px;
-    background: rgba(0,0,0,0.04);
+    background: var(--bilmed-header2-bg, rgba(0,0,0,0.04));
     flex: 0 0 auto;
 }
 .hbOzText{
@@ -899,6 +979,8 @@ html, body{
     .hbLogoChip img{ height:16px; max-height:16px; }
     #hbTopMenuBtn{ width:30px; height:30px; border-radius:10px; }
     #hbTopMenuBtn svg{ width:16px; height:16px; }
+
+
 }
 
 @media (max-width: 768px){
@@ -924,8 +1006,7 @@ html, body{
         max-height: 14px;
     }
 
-    #hbPatientName,
-    #hbDoctorName{
+    #hbPatientName{
         font-size: calc(0.62rem * var(--hbTopScaleName));
     }
 
@@ -940,16 +1021,12 @@ html, body{
         display: block;
     }
 
-    #hbPatientArea{ max-width: calc(50% - 16px); }
-    #hbDoctorArea{ max-width: calc(50% - 16px); }
-    #hbPatientArea,
-    #hbDoctorArea{
+    #hbPatientArea{
         padding-left: 10px;
         padding-right: 10px;
     }
 
-    #topBar #hbPatientName,
-    #topBar #hbDoctorName{
+    #topBar #hbPatientName{
         font-size: calc(0.62rem * var(--hbTopScaleName)) !important;
     }
 
@@ -973,13 +1050,14 @@ html, body{
         width: auto !important;
     }
     #hbTopMenuBtn{
-        width: 24px !important;
-        height: 14px !important;
-        border-radius: 6px !important;
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 7px !important;
     }
     #hbTopMenuBtn svg{
-        width: 10px !important;
-        height: 10px !important;
+        width: 12px !important;
+        height: 12px !important;
+        display: block;
     }
 
     #hbTopDashBtn{
@@ -1007,6 +1085,7 @@ html, body{
     }
 
 }
+
 @media (max-width: 420px){
     :root{ --hbTopBar1H: 44px; }
     #topBar{ height:44px; padding:0 8px; gap:8px; }
@@ -1018,6 +1097,31 @@ html, body{
     #hbTopBar2{ height:34px; padding:0 8px; gap:6px; }
     .hbLogoChip{ height:20px; border-radius:4px; padding:0 3px; }
     .hbLogoChip img{ height:10px; max-height:10px; }
+
+    #hbJobCenterText{
+        font-size: calc(0.6rem * var(--hbTopScaleMeta));
+    }
+
+    #hbTopDashBtn{ 
+       left: -56px; 
+    }
+
+    #hbDoctorArea{
+      flex: 0 0 auto !important;
+      width: auto !important;
+      min-width: 0 !important;
+    }
+    #hbDoctorName, #hbDoctorMeta{
+      display: none !important;
+    }
+
+    #hbPatientArea{
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      width: auto !important;
+    }
+
 }
 
 .hbRow2Dummy{visibility:hidden;pointer-events:none;}
@@ -1374,6 +1478,28 @@ html, body{
                     <div>Gösterge Paneli Ayarları</div>
                 </div>
             </div>
+            <div id='hbOzGuide' class='hbOzItem' role='button' tabindex='0'>
+                <div class='hbOzIcon'>📘</div>
+                <div class='hbOzText'>
+                    <div>Kullanıcı Kılavuzu</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id='hbGuideBackdrop'>
+    <div id='hbGuidePanel' role='dialog' aria-modal='true' aria-label='Kullanıcı Kılavuzu'>
+        <div id='hbGuideHead'>
+            <div id='hbGuideTitle'>Kullanıcı Kılavuzu</div>
+            <button id='hbGuideClose' type='button'>Çık</button>
+        </div>
+        <div id='hbGuideBody'>
+            <button id='hbGuideBtn' type='button'>Kullanıcı Kılavuzu</button>
+            <label id='hbGuideDontWrap'>
+                <input id='hbGuideDontShow' type='checkbox'>
+                <span>Bunu bir daha gösterme</span>
+            </label>
         </div>
     </div>
 </div>
@@ -1528,12 +1654,49 @@ html, body{
         __hb_topMenuClose();
     }
 
-    function __hb_wireTopMenu() {
-        var btn = document.getElementById('hbTopMenuBtn');
-        if(!btn) { return; }
-        btn.addEventListener('click', __hb_topMenuToggle);
-        document.addEventListener('pointerdown', __hb_topMenuDocDown);
-    }
+
+	function __hb_wireTopMenu() {
+		var btn = document.getElementById('hbTopMenuBtn');
+		if(!btn) { return; }
+
+		btn.addEventListener('click', __hb_topMenuToggle);
+
+		document.addEventListener('pointerdown', __hb_topMenuDocDown);
+
+		function bindIframeClose(iframe){
+			if(!iframe) { return; }
+			if(iframe.__hbMenuCloseBound) { return; }
+			iframe.__hbMenuCloseBound = 1;
+
+			iframe.addEventListener('load', function(){
+				try{
+					var w = iframe.contentWindow;
+					var d = iframe.contentDocument || (w ? w.document : null);
+					if(!d) { return; }
+
+					if(d.__hbMenuCloseHooked) { return; }
+					d.__hbMenuCloseHooked = 1;
+
+					d.addEventListener('pointerdown', function(){
+						if(__hb_topMenuOpenFlag) { __hb_topMenuClose(); }
+					}, true);
+
+					d.addEventListener('keydown', function(ev){
+						if(!__hb_topMenuOpenFlag) { return; }
+						if(ev && (ev.key === 'Escape' || ev.key === 'Esc')) { __hb_topMenuClose(); }
+					}, true);
+
+				}catch(e){
+					console.warn('HB_TOPMENU_IFRAME_BIND_FAIL', e);
+				}
+			});
+		}
+
+		bindIframeClose(document.getElementById('hbWidgetHostFrame'));
+		bindIframeClose(document.getElementById('hbFullHostFrame'));
+		bindIframeClose(document.getElementById('hbFloatingFrame'));
+	}
+
 
     function __hb_wire() {
         var wrap = document.getElementById('doctorAvatarWrap');
@@ -1636,6 +1799,21 @@ function __hb_applyTopScale(){
     var sn = 1;
     var sm = 1;
 
+    var userRow1Px = NaN;
+    try {
+        var cs = window.getComputedStyle(document.documentElement);
+        if(cs) {
+            userRow1Px = Number(cs.getPropertyValue('--bilmed-row1-px'));
+        }
+    } catch(e) {
+        console.error('BILMED_ROW1_PX_READ_FAIL', e);
+    }
+
+    var userFactor = 1;
+    if(isFinite(userRow1Px) && userRow1Px > 0) {
+        userFactor = userRow1Px / 14.4;
+    }
+
     if(w > 0 && w <= 420) {
         s = 0.84;
         sn = 0.82;
@@ -1653,6 +1831,9 @@ function __hb_applyTopScale(){
         sn = 0.96;
         sm = 0.90;
     }
+
+    sn = sn * userFactor;
+    sm = sm * userFactor;
 
     document.documentElement.style.setProperty('--hbTopScale', String(s));
     document.documentElement.style.setProperty('--hbTopScaleName', String(sn));
@@ -2063,6 +2244,8 @@ var f = document.getElementById('hbFullHostFrame');
         console.warn('HB_ITEM_NOT_FOUND', id);
         return;
     }
+
+    __hb_topMenuClose();
 
     HB_ITEM_STATE.selectedId = String(it.id || '');
     __hb_itemsSetRailSelected();
@@ -2522,6 +2705,76 @@ function __hb_fwInit(){
 }
 
 
+function __hb_userGuideCfgGet(){
+    var cfg = __hb_uiCfgLoad();
+    if(!cfg || typeof cfg !== 'object') { return {}; }
+    return cfg;
+}
+
+function __hb_userGuideDontShowGet(){
+    var cfg = __hb_userGuideCfgGet();
+    if(!cfg.flags || typeof cfg.flags !== 'object') { return 0; }
+    return Number(cfg.flags.userGuideDontShow) ? 1 : 0;
+}
+
+function __hb_userGuideDontShowSet(v){
+    var cfg = __hb_userGuideCfgGet();
+    if(!cfg.flags || typeof cfg.flags !== 'object') { cfg.flags = {}; }
+    cfg.flags.userGuideDontShow = v ? 1 : 0;
+    __hb_uiCfgSave(cfg);
+}
+
+function __hb_userGuideOpen(){
+    window.open('./Help/DrHastaBasiConcept.html', '_blank', 'noopener,noreferrer');
+}
+
+function __hb_userGuideShow(){
+    var b = document.getElementById('hbGuideBackdrop');
+    var c = document.getElementById('hbGuideDontShow');
+    if(!b) { return; }
+    if(c) { c.checked = __hb_userGuideDontShowGet() ? true : false; }
+    b.style.display = 'flex';
+}
+
+function __hb_userGuideHide(){
+    var b = document.getElementById('hbGuideBackdrop');
+    if(!b) { return; }
+    b.style.display = 'none';
+}
+
+function __hb_userGuideInit(){
+    var b = document.getElementById('hbGuideBackdrop');
+    var btn = document.getElementById('hbGuideBtn');
+    var closeBtn = document.getElementById('hbGuideClose');
+    var chk = document.getElementById('hbGuideDontShow');
+
+    if(closeBtn) {
+        closeBtn.addEventListener('click', function(){
+            if(chk) { __hb_userGuideDontShowSet(chk.checked ? 1 : 0); }
+            __hb_userGuideHide();
+        });
+    }
+
+    if(b) {
+        b.addEventListener('click', function(ev){
+            if(ev.target === b) {
+                if(chk) { __hb_userGuideDontShowSet(chk.checked ? 1 : 0); }
+                __hb_userGuideHide();
+            }
+        });
+    }
+
+    if(btn) {
+        btn.addEventListener('click', function(){
+            __hb_userGuideOpen();
+        });
+    }
+
+    if(!__hb_userGuideDontShowGet()) {
+        __hb_userGuideShow();
+    }
+}
+
 function __hb_baslat() {
     var __hb_dashFrame = document.getElementById('hbWidgetHostFrame');
     if(__hb_dashFrame){
@@ -2561,15 +2814,85 @@ var ozClose = document.getElementById('hbOzClose');
         if(ozG) {
             ozG.addEventListener('click', function(){
                 __hb_ozClose();
-                BilmedThema(DrID, document, true);
+
+                var __hb_seenOpen = 0;
+                var __hb_closeStreak = 0;
+                var __hb_ticks = 0;
+                var __hb_timer = null;
+
+                function __hb_probeTheme(){
+                    __hb_ticks += 1;
+
+                    var el = null;
+                    try{ el = document.getElementById('bilmedThemeTitle'); }catch(e){ el = null; }
+
+                    var vis = 0;
+                    if(el){
+                        try{
+                            var r = el.getBoundingClientRect();
+                            if(r && r.width > 2 && r.height > 2){
+                                vis = 1;
+                            }
+                        }catch(e){
+                            vis = 0;
+                        }
+                    }
+
+                    if(vis){
+                        __hb_seenOpen = 1;
+                        __hb_closeStreak = 0;
+                    }else{
+                        if(__hb_seenOpen){
+                            __hb_closeStreak += 1;
+                        }
+                    }
+
+                    if(__hb_seenOpen && __hb_closeStreak >= 2){
+                        if(__hb_timer){
+                            clearInterval(__hb_timer);
+                            __hb_timer = null;
+                        }
+
+                        try{
+                            window.__hb_themeCfg = BilmedThema(DrID, document, false);
+                        }catch(err){
+                            console.error('BILMED_THEME_REAPPLY_FAIL', err);
+                        }
+
+                        try{
+                            __hb_menuApplyPlacementFromCfg({ runtimeOnly: 1 });
+                        }catch(err){
+                            console.error('HB_MENU_RERENDER_AFTER_THEME_FAIL', err);
+                        }
+
+                        return;
+                    }
+
+                    if(__hb_ticks >= 480){
+                        if(__hb_timer){
+                            clearInterval(__hb_timer);
+                            __hb_timer = null;
+                        }
+                    }
+                }
+
+                try{
+                    BilmedThema(DrID, document, true);
+                }catch(err){
+                    console.error('BILMED_THEME_OPEN_FAIL', err);
+                    return;
+                }
+
+                __hb_timer = setInterval(__hb_probeTheme, 250);
+                __hb_probeTheme();
             });
         }
 
-        var ozM = document.getElementById('hbOzMenuAyar');
+var ozM = document.getElementById('hbOzMenuAyar');
         if(ozM) {
             ozM.addEventListener('click', function(){
                 __hb_ozClose();
-                window.location.href = 'MenuAyarlari.html?drid=' + encodeURIComponent(String(typeof DrID !== 'undefined' ? DrID : ''));
+                window.location.href = 'MenuAyarlari.html?DrID=' + encodeURIComponent(String(typeof DrID !== 'undefined' ? DrID : ''));
             });
         }
 
@@ -2577,15 +2900,25 @@ var ozClose = document.getElementById('hbOzClose');
         if(ozD) {
             ozD.addEventListener('click', function(){
                 __hb_ozClose();
-                window.location.href = 'GostergePaneliAyarlari.html?drid=' + encodeURIComponent(String(typeof DrID !== 'undefined' ? DrID : ''));
+                window.location.href = 'GostergePaneliAyarlari.html?DrID=' + encodeURIComponent(String(typeof DrID !== 'undefined' ? DrID : ''));
             });
         }
-    }
+
+        var ozH = document.getElementById('hbOzGuide');
+        if(ozH) {
+            ozH.addEventListener('click', function(){
+                __hb_ozClose();
+                __hb_userGuideOpen();
+            });
+        }
+
+        __hb_userGuideInit();
 
     try {
     } catch(err) {
         console.error('BILMED_FATAL_INIT', err);
     }
+}
 </script>
 
 <script>
@@ -3022,7 +3355,90 @@ function __hb_topRenderRightMenu(slotIds){
     try{ if(typeof __hb_fwEnableDragSources === 'function'){ __hb_fwEnableDragSources(); } }catch(e){ console.error(e); }
 }
 
-function __hb_menuApplyPlacementFromCfg(){
+function __hb_row2MaxSlotsFromConst(){
+    var baseLimit, baseWidth;
+
+    if (typeof __hb_isMobile === 'function' && __hb_isMobile()){
+        baseLimit = (window.HB_LAYOUT_CONST && window.HB_LAYOUT_CONST.ROW2_MOBILE != null) ? Number(window.HB_LAYOUT_CONST.ROW2_MOBILE) : 0;
+        baseWidth = 390;
+    } else if (typeof __hb_isTablet === 'function' && __hb_isTablet()){
+        baseLimit = (window.HB_LAYOUT_CONST && window.HB_LAYOUT_CONST.ROW2_TABLET != null) ? Number(window.HB_LAYOUT_CONST.ROW2_TABLET) : 12;
+        baseWidth = 768;
+    } else {
+        baseLimit = (window.HB_LAYOUT_CONST && window.HB_LAYOUT_CONST.ROW2_PC != null) ? Number(window.HB_LAYOUT_CONST.ROW2_PC) : 22;
+        baseWidth = 2048;
+        baseWidth = 1536;
+    }
+
+    var w = Number(window.innerWidth || baseWidth) || baseWidth;
+    var ratio = w / baseWidth;
+    if (ratio > 1) ratio = 1;
+    if (ratio < 0) ratio = 0;
+    var limit = Math.floor(baseLimit * ratio);
+console.log("ratio:",window.innerWidth,ratio,limit);
+
+    if (baseLimit <= 0){
+        limit = 0;
+    } else {
+        if (limit < 1) limit = 1;
+        if (limit > baseLimit) limit = baseLimit;
+    }
+
+    return limit;
+}
+
+function __hb_row2CalcFitMax(){
+    if(typeof __hb_layoutIsMobile === 'function'){
+        try{ if(__hb_layoutIsMobile()){ window.__hb_row2FitMax = 0; return 0; } }catch(e){}
+    }
+
+    var host = document.getElementById('hbTopSelectedIcons');
+    var rightA = document.getElementById('hbTopRightActions');
+    if(!host || !rightA){
+        try{ window.__hb_row2FitMax = 0; }catch(e){}
+        return 0;
+    }
+
+    var hr = null;
+    var rr = null;
+    try{ hr = host.getBoundingClientRect(); }catch(e){ hr = null; }
+    try{ rr = rightA.getBoundingClientRect(); }catch(e){ rr = null; }
+    if(!hr || !rr){
+        try{ window.__hb_row2FitMax = 0; }catch(e){}
+        return 0;
+    }
+
+    var avail = Math.floor(rr.left - hr.left);
+    if(!isFinite(avail) || avail <= 0){
+        try{ window.__hb_row2FitMax = 0; }catch(e){}
+        return 0;
+    }
+
+    var btn = null;
+    try{ btn = host.querySelector('.hbTopSelBtn'); }catch(e){ btn = null; }
+    var slotW = 34;
+    if(btn){
+        try{ slotW = Math.floor(btn.getBoundingClientRect().width); }catch(e){}
+    }
+    if(!isFinite(slotW) || slotW <= 0){ slotW = 34; }
+
+    var gap = 6;
+    try{
+        var cs = window.getComputedStyle(host);
+        var g = parseFloat(cs.columnGap || cs.gap || '0');
+        if(isFinite(g) && g >= 0){ gap = g; }
+    }catch(e){}
+
+    var fit = Math.floor((avail + gap) / (slotW + gap));
+    if(!isFinite(fit) || fit < 0){ fit = 0; }
+
+    try{ window.__hb_row2FitMax = fit; }catch(e){}
+    return fit;
+}
+
+function __hb_menuApplyPlacementFromCfg(opt){
+    var __hb_runtimeOnly = 0;
+    try{ __hb_runtimeOnly = (opt && opt.runtimeOnly) ? 1 : 0; }catch(e){ __hb_runtimeOnly = 0; }
     var cfg = __hb_uiCfgLoad();
     if(!cfg || typeof cfg !== 'object') {
         console.warn('HB_MENU_CFG_EMPTY');
@@ -3038,6 +3454,21 @@ function __hb_menuApplyPlacementFromCfg(){
     var miniSlots = menu.miniSlots;
     var row2Slots = menu.row2Slots;
     var rightMenu = __hb_menuFilterIds(menu.rightMenu);
+
+    if(__hb_runtimeOnly){
+        if(row2Slots && typeof row2Slots === 'object'){
+            if(Array.isArray(row2Slots)){
+                row2Slots = row2Slots.slice(0);
+            }else{
+                var __hb_row2Copy = {};
+                for(var __hb_ck in row2Slots){
+                    if(!Object.prototype.hasOwnProperty.call(row2Slots, __hb_ck)) { continue; }
+                    __hb_row2Copy[__hb_ck] = row2Slots[__hb_ck];
+                }
+                row2Slots = __hb_row2Copy;
+            }
+        }
+    }
 
 
     // HB_ROW2_OVERFLOW_NORMALIZE
@@ -3360,11 +3791,19 @@ function __hb_layoutInit(){
     __hb_wireLayout();
 }
 
-window.addEventListener('resize', function(){
-    try{ __hb_layoutApply(); }catch(e){ console.error(e); }
-    try{ __hb_applyTopScale(); }catch(e){ console.error(e); }
-    try{ if(typeof __hb_row2NormalizeAndRender === 'function'){ __hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); }
-});
+(function(){
+    var __hb_resizeEndTimer = null;
+    window.addEventListener('resize', function(){
+        try{ window.__hb_row2NormalizeReason = 'resize'; }catch(e){}
+        if(__hb_resizeEndTimer){ try{ clearTimeout(__hb_resizeEndTimer); }catch(e){} }
+        __hb_resizeEndTimer = setTimeout(function(){
+            __hb_resizeEndTimer = null;
+            try{ __hb_layoutApply(); }catch(e){ console.error(e); }
+            try{ __hb_applyTopScale(); }catch(e){ console.error(e); }
+            try{ if(typeof __hb_row2NormalizeAndRender === 'function'){ __hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); }
+        }, 180);
+    });
+})();
 
 try{ window.addEventListener('orientationchange', function(){ try{ if(window.__hb_row2NormalizeAndRender){ window.__hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); } }); }catch(e){}
 try{ document.addEventListener('visibilitychange', function(){ try{ if(!document.hidden && window.__hb_row2NormalizeAndRender){ window.__hb_row2NormalizeAndRender(); } }catch(e){ console.error(e); } }); }catch(e){}
@@ -3598,7 +4037,20 @@ __hb_baslat();
     function __hb_row2NormalizeAndRender(){
         try{
             if(typeof __hb_menuApplyPlacementFromCfg === 'function'){
-                __hb_menuApplyPlacementFromCfg();
+	                var __hb_reason = '';
+	                try{ __hb_reason = String(window.__hb_row2NormalizeReason || ''); }catch(e0){ __hb_reason = ''; }
+	                var __hb_before = 0;
+	                if(__hb_reason === 'resize'){
+	                    try{ if(typeof __hb_row2MaxSlotsFromConst === 'function'){ __hb_before = Number(__hb_row2MaxSlotsFromConst()) || 0; } }catch(e2){ __hb_before = 0; }
+	                    try{ console.log('[HB_ROW2_RESIZE_BEFORE]', { screen: window.innerWidth + 'x' + window.innerHeight, limit: __hb_before }); }catch(e3){}
+	                }
+	                try{ if(typeof __hb_row2CalcFitMax === 'function'){ __hb_row2CalcFitMax(); } }catch(e1){}
+	                if(__hb_reason === 'resize'){
+	                    var __hb_after = 0;
+	                    try{ if(typeof __hb_row2MaxSlotsFromConst === 'function'){ __hb_after = Number(__hb_row2MaxSlotsFromConst()) || 0; } }catch(e4){ __hb_after = 0; }
+	                    try{ console.log('[HB_ROW2_RESIZE_AFTER]',  { screen: window.innerWidth + 'x' + window.innerHeight, limit: __hb_after  }); }catch(e5){}
+	                }
+	                __hb_menuApplyPlacementFromCfg({runtimeOnly:1});
             }else{
                 console.warn('HB_ROW2_NO_APPLY');
             }
@@ -3609,8 +4061,9 @@ __hb_baslat();
 
     try{ window.__hb_row2NormalizeAndRender = __hb_row2NormalizeAndRender; }catch(e){}
 
-    function hbDebouncedRow2(){
+    function hbDebouncedRow2(reason){
         try{
+            try{ window.__hb_row2NormalizeReason = String(reason || ''); }catch(e0){}
             if(window.__hb_row2NormalizeAndRender_t){ clearTimeout(window.__hb_row2NormalizeAndRender_t); }
             window.__hb_row2NormalizeAndRender_t = setTimeout(function(){
                 window.__hb_row2NormalizeAndRender_t = 0;
@@ -3620,11 +4073,13 @@ __hb_baslat();
     }
 
     try{
-        window.addEventListener('resize', hbDebouncedRow2);
-        window.addEventListener('focus', hbDebouncedRow2);
-        window.addEventListener('pageshow', hbDebouncedRow2);
-        window.addEventListener('popstate', hbDebouncedRow2);
+        window.addEventListener('resize', function(){ hbDebouncedRow2('resize'); });
+        window.addEventListener('focus', function(){ hbDebouncedRow2('focus'); });
+        window.addEventListener('pageshow', function(){ hbDebouncedRow2('pageshow'); });
+        window.addEventListener('popstate', function(){ hbDebouncedRow2('popstate'); });
     }catch(e){}
+
+    try{ setTimeout(function(){ hbDebouncedRow2('init'); }, 0); }catch(e){}
 
     try{
         document.addEventListener('visibilitychange', function(){
@@ -3702,7 +4157,7 @@ __hb_baslat();
         if(HB_DASH_STATE.hintTimer) { try{ window.clearTimeout(HB_DASH_STATE.hintTimer); }catch(e){} }
         HB_DASH_STATE.hintTimer = window.setTimeout(function(){
             if(!HB_DASH_STATE.widgetReady){
-                hbDashHintShow('Gösterge Paneli yüklenemedi. DrHastaBasiDashboard.html dosyası aynı klasörde mi?');
+                hbDashHintShow('Gösterge Paneli yüklenemedi. DrHastaBasiDashboard_V10.html dosyası aynı klasörde mi?');
             }
         }, 700);
     }
@@ -3930,6 +4385,7 @@ var f = document.getElementById('hbFullHostFrame');
     });
 })();
 </script>
+
 
 </body>
 </html>
