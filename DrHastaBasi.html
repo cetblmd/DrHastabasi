@@ -363,6 +363,10 @@ html, body{
     padding: 8px;
     z-index: 99999;
     box-sizing: border-box;
+	
+	max-height: calc(100vh - 24px);
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 #hbTopMenuPanel .hbTopMenuItemBtn{
@@ -1298,6 +1302,57 @@ html, body{
 }
 #hbFloatingWidget[data-empty='1'] #hbFloatingDropHint{
     display: flex;
+}
+
+
+
+/* V04: Mobile - prevent page scroll; mini menu + dashboard scroll in their own areas */
+@media (max-width: 768px){
+    html, body{
+        height: 100%;
+        overflow: hidden;
+    }
+
+    #hbLayout{
+        height: calc(100vh - 96px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #hbMiniPanel{
+        width: 100% !important;
+        margin: 0 !important;
+        border: none;
+        flex: 1 1 auto;
+        height: calc(100vh - 96px);
+        overflow: hidden;
+    }
+
+    #hbMiniPanelScroll{
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+    }
+
+    #hbDashboard{
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        display: block !important;
+    }
+
+    #hbDashHost{
+        height: 100%;
+    }
+
+    #hbWidgetHostFrame,
+    #hbFullHostFrame{
+        height: 100%;
+    }
 }
 
 </style>
