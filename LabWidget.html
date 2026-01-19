@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang='tr'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>LabWidget</title>
+
+    <script src='BilmedUiLib.js'></script>
+
+    <style>
+        :root{
+            --lwRadius: 14px;
+            --lwPad: 10px;
+            --lwGap: 8px;
+            --lwRowH: 38px;
+        }
+
+        html, body{
+            height: 100%;
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: transparent;
+            color: var(--bilmed-surface-text);
+        }
+
+        #lwRoot{
+            height: 100%;
+            box-sizing: border-box;
+            border-radius: var(--lwRadius);
+            border: 1px solid var(--bilmed-surface-border);
+            background: var(--bilmed-surface-bg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #lwHead{
+            display: flex;
+            align-items: center;
+            gap: var(--lwGap);
+            padding: var(--lwPad);
+            background: var(--bilmed-tint-bg);
+            border-bottom: 1px solid var(--bilmed-surface-border);
+            box-sizing: border-box;
+        }
+
+        #lwTitle{
+            font-weight: 900;
+            font-size: 13px;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+
+        #lwMeta{
+            flex: 1;
+            min-width: 0;
+            font-size: 12px;
+            opacity: 0.78;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lwChip{
+            height: 24px;
+            padding: 0 8px;
+            border-radius: 10px;
+            border: 1px solid var(--bilmed-surface-border);
+            background: var(--bilmed-surface-bg);
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        .lwDot{
+            width: 8px;
+            height: 8px;
+            border-radius: 99px;
+            background: var(--bilmed-primary-bg);
+            display: inline-block;
+        }
+
+        #lwBody{
+            flex: 1;
+            min-height: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #lwList{
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 2px;
+            box-sizing: border-box;
+        }
+
+        .lwRow{
+            height: var(--lwRowH);
+            border-radius: 12px;
+            border: 1px solid var(--bilmed-surface-border);
+            background: var(--bilmed-tint-bg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        .lwRow[data-active='1']{
+            border-color: var(--bilmed-primary-bg);
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+        }
+
+        .lwNo{
+            width: 34px;
+            flex: 0 0 34px;
+            font-weight: 900;
+            font-size: 12px;
+            opacity: 0.82;
+            text-align: center;
+        }
+
+        .lwTxt{
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .lwName{
+            font-weight: 900;
+            font-size: 12px;
+            line-height: 1.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lwDesc{
+            font-size: 12px;
+            opacity: 0.74;
+            line-height: 1.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lwBadge{
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 10px;
+            border: 1px solid var(--bilmed-surface-border);
+            background: var(--bilmed-surface-bg);
+            font-size: 12px;
+            font-weight: 800;
+            opacity: 0.9;
+            display: inline-flex;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        #lwActions{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 6px;
+        }
+
+        .lwBtn{
+            height: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--bilmed-surface-border);
+            background: var(--bilmed-surface-bg);
+            color: var(--bilmed-surface-text);
+            font-weight: 900;
+            font-size: 12px;
+            padding: 0 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-sizing: border-box;
+        }
+
+        .lwBtn:hover{
+            background: var(--bilmed-tint-bg);
+        }
+
+        .lwBtn:active{
+            background: var(--bilmed-tint-bg);
+            transform: translateY(1px);
+        }
+
+        .lwBtnPrimary{
+            background: var(--bilmed-primary-bg);
+            border-color: var(--bilmed-primary-bg);
+            color: #fff;
+        }
+
+        .lwBtnPrimary:hover{
+            filter: brightness(1.03);
+        }
+
+        .lwBtnPrimary:active{
+            transform: translateY(1px);
+            filter: brightness(0.98);
+        }
+
+        .lwBtn[disabled]{
+            opacity: 0.55;
+            cursor: default;
+            transform: none;
+        }
+
+        @media (max-width: 420px){
+            #lwHead{ padding: 8px; }
+            #lwBody{ padding: 8px; }
+            .lwRow{ padding: 0 8px; }
+            .lwBtn{ height: 30px; border-radius: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <div id='lwRoot'>
+        <div id='lwHead'>
+            <div id='lwTitle'>Laboratuvar</div>
+            <div id='lwMeta'>HastaID: <span id='lwHastaId'>-</span> · Anormal: <span id='lwAbnCount'>0</span></div>
+            <button class='lwBtn' id='lwFullBtn' type='button' title='Detay'>Detay</button>
+            <div class='lwChip' id='lwLiveChip' title='Canlı'>
+                <span class='lwDot'></span>
+                <span>Canlı</span>
+            </div>
+        </div>
+        <div id='lwBody'>
+            <div id='lwList'></div>
+            <div id='lwActions'>
+                <button class='lwBtn lwBtnPrimary' id='lwNextBtn' type='button'>Yenile</button>
+                
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        'use strict';
+
+        var __LW_CTX = { drId: 0, hastaId: 0, hizmetId: 0 };
+        var __LW_THEME_ID = 'kurumsal';
+        var __LW_TICK = 0;
+        var __LW_TIMER = 0;
+        var __LW_SUSPENDED = 0;
+        var __LW_ACTIVE_IDX = 0;
+
+        var __LW_EL = {};
+
+        function __lw_q(id){ return document.getElementById(id); }
+
+        function __lw_post(type, payload){
+            try { window.parent.postMessage({ type: type, payload: payload || {} }, '*'); }
+            catch(e){ console.error('LW_POST_FAIL', e); }
+        }
+
+        function __lw_applyTheme(themeId){
+            var tid = themeId || __LW_THEME_ID || 'kurumsal';
+            __LW_THEME_ID = tid;
+            try {
+                if(window.BilmedTheme && typeof window.BilmedTheme.apply === 'function') {
+                    window.BilmedTheme.apply(document, { themeId: tid });
+                }
+            } catch(e) { console.error('LW_THEME_APPLY_FAIL', e); }
+        }
+
+        function __lw_lcg(seed){
+            var s = Math.floor(Number(seed) || 0) >>> 0;
+            return function(){
+                s = (s * 1664525 + 1013904223) >>> 0;
+                return (s >>> 0) / 4294967296;
+            };
+        }
+
+        function __lw_seedBase(){
+            var h = Math.floor(Number(__LW_CTX.hastaId) || 0);
+            var d = Math.floor(Number(__LW_CTX.drId) || 0);
+            var z = Math.floor(Number(__LW_CTX.hizmetId) || 0);
+            var seed = (h * 2654435761) ^ (d * 2246822519) ^ (z * 3266489917) ^ (__LW_TICK * 374761393);
+            return seed >>> 0;
+        }
+
+        function __lw_testsDef(){
+            return [
+                { key:'WBC',  title:'WBC',        unit:'10^3/µL', lo:4.0,  hi:10.0 },
+                { key:'HGB',  title:'HGB',        unit:'g/dL',    lo:12.0, hi:17.5 },
+                { key:'PLT',  title:'PLT',        unit:'10^3/µL', lo:150,  hi:450 },
+                { key:'GLU',  title:'Glikoz',     unit:'mg/dL',   lo:70,   hi:110 },
+                { key:'CRP',  title:'CRP',        unit:'mg/L',    lo:0.0,  hi:5.0 },
+                { key:'CRE',  title:'Kreatinin',  unit:'mg/dL',   lo:0.6,  hi:1.3 },
+                { key:'NA',   title:'Sodyum',     unit:'mmol/L',  lo:135,  hi:145 },
+                { key:'K',    title:'Potasyum',   unit:'mmol/L',  lo:3.5,  hi:5.1 }
+            ];
+        }
+
+        function __lw_fmt(v, def){
+            var n = Number(v);
+            if(!isFinite(n)) { return def || '-'; }
+            var abs = Math.abs(n);
+            if(abs >= 100) { return String(Math.round(n)); }
+            if(abs >= 10)  { return (Math.round(n * 10) / 10).toFixed(1); }
+            return (Math.round(n * 100) / 100).toFixed(2);
+        }
+
+        function __lw_pickTime(rand01, idx){
+            var now = new Date();
+            var minsAgo = 10 + Math.floor(rand01 * 180) + (idx * 7);
+            var t = new Date(now.getTime() - minsAgo * 60000);
+            var hh = String(t.getHours()).padStart(2,'0');
+            var mm = String(t.getMinutes()).padStart(2,'0');
+            return hh + ':' + mm;
+        }
+
+        function __lw_makeRows(){
+            var defs = __lw_testsDef();
+            var rnd = __lw_lcg(__lw_seedBase());
+            var rows = [];
+            for(var i = 0; i < defs.length; i += 1){
+                var d = defs[i];
+                var mid = (d.lo + d.hi) / 2;
+                var span = (d.hi - d.lo);
+                var r = rnd();
+                var v = mid + (r - 0.5) * span * 0.8;
+
+                var out = rnd();
+                if(out > 0.88){
+                    var dir = (rnd() > 0.5) ? 1 : -1;
+                    v = mid + dir * span * (0.9 + rnd() * 1.1);
+                }
+
+                var flag = '';
+                if(v < d.lo) { flag = 'L'; }
+                if(v > d.hi) { flag = 'H'; }
+
+                rows.push({
+                    idx: i,
+                    key: d.key,
+                    name: d.title,
+                    value: v,
+                    valueText: __lw_fmt(v, '-'),
+                    unit: d.unit,
+                    lo: d.lo,
+                    hi: d.hi,
+                    flag: flag,
+                    time: __lw_pickTime(rnd(), i)
+                });
+            }
+            return rows;
+        }
+
+        function __lw_esc(s){
+            var t = String(typeof s === 'undefined' ? '' : s);
+            var out = '';
+            for(var i = 0; i < t.length; i += 1){
+                var ch = t[i];
+                if(ch === '&') { out += '&amp;'; continue; }
+                if(ch === '<') { out += '&lt;'; continue; }
+                if(ch === '>') { out += '&gt;'; continue; }
+                if(ch === '"') { out += '&quot;'; continue; }
+                if(ch === "'") { out += '&#39;'; continue; }
+                out += ch;
+            }
+            return out;
+        }
+
+        function __lw_render(){
+            var rows = __lw_makeRows();
+            var abn = 0;
+
+            var html = '';
+            for(var i = 0; i < rows.length; i += 1){
+                var it = rows[i];
+                if(it.flag) { abn += 1; }
+
+                var active = (i === __LW_ACTIVE_IDX) ? '1' : '0';
+                var badge = it.flag ? (it.flag === 'H' ? 'Yüksek' : 'Düşük') : 'Normal';
+                html += '' +
+                    '<div class=\'lwRow\' data-active=\'' + active + '\' data-idx=\'' + i + '\' role=\'button\' tabindex=\'0\'>' +
+                        '<div class=\'lwNo\'>' + __lw_esc(it.key) + '</div>' +
+                        '<div class=\'lwTxt\'>' +
+                            '<div class=\'lwName\'>' + __lw_esc(it.name) + '</div>' +
+                            '<div class=\'lwDesc\'>' + __lw_esc(it.valueText + ' ' + it.unit) + ' · ' + __lw_esc(it.time) + '</div>' +
+                        '</div>' +
+                        '<div class=\'lwBadge\'>' + __lw_esc(badge) + '</div>' +
+                    '</div>';
+            }
+
+            __LW_EL.list.innerHTML = html;
+            __LW_EL.hastaId.textContent = String(Math.floor(Number(__LW_CTX.hastaId) || 0) || '-');
+            __LW_EL.abnCount.textContent = String(abn);
+
+            __lw_bindRowClicks();
+        }
+
+        function __lw_bindRowClicks(){
+            var nodes = __LW_EL.list.querySelectorAll('.lwRow');
+            for(var i = 0; i < nodes.length; i += 1){
+                nodes[i].onclick = __lw_onRowClick;
+                nodes[i].onkeydown = __lw_onRowKey;
+            }
+        }
+
+        function __lw_onRowClick(e){
+            var el = e.currentTarget;
+            if(!el) { return; }
+            var idx = Math.floor(Number(el.getAttribute('data-idx')) || 0);
+            if(idx < 0) { idx = 0; }
+            __LW_ACTIVE_IDX = idx;
+            __lw_render();
+        }
+
+        function __lw_onRowKey(e){
+            if(!e) { return; }
+            if(e.key === 'Enter' || e.key === ' '){
+                e.preventDefault();
+                __lw_onRowClick({ currentTarget: e.currentTarget });
+            }
+        }
+
+        function __lw_onRefreshClick(){
+            __LW_TICK += 1;
+            __lw_render();
+            __lw_post('ACTION', { action: 'labRefresh', source: 'labWidget', data: { tick: __LW_TICK } });
+        }
+
+        function __lw_onFullClick(){
+            __lw_post('OPEN_FULL', { pageId: 'labFull', url: 'LabFull_V02.html', title: 'Laboratuvar' });
+        }
+
+        function __lw_start(){
+            if(__LW_TIMER){ return; }
+            __LW_TIMER = window.setInterval(function(){
+                if(__LW_SUSPENDED){ return; }
+                __LW_TICK += 1;
+                __lw_render();
+            }, 30000);
+        }
+
+        function __lw_suspend(){ __LW_SUSPENDED = 1; }
+        function __lw_resume(){ __LW_SUSPENDED = 0; }
+
+        function __lw_onMessage(e){
+            var msg = e && e.data ? e.data : null;
+            if(!msg || !msg.type){ return; }
+            var t = String(msg.type || '');
+            var p = msg.payload || {};
+
+            if(t === 'CTX_SET'){
+                __LW_CTX.drId = Math.floor(Number(p.drId) || 0);
+                __LW_CTX.hastaId = Math.floor(Number(p.hastaId) || 0);
+                __LW_CTX.hizmetId = Math.floor(Number(p.hizmetId) || 0);
+                __LW_ACTIVE_IDX = 0;
+                __LW_TICK = 0;
+                __lw_render();
+                return;
+            }
+
+            if(t === 'THEME_SET'){ __lw_applyTheme(String(p.themeId || 'kurumsal')); return; }
+            if(t === 'SUSPEND'){ __lw_suspend(); return; }
+            if(t === 'RESUME'){ __lw_resume(); return; }
+        }
+
+        function __lw_init(){
+            __LW_EL.list = __lw_q('lwList');
+            __LW_EL.hastaId = __lw_q('lwHastaId');
+            __LW_EL.abnCount = __lw_q('lwAbnCount');
+            __LW_EL.refreshBtn = __lw_q('lwNextBtn');
+            __LW_EL.fullBtn = __lw_q('lwFullBtn');
+
+            __LW_EL.refreshBtn.textContent = 'Yenile';
+            __LW_EL.refreshBtn.addEventListener('click', __lw_onRefreshClick);
+            __LW_EL.fullBtn.addEventListener('click', __lw_onFullClick);
+
+            window.addEventListener('message', __lw_onMessage, false);
+
+            __lw_applyTheme(__LW_THEME_ID);
+            __lw_render();
+            __lw_start();
+            __lw_post('READY', { host: 'LabWidget', version: 'v02' });
+        }
+
+        try { __lw_init(); } catch(err){ console.error('LW_INIT_FAIL', err); }
+    </script>
+    
+</body>
+</html>
