@@ -3,7 +3,7 @@
 <head>
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Gosterge Paneli Ayarlari</title>
+<title>Gosterge Paneli Ayarlari_V27</title>
 
 <script src='BilmedUiLib.js'></script>
 <script src='HB_ItemCatalog.js'></script>
@@ -195,7 +195,9 @@ overflow: hidden;
         background-size: calc(var(--gpUnitPx) + var(--gpGap)) calc(var(--gpUnitPx) + var(--gpGap));
         background-origin: content-box;
         background-clip: content-box;
-    }
+    
+        padding-bottom: 240px;
+	}
 
     #gpSizeBox{
         position: sticky;
@@ -220,7 +222,9 @@ overflow: hidden;
         max-width: 240px;
         overflow: hidden;
         text-overflow: ellipsis;
+        cursor: move;
         white-space: nowrap;
+        cursor: move;
     }
     .gpSizeField{
         display: flex;
@@ -340,11 +344,10 @@ box-sizing: border-box;
         border-color: rgba(200,0,0,0.92);}
 
     #gpSizeBox{
-        position: sticky;
-        right: 10px;
-        bottom: 10px;
-        margin-top: 10px;
-        margin-left: auto;
+        position: fixed;
+        right: 14px;
+        bottom: 14px;
+        margin: 0;
         width: 240px;
         border-radius: 16px;
         background: var(--gpSurfaceBg);
@@ -357,6 +360,8 @@ box-sizing: border-box;
         flex-direction: column;
         gap: 8px;
         z-index: 50;
+        user-select: none;
+        touch-action: none;
     }
     #gpSizeTitle{
         font-size: 12px;
@@ -366,6 +371,7 @@ box-sizing: border-box;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        cursor: move;
     }
     .gpSizeRow{
         display: flex;
@@ -461,6 +467,7 @@ box-sizing: border-box;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        cursor: move;
         }
         .gpDragGhostMeta{
             font-size: 12px;
@@ -1213,6 +1220,8 @@ function gpGridSelect(id){
         el.classList.toggle('isSelected', gpIdNorm(el.dataset.id) === id);
     }
     gpSizeUiSync();
+    try{ GP._sbDockLock = 0; }catch(_e){}
+    try{ gpSizeBoxDockUnderSelected(true); }catch(_e2){}
 }
 
 function gpSelObjGet(){
@@ -2019,6 +2028,252 @@ function gpNumOrZero(v){
     return n;
 }
 
+
+
+function gpSizeBoxFloatKey(){
+    var drid = Math.floor(Number(GP.drid) || 0);
+    return 'HB.GP.SIZEBOX.POS.' + String(drid);
+}
+
+function gpSizeBoxFloatLoad(){
+    try{
+        var raw = String(localStorage.getItem(gpSizeBoxFloatKey()) || '');
+        if(!raw) { return null; }
+        var o = JSON.parse(raw);
+        if(!o || typeof o !== 'object') { return null; }
+        var x = Number(o.x);
+        var y = Number(o.y);
+        if(!isFinite(x) || !isFinite(y)) { return null; }
+        return { x: x, y: y };
+    }catch(e){
+        return null;
+    }
+}
+
+function gpSizeBoxFloatSave(pos){
+    try{
+        if(!pos) { return; }
+        var x = Number(pos.x);
+        var y = Number(pos.y);
+        if(!isFinite(x) || !isFinite(y)) { return; }
+        localStorage.setItem(gpSizeBoxFloatKey(), JSON.stringify({ x: x, y: y }));
+    }catch(e){}
+}
+
+function gpSizeBoxFloatClamp(x, y){
+    try{
+        var el = GP.dom && GP.dom.sizeBox ? GP.dom.sizeBox : null;
+        if(!el) { return { x: x, y: y }; }
+        var vw = Math.max(1, window.innerWidth || 1);
+        var vh = Math.max(1, window.innerHeight || 1);
+        var rr = el.getBoundingClientRect();
+        var w = Math.max(40, rr.width || 240);
+        var h = Math.max(40, rr.height || 120);
+        var pad = 8;
+        if(x < pad) { x = pad; }
+        if(y < pad) { y = pad; }
+        if(x > vw - w - pad) { x = vw - w - pad; }
+        if(y > vh - h - pad) { y = vh - h - pad; }
+    }catch(e){}
+    return { x: x, y: y };
+}
+
+function gpSizeBoxFloatApply(pos){
+    if(!GP.dom || !GP.dom.sizeBox || !pos) { return; }
+    var p = gpSizeBoxFloatClamp(Number(pos.x) || 0, Number(pos.y) || 0);
+    GP.dom.sizeBox.style.left = String(Math.round(p.x)) + 'px';
+    GP.dom.sizeBox.style.top = String(Math.round(p.y)) + 'px';
+    GP.dom.sizeBox.style.right = 'auto';
+    GP.dom.sizeBox.style.bottom = 'auto';
+}
+
+function gpSizeBoxFloatInit(){
+    try{
+        if(!GP.dom || !GP.dom.sizeBox || !GP.dom.sizeTitle) { return; }
+
+        var loaded = gpSizeBoxFloatLoad();
+        if(loaded){
+            gpSizeBoxFloatApply(loaded);
+        }
+
+        GP._sbDrag = GP._sbDrag || { active: 0, dx: 0, dy: 0 };
+
+        function onDown(ev){
+            try{
+                if(!ev) { return; }
+                if(ev.button != null && ev.button !== 0) { return; }
+                ev.preventDefault();
+                ev.stopPropagation();
+
+                var box = GP.dom.sizeBox;
+                var rr = box.getBoundingClientRect();
+                var cx = Number(ev.clientX || 0);
+                var cy = Number(ev.clientY || 0);
+
+                GP._sbDrag.active = 1;
+                GP._sbDrag.dx = cx - rr.left;
+                GP._sbDrag.dy = cy - rr.top;
+
+                try{ if(ev.target && ev.target.setPointerCapture && ev.pointerId != null){ ev.target.setPointerCapture(ev.pointerId); } }catch(e){}
+            }catch(e){}
+        }
+
+        function onMove(ev){
+            try{
+                if(!GP._sbDrag || !GP._sbDrag.active) { return; }
+                if(!ev) { return; }
+                ev.preventDefault();
+                var cx = Number(ev.clientX || 0);
+                var cy = Number(ev.clientY || 0);
+                var x = cx - Number(GP._sbDrag.dx || 0);
+                var y = cy - Number(GP._sbDrag.dy || 0);
+                var p = gpSizeBoxFloatClamp(x, y);
+                gpSizeBoxFloatApply(p);
+            }catch(e){}
+        }
+
+        function onUp(ev){
+            try{
+                if(!GP._sbDrag || !GP._sbDrag.active) { return; }
+                if(ev){ ev.preventDefault(); }
+                GP._sbDrag.active = 0;
+                try{ GP._sbDockLock = 1; }catch(_e){}
+                try{
+                    var rr = GP.dom.sizeBox.getBoundingClientRect();
+                    gpSizeBoxFloatSave({ x: rr.left, y: rr.top });
+                }catch(e){}
+            }catch(e){}
+        }
+
+        GP.dom.sizeTitle.addEventListener('pointerdown', onDown, { passive: false });
+        window.addEventListener('pointermove', onMove, { passive: false });
+        window.addEventListener('pointerup', onUp, { passive: false });
+        window.addEventListener('pointercancel', onUp, { passive: false });
+    }catch(e){ console.error(e); }
+}
+
+
+function gpSizeBoxDockUnderSelected(force){
+    try{
+        if(!GP || !GP.dom || !GP.dom.sizeBox) { return; }
+        if(GP._sbDrag && GP._sbDrag.active) { return; }
+        if(!force && GP._sbDockLock) { return; }
+
+        var id = gpIdNorm(GP.selId);
+        if(!id) { return; }
+
+        var card = null;
+        try{
+            if(GP.dom.grid){
+                var kids = GP.dom.grid.querySelectorAll('.gpGridCard');
+                for(var i=0;i<kids.length;i+=1){
+                    var el = kids[i];
+                    if(!el || !el.dataset) { continue; }
+                    if(gpIdNorm(el.dataset.id) === id){ card = el; break; }
+                }
+            }
+        }catch(_e){ card = null; }
+        if(!card || !card.getBoundingClientRect) { return; }
+
+        var box = GP.dom.sizeBox;
+        var gap = 10;
+        var pad = 8;
+        var vw = Math.max(1, window.innerWidth || 1);
+        var vh = Math.max(1, window.innerHeight || 1);
+
+        function rectIntersects(a, b){
+            if(!a || !b) { return false; }
+            if(a.right <= b.left) { return false; }
+            if(a.left >= b.right) { return false; }
+            if(a.bottom <= b.top) { return false; }
+            if(a.top >= b.bottom) { return false; }
+            return true;
+        }
+
+        function getBoxWH(){
+            var br = box.getBoundingClientRect();
+            var bw = Math.max(60, Number(br.width || 0) || 240);
+            var bh = Math.max(60, Number(br.height || 0) || 120);
+            return { w: bw, h: bh };
+        }
+
+        function clampInViewport(x, y, bw, bh){
+            if(x < pad) { x = pad; }
+            if(y < pad) { y = pad; }
+            if(x > vw - bw - pad) { x = vw - bw - pad; }
+            if(y > vh - bh - pad) { y = vh - bh - pad; }
+            return { x: x, y: y };
+        }
+
+        function testPos(x, y, bw, bh, cardRect){
+            var p = clampInViewport(x, y, bw, bh);
+            var r = { left: p.x, top: p.y, right: p.x + bw, bottom: p.y + bh };
+            var ok = !rectIntersects(r, cardRect);
+            return { ok: ok, x: p.x, y: p.y };
+        }
+
+        function applyPos(x, y){
+            gpSizeBoxFloatApply({ x: x, y: y });
+        }
+
+        function tryPlace(){
+            var rr = card.getBoundingClientRect();
+            var wh = getBoxWH();
+
+            var cand = [
+                { x: rr.left, y: rr.bottom + gap },
+                { x: rr.left, y: rr.top - wh.h - gap },
+                { x: rr.right + gap, y: rr.top },
+                { x: rr.left - wh.w - gap, y: rr.top }
+            ];
+
+            for(var k=0;k<cand.length;k+=1){
+                var t = testPos(cand[k].x, cand[k].y, wh.w, wh.h, rr);
+                if(t.ok){
+                    applyPos(t.x, t.y);
+                    return true;
+                }
+            }
+
+            var t0 = testPos(cand[0].x, cand[0].y, wh.w, wh.h, rr);
+            applyPos(t0.x, t0.y);
+            return false;
+        }
+
+        var ok = tryPlace();
+        if(ok) { return; }
+
+        if(!GP.dom.gridScroll || typeof GP.dom.gridScroll.scrollTop !== 'number') { return; }
+
+        var wh2 = getBoxWH();
+        var r0 = card.getBoundingClientRect();
+
+        var targetTop = (vh - pad - (wh2.h + gap) - (r0.height || 0));
+        if(!isFinite(targetTop)) { targetTop = pad; }
+        if(targetTop < pad) { targetTop = pad; }
+
+        var delta = (r0.top - targetTop);
+        if(isFinite(delta) && Math.abs(delta) > 2){
+            try{
+                var st = Number(GP.dom.gridScroll.scrollTop || 0);
+                var next = st + delta;
+                if(next < 0) { next = 0; }
+                if(GP.dom.gridScroll.scrollTo){
+                    try{ GP.dom.gridScroll.scrollTo({ top: next, behavior: 'smooth' }); }
+                    catch(_e){ GP.dom.gridScroll.scrollTop = next; }
+                }else{
+                    GP.dom.gridScroll.scrollTop = next;
+                }
+            }catch(_e2){}
+        }
+
+        try{
+            setTimeout(function(){
+                try{ tryPlace(); }catch(_e3){}
+            }, 80);
+        }catch(_e4){}
+    }catch(e){}
+}
 function gpThemeApply(){
     var drid = gpNumOrZero(gpParamGet('DrID'));
     GP.drid = drid;
@@ -2049,6 +2304,7 @@ function gpInit(){
 
     GP.dom = GP.dom || {};
     gpDomCache();
+    try{ gpSizeBoxFloatInit(); }catch(e){ console.error(e); }
 
     try{
         if(GP.dom.sizeW){
@@ -2151,10 +2407,22 @@ window.addEventListener('beforeunload', function(e){
         gpGridLayoutApply();
         gpGridRender();
         gpPoolRender();
+        try{ gpSizeBoxDockUnderSelected(false); }catch(_e){}
     });
     GP.dom.gridScroll.addEventListener('dragover', gpOnGridDragOver);
     GP.dom.gridScroll.addEventListener('drop', gpOnGridDrop);
     GP.dom.gridScroll.addEventListener('dragleave', gpOnGridDragLeave);
+    GP.dom.gridScroll.addEventListener('scroll', function(){
+        try{ gpSizeBoxDockUnderSelected(false); }catch(_e){}
+    }, { passive: true });
+
+    window.addEventListener('scroll', function(){
+        try{ gpSizeBoxDockUnderSelected(false); }catch(_e){}
+    }, { passive: true });
+
+    document.addEventListener('scroll', function(){
+        try{ gpSizeBoxDockUnderSelected(false); }catch(_e){}
+    }, { passive: true, capture: true });
 
 }
 
