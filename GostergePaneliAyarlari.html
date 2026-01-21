@@ -3,7 +3,7 @@
 <head>
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Gosterge Paneli Ayarlari_V28</title>
+<title>Gosterge Paneli Ayarlari_V27</title>
 
 <script src='BilmedUiLib.js'></script>
 <script src='HB_ItemCatalog.js'></script>
@@ -1063,16 +1063,10 @@ function gpPoolCardEl(id){
     var it = gpCatalogGet(id) || {};
     var el = document.createElement('div');
     el.className = 'gpPoolCard';
+    el.setAttribute('draggable', 'true');
     el.dataset.id = id;
-
-    if(!(GP.touch && GP.touch.enabled)){
-        el.setAttribute('draggable', 'true');
-        el.addEventListener('dragstart', gpOnDragStart);
-        el.addEventListener('dragend', gpOnDragEnd);
-    }else{
-        el.setAttribute('draggable', 'false');
-        el.addEventListener('dragstart', function(ev){ try{ ev.preventDefault(); }catch(e){} });
-    }
+    el.addEventListener('dragstart', gpOnDragStart);
+    el.addEventListener('dragend', gpOnDragEnd);
 
     var icon = document.createElement('div');
     icon.className = 'gpPoolIcon';
@@ -1155,14 +1149,8 @@ function gpGridCardEl(id, c, r){
 
     var el = document.createElement('div');
     el.className = 'gpGridCard';
+    el.setAttribute('draggable', 'true');
     el.dataset.id = id;
-
-    if(!(GP.touch && GP.touch.enabled)){
-        el.setAttribute('draggable', 'true');
-    }else{
-        el.setAttribute('draggable', 'false');
-        el.addEventListener('dragstart', function(ev){ try{ ev.preventDefault(); }catch(e){} });
-    }
 
     if(gpIdNorm(GP.selId) === id){ el.classList.add('isSelected'); }
 
@@ -2349,14 +2337,6 @@ function gpInit(){
             document.addEventListener('pointermove', gpTouchOnPointerMove, { passive: false });
             document.addEventListener('pointerup', gpTouchOnPointerUp, { passive: false });
             document.addEventListener('pointercancel', gpTouchOnPointerUp, { passive: false });
-            document.addEventListener('dragstart', function(ev){ try{ ev.preventDefault(); }catch(e){} }, { passive: false });
-            try{
-                var _els = document.querySelectorAll('.gpPoolCard, .gpGridCard');
-                for(var _i=0; _i<_els.length; _i+=1){
-                    try{ _els[_i].setAttribute('draggable','false'); }catch(e){}
-                }
-            }catch(e){}
-
             document.addEventListener('click', function(ev){
                 try{
                     if(!GP.touch.enabled) { return; }
